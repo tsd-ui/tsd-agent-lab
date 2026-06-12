@@ -65,7 +65,9 @@ tsd-agent-lab/
 12. **Phase 11**: Team documentation
 13. **Phase 12**: GitHub Actions experiment (optional)
 
-Current phase: **Phase 0B - Threat Model and Policies (Complete)**
+Current phase: **Phase 1 - Dedicated Local User Setup (Ready for Execution)**
+
+See [PHASE1-QUICKSTART.md](PHASE1-QUICKSTART.md) for execution steps.
 
 ## Non-Goals
 

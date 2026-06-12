@@ -1,0 +1,418 @@
+# Repository Allowlist Example
+#
+# This file defines which GitHub repositories agents are permitted to access.
+# Copy to `repo-allowlist.yaml` and customize for your organization(s).
+#
+# Version: 1.0
+# Last Updated: 2026-06-12
+
+metadata:
+  version: "1.0"
+  updated: "2026-06-12"
+  owner: "Engineering Team"
+  description: "Repository access allowlist for agent workflows"
+
+# =============================================================================
+# GLOBAL SETTINGS
+# =============================================================================
+
+global:
+  # Default behavior for repositories not in allowlist
+  # - block: Deny access (recommended)
+  # - warn: Allow with warning logged
+  # - allow: Allow without warning (unsafe)
+  default_action: "block"
+
+  # Require explicit approval for cross-org access
+  cross_org_approval_required: true
+
+  # Maximum number of repositories that can be cloned per workflow
+  max_repos_per_workflow: 5
+
+  # Block forking of allowlisted repositories
+  block_fork: false
+
+  # Allow read-only access to public repositories for documentation
+  # (even if not in allowlist)
+  allow_public_readonly: false
+
+# =============================================================================
+# ORGANIZATION: example-org-1
+# =============================================================================
+
+organizations:
+  - name: "example-org-1"
+    github_org: "example-org-1"
+
+    # Organization-specific policies
+    policies:
+      require_signed_commits: true
+      require_linear_history: false
+      enforce_branch_naming: true
+      branch_prefix: "agent/"
+
+    # Repositories in this organization
+    repositories:
+      # Explicitly allowed repositories
+      - name: "tsd-agent-lab"
+        access: "read-write"
+        description: "Agent lab repository"
+        protected_branches:
+          - "main"
+        allowed_operations:
+          - "clone"
+          - "checkout"
+          - "commit"
+          - "push"
+          - "pr_create"
+        blocked_operations:
+          - "push_force"
+          - "pr_merge"
+          - "branch_delete"
+        notes: "Primary lab repository"
+
+      - name: "demo-app"
+        access: "read-write"
+        description: "Demo application for testing agent workflows"
+        protected_branches:
+          - "main"
+          - "production"
+        allowed_operations:
+          - "clone"
+          - "checkout"
+          - "commit"
+          - "push"
+          - "pr_create"
+        blocked_operations:
+          - "push_force"
+          - "pr_merge"
+        notes: "Safe for experimentation"
+
+      - name: "internal-tool-*"
+        access: "read-only"
+        description: "Internal tools (pattern match)"
+        pattern: true
+        allowed_operations:
+          - "clone"
+          - "checkout"
+        blocked_operations:
+          - "commit"
+          - "push"
+          - "pr_create"
+        notes: "Read-only access for reference"
+
+      # Example: Documentation repo
+      - name: "team-docs"
+        access: "read-write"
+        description: "Team documentation"
+        protected_branches:
+          - "main"
+        allowed_operations:
+          - "clone"
+          - "checkout"
+          - "commit"
+          - "push"
+          - "pr_create"
+        max_files_per_commit: 10
+        notes: "Agent can help with docs, but keep changes small"
+
+    # Repositories explicitly blocked (even if pattern-matched)
+    blocked_repositories:
+      - name: "production-app"
+        reason: "Production repository, no agent access"
+      - name: "secrets-management"
+        reason: "Contains production secrets"
+      - name: "customer-data-pipeline"
+        reason: "Processes customer PII"
+
+    # Organization-specific command restrictions
+    command_overrides:
+      # Allow additional commands for this org
+      allow:
+        - "bundle exec rake db:migrate"  # Safe in dev environment
+      # Block commands for this org
+      block:
+        - "npm publish"                  # Publishing forbidden
+
+# =============================================================================
+# ORGANIZATION: example-org-2
+# =============================================================================
+
+  - name: "example-org-2"
+    github_org: "example-org-2"
+
+    # Different policies for this org
+    policies:
+      require_signed_commits: false
+      require_linear_history: true
+      enforce_branch_naming: true
+      branch_prefix: "ai/"
+
+    repositories:
+      - name: "open-source-lib"
+        access: "read-write"
+        description: "Open source library"
+        protected_branches:
+          - "main"
+          - "release/*"
+        allowed_operations:
+          - "clone"
+          - "checkout"
+          - "commit"
+          - "push"
+          - "pr_create"
+        max_lines_per_commit: 500
+        notes: "Small changes only; this is public"
+
+      - name: "experiment-*"
+        access: "read-write"
+        description: "Experimental repositories (pattern)"
+        pattern: true
+        allowed_operations:
+          - "clone"
+          - "checkout"
+          - "commit"
+          - "push"
+          - "pr_create"
+          - "branch_delete"      # More permissive for experiments
+        notes: "Experimental repos have looser restrictions"
+
+    blocked_repositories:
+      - name: "example-org-2-production"
+        reason: "Production environment"
+
+# =============================================================================
+# ORGANIZATION: personal (for individual GitHub accounts)
+# =============================================================================
+
+  - name: "personal"
+    github_org: "your-github-username"
+
+    policies:
+      require_signed_commits: false
+      require_linear_history: false
+      enforce_branch_naming: false
+
+    repositories:
+      - name: "personal-lab"
+        access: "read-write"
+        description: "Personal experimentation repository"
+        allowed_operations:
+          - "clone"
+          - "checkout"
+          - "commit"
+          - "push"
+          - "pr_create"
+        notes: "Personal repo for learning"
+
+    blocked_repositories:
+      - name: "dotfiles"
+        reason: "Personal configuration, keep manual"
+      - name: "password-manager-backup"
+        reason: "Contains sensitive data"
+
+# =============================================================================
+# PATTERN-BASED ALLOWLISTS
+# =============================================================================
+
+# Global patterns that apply across all organizations
+# Use sparingly; explicit lists are safer
+
+patterns:
+  # Allow access to all repos matching these patterns
+  allow:
+    # Example: All repos starting with "agent-test-"
+    - pattern: "*/agent-test-*"
+      access: "read-write"
+      reason: "Temporary test repositories"
+      auto_expire_days: 30    # Review after 30 days
+
+    # Example: All public documentation repos
+    - pattern: "*/docs"
+      access: "read-only"
+      reason: "Documentation reference"
+
+  # Block access to repos matching these patterns (takes precedence)
+  block:
+    - pattern: "*/production-*"
+      reason: "Production repositories"
+    - pattern: "*-prod"
+      reason: "Production repositories"
+    - pattern: "*/secrets-*"
+      reason: "Secrets management"
+    - pattern: "*-secret"
+      reason: "Secrets management"
+    - pattern: "*/customer-*"
+      reason: "Customer data"
+    - pattern: "*/pii-*"
+      reason: "Personal information"
+
+# =============================================================================
+# AUDIT AND MONITORING
+# =============================================================================
+
+audit:
+  # Log all repository access attempts
+  log_all_access: true
+
+  # Log successful access
+  log_successful: true
+
+  # Log blocked access attempts
+  log_blocked: true
+
+  # Alert on these events
+  alert_on:
+    - "blocked_access_attempt"
+    - "cross_org_access"
+    - "pattern_matched_access"
+    - "new_repository_accessed"
+
+  # Weekly summary report
+  weekly_summary: true
+  summary_path: "~/tsd-agent-lab/logs/repo-access-summary.jsonl"
+
+# =============================================================================
+# CROSS-ORGANIZATION RULES
+# =============================================================================
+
+cross_org:
+  # Allow accessing multiple orgs in single workflow
+  allow_multi_org_workflow: false
+
+  # Require explicit confirmation for cross-org access
+  require_confirmation: true
+
+  # Log cross-org access with high priority
+  log_priority: "high"
+
+  # Block access to org B while working in org A
+  enforce_org_isolation: true
+
+  # Exception: These org pairs can be accessed together
+  allowed_pairs:
+    - orgs: ["example-org-1", "personal"]
+      reason: "Testing changes that affect both"
+
+# =============================================================================
+# TEMPORARY ALLOWLIST (short-term exceptions)
+# =============================================================================
+
+temporary:
+  # Repositories temporarily allowed (auto-expires)
+  repositories:
+    - name: "example-org-1/urgent-fix-repo"
+      access: "read-write"
+      expires: "2026-07-01"
+      reason: "One-time urgent fix"
+      approved_by: "tech-lead"
+
+    # Example: Conference workshop repo
+    - name: "conference-org/workshop-2026"
+      access: "read-only"
+      expires: "2026-06-30"
+      reason: "Conference workshop materials"
+      approved_by: "team-lead"
+
+  # Auto-remove expired entries
+  auto_remove_expired: true
+
+  # Warn N days before expiration
+  warn_before_expiration_days: 7
+
+# =============================================================================
+# EMERGENCY OVERRIDES
+# =============================================================================
+
+emergency:
+  # Allow operator to override allowlist with justification
+  allow_override: true
+
+  # Require override reason
+  require_reason: true
+
+  # Require approval from this role/person
+  require_approval_from: "tech-lead"
+
+  # Log all overrides prominently
+  log_overrides: true
+  override_log_path: "~/tsd-agent-lab/logs/allowlist-overrides.jsonl"
+
+  # Alert on overrides
+  alert_on_override: true
+
+  # Maximum overrides per week before escalation
+  max_overrides_per_week: 2
+
+# =============================================================================
+# VALIDATION AND TESTING
+# =============================================================================
+
+validation:
+  # Validate allowlist syntax on load
+  validate_on_load: true
+
+  # Fail workflow if allowlist is invalid
+  fail_on_invalid: true
+
+  # Test allowlist against known-good and known-bad repositories
+  test_mode: false
+  test_repos:
+    should_allow:
+      - "example-org-1/tsd-agent-lab"
+      - "example-org-1/demo-app"
+    should_block:
+      - "example-org-1/production-app"
+      - "unknown-org/random-repo"
+
+# =============================================================================
+# EXAMPLE WORKFLOW SCENARIOS
+# =============================================================================
+
+# Scenario 1: Agent working on demo-app
+# - Clone: example-org-1/demo-app (allowed)
+# - Create branch: agent/add-feature (allowed)
+# - Commit changes (allowed)
+# - Push to origin (allowed)
+# - Create PR (allowed)
+# - Merge PR (blocked, requires human)
+
+# Scenario 2: Agent accessing internal-tool-xyz
+# - Clone: example-org-1/internal-tool-xyz (allowed, pattern match)
+# - Read code (allowed)
+# - Attempt to commit (blocked, read-only)
+
+# Scenario 3: Agent trying to access production-app
+# - Clone: example-org-1/production-app (blocked, in blocked_repositories)
+# - Logged as security event
+# - Workflow halted
+
+# Scenario 4: Cross-org access attempt
+# - Working in: example-org-1/demo-app
+# - Attempt to clone: example-org-2/open-source-lib
+# - Confirmation prompt shown (cross-org access)
+# - If approved: logged and allowed
+# - If denied: blocked
+
+# Scenario 5: Temporary access
+# - Clone: example-org-1/urgent-fix-repo (allowed until 2026-07-01)
+# - After 2026-07-01: automatically blocked
+
+# =============================================================================
+# MAINTENANCE NOTES
+# =============================================================================
+
+# Review this allowlist:
+# - When adding team members
+# - When creating new repositories
+# - Monthly security review
+# - After any security incident
+# - Before giving demo/training
+#
+# Keep this file in version control (git) for audit trail.
+# Use pull requests to modify the allowlist.
+# Document reasons for all changes.
+#
+# This is an EXAMPLE file. Copy to `repo-allowlist.yaml` and customize.
+# Do not commit your actual `repo-allowlist.yaml` if it contains sensitive
+# organization names or repository structures.

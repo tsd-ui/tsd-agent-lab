@@ -65,7 +65,7 @@ tsd-agent-lab/
 12. **Phase 11**: Team documentation
 13. **Phase 12**: GitHub Actions experiment (optional)
 
-Current phase: **Phase 0A - Initial Lab Plan**
+Current phase: **Phase 0B - Threat Model and Policies (Complete)**
 
 ## Non-Goals
 

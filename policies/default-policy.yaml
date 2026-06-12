@@ -1,0 +1,553 @@
+# Default Policy for TSD Agent Lab
+#
+# This policy file defines runtime controls for agent workflows.
+# It is loaded by the harness before any workflow execution.
+#
+# Version: 1.0
+# Last Updated: 2026-06-12
+
+metadata:
+  version: "1.0"
+  updated: "2026-06-12"
+  owner: "Engineering Team"
+  description: "Default safety policy for agent workflows"
+
+# =============================================================================
+# CREDENTIAL PROTECTION
+# =============================================================================
+
+credentials:
+  # Environment variables that must NOT be accessible to agent processes
+  blocked_env_vars:
+    # AWS Credentials
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_SESSION_TOKEN
+    - AWS_PROFILE
+
+    # GCP Credentials
+    - GOOGLE_APPLICATION_CREDENTIALS
+    - GCLOUD_PROJECT
+    - GCP_PROJECT
+
+    # Cloud Provider Credentials
+    - AZURE_CLIENT_ID
+    - AZURE_CLIENT_SECRET
+    - AZURE_TENANT_ID
+    - DIGITALOCEAN_TOKEN
+    - HEROKU_API_KEY
+
+    # CI/CD Tokens
+    - CIRCLE_TOKEN
+    - TRAVIS_TOKEN
+    - JENKINS_TOKEN
+    - BUILDKITE_TOKEN
+
+    # Slack & Communication
+    - SLACK_TOKEN
+    - SLACK_WEBHOOK_URL
+    - SLACK_BOT_TOKEN
+
+    # Database Credentials
+    - DATABASE_URL
+    - POSTGRES_PASSWORD
+    - MYSQL_PASSWORD
+    - REDIS_URL
+
+    # NPM & Package Registries
+    - NPM_TOKEN
+    - GEM_HOST_API_KEY
+    - PYPI_TOKEN
+
+    # Other Sensitive Tokens
+    - STRIPE_SECRET_KEY
+    - TWILIO_AUTH_TOKEN
+    - SENDGRID_API_KEY
+    - DATADOG_API_KEY
+    - NEW_RELIC_LICENSE_KEY
+
+  # Environment variables that ARE allowed (lab-specific)
+  allowed_env_vars:
+    - GITHUB_TOKEN           # Lab-scoped PAT only
+    - LAB_REPO_ALLOWLIST     # Path to repo allowlist file
+    - LAB_LOG_DIR            # Where to write logs
+    - LAB_POLICY_FILE        # Path to this policy file
+    - ANTHROPIC_API_KEY      # Claude API key (if needed)
+    - PATH                   # Safe to inherit
+    - HOME                   # Agent user home directory
+    - USER                   # Agent username
+    - SHELL                  # Shell interpreter
+    - LANG                   # Locale settings
+    - LC_ALL                 # Locale settings
+    - TMPDIR                 # Temporary directory
+
+  # Files that must be checked for credential patterns before logging
+  sensitive_file_patterns:
+    - "**/.env"
+    - "**/.env.*"
+    - "**/secrets.yaml"
+    - "**/credentials.json"
+    - "**/*.pem"
+    - "**/*.key"
+    - "**/.aws/credentials"
+    - "**/.ssh/id_rsa"
+    - "**/.ssh/id_ed25519"
+    - "**/.kube/config"
+
+  # Regex patterns for credential detection in logs
+  credential_patterns:
+    - 'AKIA[0-9A-Z]{16}'                    # AWS Access Key
+    - 'ghp_[a-zA-Z0-9]{36}'                 # GitHub PAT
+    - 'gho_[a-zA-Z0-9]{36}'                 # GitHub OAuth
+    - 'glpat-[a-zA-Z0-9\-]{20}'            # GitLab PAT
+    - 'xox[baprs]-[a-zA-Z0-9-]+'           # Slack tokens
+    - '[0-9]{12}\.apps\.googleusercontent\.com'  # Google OAuth Client ID
+    - 'sk_live_[a-zA-Z0-9]{24,}'           # Stripe Live Key
+    - '[a-zA-Z0-9_-]{32,}'                 # Generic 32+ char token (high false positive risk)
+
+# =============================================================================
+# REPOSITORY CONTROLS
+# =============================================================================
+
+repositories:
+  # Enforcement mode: strict, permissive, logging_only
+  # - strict: Block any repository not in allowlist
+  # - permissive: Allow with warning
+  # - logging_only: Log access but don't block
+  enforcement_mode: "strict"
+
+  # Path to repository allowlist file (YAML)
+  allowlist_file: "./policies/repo-allowlist.yaml"
+
+  # Require allowlist file to exist
+  require_allowlist: true
+
+  # Block access to these repository patterns even if in allowlist
+  blocked_patterns:
+    - "*/production-*"      # Explicitly marked production repos
+    - "*/prod-*"
+    - "*-production"
+    - "*-prod"
+    - "*/secrets-*"         # Secrets management repos
+    - "*/credentials-*"
+
+  # Git operations that require special approval
+  high_risk_operations:
+    - "push --force"
+    - "push -f"
+    - "reset --hard"
+    - "clean -fd"
+    - "filter-branch"
+    - "rebase -i"           # Interactive rebase (can rewrite history)
+
+  # Branch protection
+  protected_branches:
+    - "main"
+    - "master"
+    - "production"
+    - "release"
+    - "release/*"
+
+  protected_branch_operations:
+    # Operations blocked on protected branches
+    blocked:
+      - "git push --force"
+      - "git push -f"
+      - "git commit --amend"    # Amend only allowed on feature branches
+
+    # Operations that trigger confirmation prompt
+    confirm_required:
+      - "git push"              # Even normal push to main requires confirmation
+
+# =============================================================================
+# COMMAND CONTROLS
+# =============================================================================
+
+commands:
+  # Enforcement mode
+  enforcement_mode: "strict"
+
+  # Path to command allowlist file (YAML)
+  allowlist_file: "./policies/command-allowlist.yaml"
+
+  # Require allowlist file to exist
+  require_allowlist: true
+
+  # Commands that are ALWAYS blocked, regardless of allowlist
+  blocked_commands:
+    # Destructive filesystem operations
+    - "rm -rf /"
+    - "rm -rf /*"
+    - "rm -rf ~"
+    - "rm -rf $HOME"
+    - "dd if=/dev/zero"
+
+    # Privilege escalation
+    - "sudo"
+    - "su"
+    - "doas"
+
+    # Background process spawning
+    - "nohup"
+    - "disown"
+    - "screen -d"
+    - "tmux new -d"
+
+    # Network scanning / hacking tools
+    - "nmap"
+    - "masscan"
+    - "metasploit"
+    - "sqlmap"
+
+    # Cryptocurrency mining
+    - "xmrig"
+    - "ethminer"
+    - "cpuminer"
+
+  # Commands that trigger confirmation before execution
+  confirm_required:
+    - "git push"
+    - "gh pr create"
+    - "gh pr merge"
+    - "gh issue create"
+    - "npm publish"
+    - "gem push"
+    - "pip upload"
+
+  # Maximum command execution time (seconds)
+  timeout: 3600              # 1 hour max
+
+  # Kill processes still running after workflow completion
+  cleanup_on_exit: true
+
+# =============================================================================
+# FILE SYSTEM CONTROLS
+# =============================================================================
+
+filesystem:
+  # Directories agent user is allowed to write to
+  writable_paths:
+    - "~/tsd-agent-lab"                    # Lab repository
+    - "~/tsd-agent-lab-*"                  # Lab-related repos
+    - "/tmp"                                # Temporary files
+    - "~/Library/Caches"                   # Package manager caches
+
+  # Directories agent user must NOT write to
+  blocked_paths:
+    - "/System"
+    - "/Library"
+    - "/usr"
+    - "/bin"
+    - "/sbin"
+    - "/etc"
+    - "/var"
+    - "~/.ssh"              # Block SSH key modification
+    - "~/.aws"              # Block AWS credentials
+    - "~/.kube"             # Block Kubernetes config
+    - "~/.docker"           # Block Docker credentials
+
+  # File extensions that require review before creation
+  sensitive_extensions:
+    - ".pem"
+    - ".key"
+    - ".p12"
+    - ".pfx"
+    - ".crt"
+    - ".cer"
+
+  # Maximum file size for operations (bytes)
+  max_file_size: 104857600  # 100MB
+
+  # Maximum total disk usage by agent user (bytes)
+  max_disk_usage: 10737418240  # 10GB
+
+# =============================================================================
+# NETWORK CONTROLS
+# =============================================================================
+
+network:
+  # Allowed domains for outbound connections
+  allowed_domains:
+    # Required for tool functionality
+    - "github.com"
+    - "api.github.com"
+    - "raw.githubusercontent.com"
+    - "anthropic.com"            # Claude API
+    - "api.anthropic.com"
+
+    # Package managers
+    - "registry.npmjs.org"
+    - "rubygems.org"
+    - "pypi.org"
+    - "files.pythonhosted.org"
+    - "crates.io"
+
+    # CDNs and common resources
+    - "cdn.jsdelivr.net"
+    - "unpkg.com"
+    - "cloudflare.com"
+
+    # Documentation
+    - "docs.github.com"
+    - "stackoverflow.com"
+    - "developer.mozilla.org"
+
+  # Blocked domains (even if matched by allowed pattern)
+  blocked_domains:
+    - "pastebin.com"           # Common exfiltration target
+    - "paste.ee"
+    - "hastebin.com"
+    - "ix.io"
+    - "sprunge.us"
+    - "vpaste.net"
+
+  # Ports allowed for outbound connections
+  allowed_ports:
+    - 80                        # HTTP
+    - 443                       # HTTPS
+    - 22                        # SSH (for git operations)
+    - 9418                      # Git protocol
+
+  # Require confirmation for network operations
+  confirm_required:
+    - "curl"
+    - "wget"
+    - "nc"                      # Netcat
+    - "telnet"
+
+# =============================================================================
+# AUDIT AND LOGGING
+# =============================================================================
+
+audit:
+  # Log directory (relative to agent user home)
+  log_dir: "~/tsd-agent-lab/logs"
+
+  # Log everything to file
+  log_all_commands: true
+  log_all_outputs: true
+  log_all_env_vars: true      # But scrub sensitive patterns
+  log_process_list: true      # Before and after workflow
+  log_network_connections: true
+
+  # Log format: json, text
+  log_format: "json"
+
+  # Log rotation
+  rotate_logs: true
+  max_log_size_mb: 100
+  max_log_files: 10
+
+  # Retention period (days)
+  retention_days: 90
+
+  # Alert on these events
+  alert_on:
+    - "allowlist_violation"
+    - "credential_pattern_detected"
+    - "blocked_command_attempted"
+    - "protected_branch_operation"
+    - "high_risk_operation"
+    - "policy_override"
+
+  # Sanitize logs before writing
+  sanitize_logs:
+    enabled: true
+    patterns_to_redact:
+      - 'AKIA[0-9A-Z]{16}'
+      - 'ghp_[a-zA-Z0-9]{36}'
+      - 'password["\s:=]+[^\s"]+'
+      - 'token["\s:=]+[^\s"]+'
+      - 'api_key["\s:=]+[^\s"]+'
+
+# =============================================================================
+# WORKFLOW CONTROLS
+# =============================================================================
+
+workflow:
+  # Require pre-flight checklist confirmation
+  require_preflight_checklist: true
+
+  # Checklist items (operator must confirm before workflow starts)
+  preflight_checklist:
+    - "Verified I am logged in as agent user (not primary user)"
+    - "Confirmed target repository is in allowlist"
+    - "Reviewed organization-specific policies"
+    - "No production credentials in environment"
+    - "Workflow purpose documented"
+
+  # Require post-execution review
+  require_postflight_review: true
+
+  # Post-flight review items
+  postflight_checklist:
+    - "Reviewed command execution logs"
+    - "Verified no unexpected processes running"
+    - "Confirmed no sensitive files created"
+    - "Checked for allowlist violations"
+
+  # Maximum workflow duration (seconds)
+  max_duration: 7200          # 2 hours
+
+  # Kill workflow if it exceeds duration
+  enforce_timeout: true
+
+  # Pause workflow on policy violation
+  pause_on_violation: true
+
+  # Allow operator override of policy blocks
+  allow_override: true
+
+  # Require override justification
+  require_override_reason: true
+
+  # Log all overrides
+  log_overrides: true
+
+# =============================================================================
+# PULL REQUEST CONTROLS
+# =============================================================================
+
+pull_requests:
+  # Require human review before merge
+  require_human_review: true
+
+  # Minimum reviewers required
+  min_reviewers: 1
+
+  # Auto-merge disabled
+  allow_auto_merge: false
+
+  # Draft PR only (cannot be merged)
+  draft_only: false           # Set to true for stricter safety
+
+  # Required PR checks
+  required_checks:
+    - "secret-scan"
+    - "lint"
+    - "test"                  # If tests exist
+
+  # PR title/description requirements
+  require_description: true
+  min_description_length: 50
+
+  # Required labels
+  required_labels:
+    - "agent-generated"       # Mark all agent PRs
+
+  # Blocked PR patterns
+  blocked_patterns:
+    # PRs that modify sensitive files
+    - pattern: "**/.env"
+      reason: "Environment files require manual creation"
+    - pattern: "**/secrets.yaml"
+      reason: "Secrets files forbidden"
+    - pattern: "**/*.pem"
+      reason: "Certificate files require manual handling"
+
+  # PR size limits
+  max_files_changed: 50
+  max_lines_changed: 2000     # Warn if exceeded, block if > 5000
+
+# =============================================================================
+# INCIDENT RESPONSE
+# =============================================================================
+
+incident_response:
+  # Emergency stop: kill all agent processes
+  emergency_stop_command: "killall -u tsd-agent"
+
+  # Emergency containment: revoke GitHub token
+  revoke_token_command: "gh auth logout"
+
+  # Incident log location
+  incident_log: "~/tsd-agent-lab/logs/incidents.jsonl"
+
+  # Auto-report incidents
+  auto_report: true
+
+  # Incident severity levels and thresholds
+  severity_levels:
+    critical:
+      - "production_credential_accessed"
+      - "unauthorized_repo_cloned"
+      - "malicious_code_detected"
+    high:
+      - "allowlist_violation"
+      - "protected_branch_modified"
+      - "high_risk_operation_attempted"
+    medium:
+      - "policy_override_used"
+      - "large_pr_created"
+    low:
+      - "workflow_timeout"
+      - "command_blocked"
+
+# =============================================================================
+# POLICY VERSIONING
+# =============================================================================
+
+versioning:
+  # Require policy version check before workflow
+  enforce_version: true
+
+  # Minimum policy version required
+  min_version: "1.0"
+
+  # Warn if policy is older than this (days)
+  warn_if_older_than: 30
+
+  # Block if policy is older than this (days)
+  block_if_older_than: 90
+
+  # Policy git repository for updates
+  policy_repo: "tsd-agent-lab"
+  policy_path: "policies/default-policy.yaml"
+
+# =============================================================================
+# EXPERIMENTAL FEATURES (disabled by default)
+# =============================================================================
+
+experimental:
+  # Allow Superpowers tool (when available)
+  allow_superpowers: false
+
+  # Allow OpenCode tool (when available)
+  allow_opencode: false
+
+  # Allow multi-agent workflows
+  allow_multi_agent: false
+
+  # Allow autonomous decision-making (no human approval)
+  allow_autonomous: false     # NEVER enable this
+
+  # Allow GitHub Actions integration
+  allow_github_actions: false
+
+  # Allow webhook-based triggers
+  allow_webhooks: false       # NEVER enable this (design decision)
+
+# =============================================================================
+# NOTES
+# =============================================================================
+
+# This policy is enforced by the workflow harness (to be built in Phase 3).
+# Until the harness is built, this serves as documentation and manual checklist.
+#
+# Policy enforcement happens at these layers:
+# 1. Pre-execution validation (before command runs)
+# 2. Runtime monitoring (while command executes)
+# 3. Post-execution review (after command completes, before PR creation)
+# 4. Human review (during PR review process)
+#
+# Known limitations:
+# - Some controls require harness implementation (Phase 3+)
+# - Network controls require external tooling (Little Snitch, corporate proxy)
+# - Filesystem controls rely on OS permissions
+# - Human discipline required for checklist items
+#
+# Future improvements:
+# - Automated policy testing
+# - Real-time alerting integration
+# - Policy-as-code enforcement engine
+# - Multi-user policy support

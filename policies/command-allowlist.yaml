@@ -1,0 +1,875 @@
+# Command Allowlist for TSD Agent Lab
+#
+# This file defines which shell commands agents are permitted to execute.
+# Commands not in the allowlist are blocked by default (strict mode).
+#
+# Version: 1.0
+# Last Updated: 2026-06-12
+
+metadata:
+  version: "1.0"
+  updated: "2026-06-12"
+  owner: "Engineering Team"
+  description: "Command execution allowlist for agent workflows"
+
+# =============================================================================
+# GLOBAL SETTINGS
+# =============================================================================
+
+global:
+  # Enforcement mode:
+  # - strict: Block all commands not in allowlist
+  # - permissive: Allow with warning
+  # - logging_only: Log but don't block
+  enforcement_mode: "strict"
+
+  # Default action for unknown commands
+  default_action: "block"
+
+  # Allow command arguments to be modified by agent
+  allow_argument_variation: true
+
+  # Maximum command length (characters)
+  max_command_length: 1000
+
+  # Maximum arguments per command
+  max_arguments: 50
+
+  # Command execution timeout (seconds)
+  default_timeout: 300        # 5 minutes
+
+  # Log all command executions
+  log_all_commands: true
+
+# =============================================================================
+# GIT COMMANDS (version control)
+# =============================================================================
+
+git:
+  # Core read operations (safe)
+  read:
+    - command: "git status"
+      description: "Show working tree status"
+      timeout: 10
+
+    - command: "git log"
+      description: "Show commit history"
+      allowed_flags:
+        - "--oneline"
+        - "--graph"
+        - "--all"
+        - "--decorate"
+        - "-n"
+        - "--since"
+        - "--until"
+        - "--author"
+      timeout: 30
+
+    - command: "git diff"
+      description: "Show changes"
+      allowed_flags:
+        - "--cached"
+        - "--staged"
+        - "--name-only"
+        - "--stat"
+      timeout: 30
+
+    - command: "git show"
+      description: "Show commit details"
+      timeout: 30
+
+    - command: "git branch"
+      description: "List branches"
+      allowed_flags:
+        - "-a"
+        - "-r"
+        - "-v"
+        - "--list"
+      blocked_flags:
+        - "-D"          # Force delete
+        - "--delete"
+      timeout: 10
+
+    - command: "git remote"
+      description: "Show remotes"
+      allowed_flags:
+        - "-v"
+        - "show"
+      timeout: 10
+
+    - command: "git ls-files"
+      description: "List tracked files"
+      timeout: 10
+
+  # Write operations (monitored)
+  write:
+    - command: "git clone"
+      description: "Clone repository"
+      timeout: 600    # 10 minutes for large repos
+      require_confirmation: false
+
+    - command: "git checkout"
+      description: "Switch branches or restore files"
+      allowed_flags:
+        - "-b"          # Create new branch
+        - "--"          # File separator
+      blocked_flags:
+        - "-f"          # Force checkout (destructive)
+        - "--force"
+      timeout: 30
+
+    - command: "git add"
+      description: "Stage changes"
+      allowed_flags:
+        - "-A"
+        - "--all"
+        - "-p"          # Interactive staging
+        - "--patch"
+      timeout: 30
+
+    - command: "git commit"
+      description: "Create commit"
+      allowed_flags:
+        - "-m"
+        - "--message"
+        - "-a"
+        - "--all"
+        - "-v"
+        - "--verbose"
+        - "--amend"     # Allowed on feature branches only (see policy)
+      timeout: 30
+
+    - command: "git push"
+      description: "Push changes to remote"
+      allowed_flags:
+        - "-u"
+        - "--set-upstream"
+        - "origin"
+      blocked_flags:
+        - "-f"
+        - "--force"
+        - "--force-with-lease"
+      require_confirmation: true
+      timeout: 300
+
+    - command: "git pull"
+      description: "Fetch and merge changes"
+      allowed_flags:
+        - "--rebase"
+      timeout: 300
+
+    - command: "git fetch"
+      description: "Download objects from remote"
+      allowed_flags:
+        - "--all"
+        - "--prune"
+      timeout: 300
+
+    - command: "git merge"
+      description: "Merge branches"
+      allowed_flags:
+        - "--no-ff"
+        - "--ff-only"
+      blocked_flags:
+        - "--squash"    # Requires careful review
+      timeout: 60
+
+  # Dangerous operations (blocked or require confirmation)
+  dangerous:
+    - command: "git reset"
+      allowed_flags:
+        - "--soft"      # Safe, just moves HEAD
+      blocked_flags:
+        - "--hard"      # Destructive
+        - "--mixed"
+      require_confirmation: true
+      timeout: 10
+
+    - command: "git revert"
+      description: "Revert commits (safe)"
+      require_confirmation: true
+      timeout: 30
+
+    - command: "git stash"
+      description: "Stash changes"
+      allowed_flags:
+        - "push"
+        - "pop"
+        - "list"
+        - "show"
+      timeout: 30
+
+  # Explicitly blocked git commands
+  blocked:
+    - "git push --force"
+    - "git push -f"
+    - "git reset --hard"
+    - "git clean -fd"
+    - "git filter-branch"
+    - "git reflog delete"
+
+# =============================================================================
+# GITHUB CLI (gh) COMMANDS
+# =============================================================================
+
+github_cli:
+  # Repository operations
+  repo:
+    - command: "gh repo view"
+      description: "View repository details"
+      timeout: 30
+
+    - command: "gh repo clone"
+      description: "Clone repository"
+      timeout: 600
+
+    - command: "gh repo list"
+      description: "List repositories"
+      timeout: 30
+
+  # Pull request operations
+  pr:
+    - command: "gh pr list"
+      description: "List pull requests"
+      timeout: 30
+
+    - command: "gh pr view"
+      description: "View pull request details"
+      timeout: 30
+
+    - command: "gh pr create"
+      description: "Create pull request"
+      allowed_flags:
+        - "--title"
+        - "--body"
+        - "--draft"
+        - "--base"
+        - "--head"
+        - "--label"
+      require_confirmation: true
+      timeout: 60
+
+    - command: "gh pr diff"
+      description: "View PR diff"
+      timeout: 30
+
+    - command: "gh pr checks"
+      description: "View PR checks"
+      timeout: 30
+
+  # Issue operations
+  issue:
+    - command: "gh issue list"
+      description: "List issues"
+      timeout: 30
+
+    - command: "gh issue view"
+      description: "View issue details"
+      timeout: 30
+
+    - command: "gh issue create"
+      description: "Create issue"
+      allowed_flags:
+        - "--title"
+        - "--body"
+        - "--label"
+      require_confirmation: true
+      timeout: 60
+
+  # Blocked GitHub CLI commands
+  blocked:
+    - "gh pr merge"           # Human must merge
+    - "gh pr close"
+    - "gh issue close"
+    - "gh repo delete"
+    - "gh secret set"
+
+# =============================================================================
+# FILE SYSTEM COMMANDS
+# =============================================================================
+
+filesystem:
+  # Read operations
+  read:
+    - command: "ls"
+      description: "List directory contents"
+      allowed_flags:
+        - "-l"
+        - "-a"
+        - "-h"
+        - "-R"
+        - "-t"
+      timeout: 10
+
+    - command: "cat"
+      description: "Display file contents"
+      max_file_size_mb: 10
+      timeout: 30
+
+    - command: "head"
+      description: "Display first lines of file"
+      timeout: 10
+
+    - command: "tail"
+      description: "Display last lines of file"
+      allowed_flags:
+        - "-n"
+        - "-f"          # Follow mode
+      timeout: 10
+
+    - command: "find"
+      description: "Search for files"
+      allowed_flags:
+        - "-name"
+        - "-type"
+        - "-mtime"
+        - "-size"
+      blocked_flags:
+        - "-exec"       # Can execute arbitrary commands
+        - "-delete"     # Destructive
+      timeout: 60
+
+    - command: "grep"
+      description: "Search file contents"
+      allowed_flags:
+        - "-r"
+        - "-i"
+        - "-n"
+        - "-v"
+        - "-l"
+        - "-A"
+        - "-B"
+        - "-C"
+      timeout: 60
+
+    - command: "wc"
+      description: "Count lines/words/characters"
+      timeout: 10
+
+    - command: "file"
+      description: "Determine file type"
+      timeout: 10
+
+  # Write operations (monitored)
+  write:
+    - command: "mkdir"
+      description: "Create directory"
+      allowed_flags:
+        - "-p"          # Create parents
+      timeout: 10
+
+    - command: "touch"
+      description: "Create empty file or update timestamp"
+      timeout: 10
+
+    - command: "cp"
+      description: "Copy files"
+      allowed_flags:
+        - "-r"
+        - "-p"
+      blocked_flags:
+        - "-f"          # Force overwrite
+      timeout: 60
+
+    - command: "mv"
+      description: "Move/rename files"
+      timeout: 30
+
+  # Dangerous operations (require confirmation or blocked)
+  dangerous:
+    - command: "rm"
+      description: "Remove files"
+      allowed_flags:
+        - "-r"
+      blocked_flags:
+        - "-rf"         # Too dangerous
+        - "-f"
+      blocked_patterns:
+        - "rm -rf /"
+        - "rm -rf /*"
+        - "rm -rf ~"
+      require_confirmation: true
+      timeout: 30
+
+    - command: "chmod"
+      description: "Change file permissions"
+      require_confirmation: true
+      timeout: 10
+
+    - command: "chown"
+      description: "Change file ownership"
+      require_confirmation: true
+      timeout: 10
+
+  # Blocked filesystem commands
+  blocked:
+    - "dd"              # Disk operations
+    - "mkfs"            # Format filesystem
+    - "fdisk"           # Partition table
+    - "parted"          # Partition editor
+
+# =============================================================================
+# TEXT PROCESSING
+# =============================================================================
+
+text_processing:
+  - command: "sed"
+    description: "Stream editor"
+    timeout: 30
+
+  - command: "awk"
+    description: "Pattern scanning and processing"
+    timeout: 30
+
+  - command: "sort"
+    description: "Sort lines"
+    timeout: 30
+
+  - command: "uniq"
+    description: "Remove duplicate lines"
+    timeout: 30
+
+  - command: "cut"
+    description: "Cut out sections of lines"
+    timeout: 30
+
+  - command: "paste"
+    description: "Merge lines of files"
+    timeout: 30
+
+  - command: "tr"
+    description: "Translate or delete characters"
+    timeout: 30
+
+  - command: "jq"
+    description: "JSON processor"
+    timeout: 30
+
+# =============================================================================
+# DEVELOPMENT TOOLS
+# =============================================================================
+
+development:
+  # Node.js / JavaScript
+  node:
+    - command: "node"
+      description: "Run Node.js script"
+      allowed_flags:
+        - "--version"
+        - "-e"
+      timeout: 300
+
+    - command: "npm"
+      description: "Node package manager"
+      allowed_subcommands:
+        - "install"
+        - "ci"
+        - "test"
+        - "run"
+        - "list"
+        - "outdated"
+        - "audit"
+      blocked_subcommands:
+        - "publish"     # Prevent accidental publishing
+      timeout: 600
+
+    - command: "npx"
+      description: "Execute npm package binaries"
+      timeout: 300
+
+    - command: "yarn"
+      description: "Yarn package manager"
+      allowed_subcommands:
+        - "install"
+        - "test"
+        - "run"
+      timeout: 600
+
+  # Ruby
+  ruby:
+    - command: "ruby"
+      description: "Run Ruby script"
+      allowed_flags:
+        - "--version"
+        - "-e"
+      timeout: 300
+
+    - command: "bundle"
+      description: "Bundler dependency manager"
+      allowed_subcommands:
+        - "install"
+        - "update"
+        - "exec"
+      timeout: 600
+
+    - command: "gem"
+      description: "RubyGems package manager"
+      allowed_subcommands:
+        - "list"
+        - "install"
+        - "update"
+      blocked_subcommands:
+        - "push"        # Prevent publishing
+      timeout: 300
+
+  # Python
+  python:
+    - command: "python"
+      description: "Run Python script"
+      allowed_flags:
+        - "--version"
+        - "-c"
+      timeout: 300
+
+    - command: "python3"
+      description: "Run Python 3 script"
+      timeout: 300
+
+    - command: "pip"
+      description: "Python package installer"
+      allowed_subcommands:
+        - "install"
+        - "list"
+        - "show"
+        - "freeze"
+      blocked_subcommands:
+        - "upload"      # Prevent publishing
+      timeout: 600
+
+    - command: "pip3"
+      description: "Python 3 package installer"
+      timeout: 600
+
+  # Go
+  go:
+    - command: "go"
+      description: "Go toolchain"
+      allowed_subcommands:
+        - "version"
+        - "build"
+        - "test"
+        - "run"
+        - "fmt"
+        - "vet"
+        - "mod"
+      timeout: 600
+
+  # Rust
+  rust:
+    - command: "cargo"
+      description: "Rust package manager"
+      allowed_subcommands:
+        - "build"
+        - "test"
+        - "run"
+        - "check"
+        - "fmt"
+        - "clippy"
+      blocked_subcommands:
+        - "publish"
+      timeout: 600
+
+    - command: "rustc"
+      description: "Rust compiler"
+      timeout: 600
+
+  # Make
+  build:
+    - command: "make"
+      description: "Build automation"
+      allowed_targets:
+        - "build"
+        - "test"
+        - "clean"
+        - "install"
+      blocked_targets:
+        - "deploy"      # Prevent deployment
+      timeout: 600
+
+# =============================================================================
+# TESTING AND LINTING
+# =============================================================================
+
+testing:
+  - command: "jest"
+    description: "JavaScript testing framework"
+    timeout: 600
+
+  - command: "pytest"
+    description: "Python testing framework"
+    timeout: 600
+
+  - command: "rspec"
+    description: "Ruby testing framework"
+    timeout: 600
+
+  - command: "eslint"
+    description: "JavaScript linter"
+    timeout: 300
+
+  - command: "rubocop"
+    description: "Ruby linter"
+    timeout: 300
+
+  - command: "flake8"
+    description: "Python linter"
+    timeout: 300
+
+  - command: "prettier"
+    description: "Code formatter"
+    timeout: 300
+
+  - command: "black"
+    description: "Python code formatter"
+    timeout: 300
+
+# =============================================================================
+# SYSTEM INFORMATION (read-only)
+# =============================================================================
+
+system_info:
+  - command: "whoami"
+    description: "Current user"
+    timeout: 5
+
+  - command: "pwd"
+    description: "Current directory"
+    timeout: 5
+
+  - command: "date"
+    description: "Current date/time"
+    timeout: 5
+
+  - command: "hostname"
+    description: "System hostname"
+    timeout: 5
+
+  - command: "uname"
+    description: "System information"
+    timeout: 5
+
+  - command: "which"
+    description: "Locate command"
+    timeout: 5
+
+  - command: "env"
+    description: "Environment variables (filtered)"
+    timeout: 5
+    sanitize_output: true    # Remove sensitive vars
+
+  - command: "ps"
+    description: "Process list"
+    allowed_flags:
+      - "aux"
+      - "-ef"
+    timeout: 10
+
+  - command: "top"
+    description: "System resource usage"
+    blocked: true             # Use 'ps' instead
+
+  - command: "df"
+    description: "Disk usage"
+    allowed_flags:
+      - "-h"
+    timeout: 10
+
+  - command: "du"
+    description: "Directory disk usage"
+    allowed_flags:
+      - "-h"
+      - "-s"
+      - "--max-depth"
+    timeout: 30
+
+# =============================================================================
+# NETWORK COMMANDS (restricted)
+# =============================================================================
+
+network:
+  # Safe read operations
+  read:
+    - command: "curl"
+      description: "Transfer data from URL"
+      allowed_flags:
+        - "-s"
+        - "-L"
+        - "-I"          # Headers only
+      blocked_flags:
+        - "-X POST"
+        - "-X PUT"
+        - "-X DELETE"
+        - "--data"
+        - "--upload-file"
+      require_confirmation: true
+      timeout: 60
+
+    - command: "wget"
+      description: "Download files"
+      allowed_flags:
+        - "-O"
+        - "-q"
+      require_confirmation: true
+      timeout: 300
+
+  # Blocked network commands
+  blocked:
+    - "nc"              # Netcat (can be used for backdoors)
+    - "telnet"
+    - "ssh"             # Use git over SSH, not interactive ssh
+    - "scp"
+    - "sftp"
+    - "ftp"
+    - "rsync"           # Can sync to remote servers
+    - "nmap"            # Network scanning
+    - "ping"            # Usually not needed
+    - "traceroute"
+
+# =============================================================================
+# EXPLICITLY BLOCKED COMMANDS
+# =============================================================================
+
+blocked_commands:
+  # Privilege escalation
+  - command: "sudo"
+    reason: "Agent user must not have sudo access"
+
+  - command: "su"
+    reason: "No user switching"
+
+  - command: "doas"
+    reason: "No privilege escalation"
+
+  # Process management (backgrounding)
+  - command: "nohup"
+    reason: "Prevents long-running background processes"
+
+  - command: "disown"
+    reason: "Prevents process persistence"
+
+  - command: "screen"
+    reason: "Prevents session persistence"
+
+  - command: "tmux"
+    reason: "Prevents session persistence"
+
+  # System modification
+  - command: "reboot"
+    reason: "No system control"
+
+  - command: "shutdown"
+    reason: "No system control"
+
+  - command: "halt"
+    reason: "No system control"
+
+  - command: "systemctl"
+    reason: "No service management"
+
+  - command: "launchctl"
+    reason: "No macOS service management"
+
+  # Package management (system-level)
+  - command: "apt"
+    reason: "No system package installation"
+
+  - command: "apt-get"
+    reason: "No system package installation"
+
+  - command: "yum"
+    reason: "No system package installation"
+
+  - command: "brew"
+    reason: "No Homebrew system packages (use project dependencies only)"
+
+  # Dangerous utilities
+  - command: "dd"
+    reason: "Disk operations too dangerous"
+
+  - command: "mkfs"
+    reason: "Filesystem formatting forbidden"
+
+  - command: "fdisk"
+    reason: "Partition manipulation forbidden"
+
+  - command: "crontab"
+    reason: "No scheduled tasks (prevents persistence)"
+
+  - command: "at"
+    reason: "No scheduled tasks"
+
+  # Compilation of system tools (rare, but possible)
+  - command: "gcc"
+    reason: "Prevent compiling potentially malicious binaries"
+
+  - command: "clang"
+    reason: "Prevent compiling potentially malicious binaries"
+
+  # Note: Language-specific compilers (rustc, go build) are allowed
+  # because they're part of normal development workflow
+
+# =============================================================================
+# AUDIT AND LOGGING
+# =============================================================================
+
+audit:
+  # Log every command execution
+  log_all: true
+
+  # Log format: json, text
+  log_format: "json"
+
+  # Fields to log
+  log_fields:
+    - timestamp
+    - user
+    - command
+    - arguments
+    - working_directory
+    - exit_code
+    - duration_ms
+    - output_lines      # Count only
+    - blocked_reason    # If blocked
+
+  # Alert on these events
+  alert_on:
+    - "blocked_command"
+    - "confirmation_required"
+    - "dangerous_operation"
+    - "timeout_exceeded"
+
+  # Sanitize command output before logging
+  sanitize_output: true
+  sanitize_patterns:
+    - 'AKIA[0-9A-Z]{16}'            # AWS keys
+    - 'ghp_[a-zA-Z0-9]{36}'         # GitHub PAT
+    - 'password["\s:=]+[^\s"]+'     # Password patterns
+
+# =============================================================================
+# NOTES
+# =============================================================================
+
+# This allowlist is enforced by the workflow harness (Phase 3+).
+# Until then, use as a reference for manual command review.
+#
+# Philosophy:
+# - Default deny (strict allowlist)
+# - Prefer safe read operations
+# - Require confirmation for risky write operations
+# - Block destructive operations entirely
+# - Log everything for audit
+#
+# Maintenance:
+# - Review quarterly
+# - Add commands as needed (with justification)
+# - Remove unused commands
+# - Update based on security incidents
+# - Test changes before deploying
+#
+# To propose a new command:
+# 1. Document why it's needed
+# 2. Identify risk level
+# 3. Define allowed/blocked flags
+# 4. Set appropriate timeout
+# 5. Add to this file via PR
+# 6. Review with team

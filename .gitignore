@@ -1,0 +1,110 @@
+# TSD Agent Lab - Git Ignore
+
+# Logs - contain sensitive execution data
+logs/*.log
+logs/**/*.log
+logs/**/*.json
+
+# Credentials and secrets
+*.key
+*.pem
+*.token
+credentials/
+.credentials/
+secrets/
+.secrets/
+
+# Local configuration overrides
+*.local.yaml
+*.local.json
+.env
+.env.*
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+dist/
+build/
+
+# Experiment outputs (may contain sensitive data)
+experiments/*/output/
+experiments/*/results/
+results/
+output/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ruby
+*.gem
+.bundle/
+vendor/bundle/
+
+# Go
+*.test
+*.prof
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Local test repositories (cloned for experiments)
+test-repos/
+.test-repos/
+
+# Session and state files
+.session
+*.session
+state.json
+.state/
+
+# Coverage reports
+coverage/
+.coverage
+*.lcov
+
+# Compiled binaries from experiments
+bin/*.compiled
+bin/*.bin
+
+# Keep directory structure
+!logs/.gitkeep
+!experiments/.gitkeep

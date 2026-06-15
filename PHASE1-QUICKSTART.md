@@ -42,14 +42,35 @@ Expected output:
 - ✓ User is NOT an administrator
 - ✓ Home directory exists
 
-### Step 3: Log In as agent-lab
+### Step 3: Setup Easy Switching (Admin Account)
 
-1. Log out of your current account
-2. Log in as `agent-lab`
-3. Open Terminal
+Setup a convenient alias to switch to the agent-lab user:
 
-### Step 4: Clone Repository (agent-lab Account)
+```bash
+./scripts/macos/setup-agent-alias.sh
+```
 
+Then activate it:
+```bash
+source ~/.zshrc    # or ~/.bashrc if using bash
+```
+
+Now you can easily switch:
+```bash
+agent    # Switch to agent-lab
+exit     # Return to your account
+```
+
+**Alternative**: Log out and log in as agent-lab via the GUI (not recommended for development workflow)
+
+### Step 4: Switch to agent-lab and Clone Repository
+
+From your admin terminal:
+```bash
+agent    # This will prompt for your admin password
+```
+
+Now as agent-lab:
 ```bash
 cd ~
 mkdir -p workspaces/repos

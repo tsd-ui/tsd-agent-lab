@@ -176,15 +176,60 @@ After setup, the agent-lab user should have:
 
 ## Switching Between Users
 
-**Fast User Switching**
+### Recommended: Using `su` (Command Line)
+
+The most reliable way to switch to the agent-lab user from your admin account is using `su`:
+
+```bash
+# Switch to agent-lab user
+sudo su - agent-lab
+
+# You'll be prompted for your admin password
+# Then you'll have a shell as agent-lab
+
+# To exit back to your account
+exit
+```
+
+**Convenience alias** - Add to your `~/.zshrc` or `~/.bashrc`:
+```bash
+alias agent='sudo su - agent-lab'
+```
+
+Then simply use:
+```bash
+agent        # Switch to agent-lab
+exit         # Return to your account
+```
+
+**Why use `su` instead of Fast User Switching?**
+- Works from command line without UI switching
+- Supports copy/paste between terminal sessions
+- More reliable for development workflows
+- Integrates better with terminal multiplexers (tmux, screen)
+
+### Alternative: Fast User Switching (GUI)
+
+If you prefer GUI switching:
 1. Click your username in the menu bar
 2. Select the other user
 3. Both sessions remain active
 
-**Full Logout**
+**Note**: Fast User Switching has limitations:
+- No clipboard sharing between users
+- UI elements may disappear when switching back
+- Can be slower for quick context switches
+
+### Alternative: SSH (Advanced)
+
+SSH access to `agent-lab@localhost` is **not recommended** due to macOS OpenSSH issues with the `publickey-hostbound-v00@openssh.com` protocol on localhost connections. If you need SSH specifically, see [SSH_TROUBLESHOOTING.md](./SSH_TROUBLESHOOTING.md).
+
+### Full Logout
+
 ```bash
-# From agent-lab user
-logout
+# From agent-lab user terminal
+exit         # If using su
+logout       # If logged in via GUI
 ```
 
 ## Troubleshooting

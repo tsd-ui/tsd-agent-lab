@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tsd-agent-lab/schemas/task.schema.json",
+  "title": "TSD Agent Lab Task Specification",
+  "description": "Defines a task for an agent to execute within the TSD Agent Lab harness.",
+  "type": "object",
+  "required": ["task_id", "title", "mode", "repo_url"],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Unique kebab-case identifier for this task."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable title describing the task."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["read-only", "patch-only", "commit-allowed", "review-only"],
+      "description": "Agent permission level. read-only: no file changes. patch-only: local changes only, no commits. commit-allowed: local commits allowed, no pushes. review-only: read-only with structured review output."
+    },
+    "repo_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Git remote URL for the target repository. Must be an allowlisted repository."
+    },
+    "base_ref": {
+      "type": "string",
+      "default": "main",
+      "description": "Git ref to base the worktree on (branch, tag, or commit SHA)."
+    },
+    "working_directory": {
+      "type": "string",
+      "description": "Subdirectory within the repo to use as the working directory."
+    },
+    "agent": {
+      "type": "string",
+      "enum": ["claude-code", "codex-cli", "manual"],
+      "default": "claude-code",
+      "description": "Which agent to use for execution."
+    },
+    "prompt_file": {
+      "type": "string",
+      "description": "Path to a file containing the agent prompt, relative to the task file."
+    },
+    "allowed_commands": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Shell commands the agent is permitted to run."
+    },
+    "denied_commands": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Shell commands the agent must never run. Checked before allowed_commands."
+    },
+    "verification_commands": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Commands to run after the agent completes to verify correctness."
+    },
+    "max_runtime_minutes": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum wall-clock time for the agent run."
+    },
+    "expected_outputs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Files or patterns expected to exist after the run completes."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-form notes for human reviewers."
+    }
+  }
+}

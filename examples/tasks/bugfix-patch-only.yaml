@@ -1,0 +1,30 @@
+task_id: bugfix-patch-only
+title: "Fix null-check bug in user validation"
+mode: patch-only
+repo_url: "https://github.com/example-org-1/demo-app.git"
+base_ref: main
+agent: claude-code
+working_directory: src
+
+allowed_commands:
+  - "npm test"
+  - "npm run lint"
+
+denied_commands:
+  - "git push"
+  - "git commit"
+  - "npm publish"
+
+verification_commands:
+  - "npm test"
+  - "git diff --stat"
+
+max_runtime_minutes: 15
+
+expected_outputs:
+  - "changed-files.txt"
+
+notes: >
+  Patch-only bugfix. The agent may edit files and run tests locally
+  but must not commit or push. The harness captures the diff for
+  human review.

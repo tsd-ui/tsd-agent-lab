@@ -44,7 +44,7 @@ Podman is better suited for the agent-lab non-admin user environment:
    - Updated optional tools checklist
    - Changed Docker/Colima configuration to Podman configuration
 
-4. **PHASE1-QUICKSTART.md**
+4. **Phase-1-Quickstart.md**
    - Updated recommended optional tools
 
 ### Scripts

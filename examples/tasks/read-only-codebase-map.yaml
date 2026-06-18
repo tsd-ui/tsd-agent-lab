@@ -1,0 +1,17 @@
+task_id: read-only-codebase-map
+title: "Generate a codebase structure map"
+mode: read-only
+repo_url: "https://github.com/example-org-1/demo-app.git"
+base_ref: main
+agent: claude-code
+
+verification_commands:
+  - "test -f agent-output.md"
+
+expected_outputs:
+  - "agent-output.md"
+
+notes: >
+  Read-only exploration task. The agent should produce a markdown file
+  documenting the repository structure, key modules, and entry points.
+  No file modifications are permitted.

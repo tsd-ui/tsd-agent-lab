@@ -1,3 +1,7 @@
+---
+aliases: 
+tags: 
+---
 # Bootstrap Agent Lab User
 
 This document describes the bootstrap process for the `agent-lab` user after initial account creation.
@@ -169,7 +173,7 @@ git config --global --list
 gh auth status
 
 # Verify you can access the lab repo
-gh repo view YOUR-ORG/tsd-agent-lab
+gh repo view tsd-ui/tsd-agent-lab
 ```
 
 ## Troubleshooting
@@ -185,6 +189,7 @@ gh repo view YOUR-ORG/tsd-agent-lab
 **Problem**: The agent-lab user was created with admin rights.
 
 **Solution**: Ask your system administrator to remove admin privileges:
+
 ```bash
 sudo dseditgroup -o edit -d agent-lab -t user admin
 ```
@@ -236,7 +241,6 @@ After successful bootstrap:
    - Create `tsd-agent-lab/CLAUDE.md` for repo-specific guidance
 
 2. **Install Missing Tools**: Reference [tool-installation-notes.md](./tool-installation-notes.md)
-
 3. **Begin Experimentation**: Start exploring agent workflows in a safe, isolated environment
 
 ## Security Notes

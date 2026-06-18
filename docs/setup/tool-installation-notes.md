@@ -223,8 +223,9 @@ claude --version
 **Installation**:
 
 Follow official Claude Code installation instructions:
-- Desktop app: https://claude.ai/code
+- ~~Desktop app: https://claude.ai/code~~
 - CLI: Bundled with desktop app or standalone installer
+	- See employer instructions here: https://docs.google.com/document/d/1eNARy9CI28o09E7Foq01e5WD5MvEj3LSBnXqFcprxjo/edit?tab=t.0
 
 Authentication:
 ```bash

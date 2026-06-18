@@ -28,16 +28,29 @@ See [docs/getting-started.md](docs/getting-started.md) for setup instructions.
 ```
 tsd-agent-lab/
 ├── docs/              # Documentation and ADRs
-│   ├── adr/          # Architecture decision records
-│   ├── guides/       # How-to guides and runbooks
-│   └── threat-model.md
+│   ├── phases/       # Phase prompts and completion summaries
+│   ├── setup/        # Setup guides
+│   ├── harness.md    # Harness usage guide
+│   └── task-format.md # Task specification format
+├── harness/          # Local harness scripts
+│   ├── lib/          # Shared libraries (common.sh, git.sh)
+│   ├── create-run.sh # Create a timestamped run directory
+│   ├── write-report.sh # Generate markdown report from a run
+│   └── prepare-repo.sh # Safe clone + worktree creation
+├── schemas/          # JSON schemas
+│   └── task.schema.json
+├── examples/         # Example task specs and reports
+│   ├── tasks/        # Sample task YAML files
+│   └── reports/      # Sample run reports
 ├── policies/         # Safety policies and allowlists
 │   ├── default-policy.yaml
 │   ├── command-allowlist.yaml
 │   └── repo-allowlist.example.yaml
-├── experiments/      # Experimental scripts and test cases
-├── logs/            # Execution logs and audit trail
-└── README.md        # This file
+├── scripts/          # Setup and utility scripts
+│   ├── bootstrap/
+│   └── macos/
+├── templates/        # Reusable templates
+└── README.md         # This file
 ```
 
 ## Safety Model
@@ -51,23 +64,21 @@ tsd-agent-lab/
 
 ## Implementation Phases
 
-1. **Phase 0**: Discovery and safety boundaries
-2. **Phase 1**: Dedicated local user setup
-3. **Phase 2**: Global and repo instructions (CLAUDE.md, etc.)
-4. **Phase 3**: Local harness v0
-5. **Phase 4**: Runner mode
-6. **Phase 5**: Skills and workflow experiments
-7. **Phase 6**: First real pilot task
-8. **Phase 7**: Patch-only mode
-9. **Phase 8**: Draft PR mode (manual, explicit)
-10. **Phase 9**: Multi-agent comparison
-11. **Phase 10**: Protocol playground
-12. **Phase 11**: Team documentation
-13. **Phase 12**: GitHub Actions experiment (optional)
+1. [x] **Phase 0**: Discovery and safety boundaries
+2. [x] **Phase 1**: Dedicated local user setup
+3. [x] **Phase 2**: Global and repo instructions (`CLAUDE.md`, etc.)
+4. [x] **Phase 3**: Local harness v0
+5. [ ] **Phase 4**: Runner mode
+6. [ ] **Phase 5**: Skills and workflow experiments
+7. [ ] **Phase 6**: First real pilot task
+8. [ ] **Phase 7**: Patch-only mode
+9. [ ] **Phase 8**: Draft PR mode (manual, explicit)
+10. [ ] **Phase 9**: Multi-agent comparison
+11. [ ] **Phase 10**: Protocol playground
+12. [ ] **Phase 11**: Team documentation
+13. [ ] **Phase 12**: GitHub Actions experiment (optional)
 
-Current phase: **Phase 1 - Dedicated Local User Setup (Ready for Execution)**
-
-See [PHASE1-QUICKSTART.md](PHASE1-QUICKSTART.md) for execution steps.
+Current phase: **Phase 4 - Runner mode**
 
 ## Non-Goals
 

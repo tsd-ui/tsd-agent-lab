@@ -1,16 +1,20 @@
+---
+aliases: 
+tags: [agent-lab]
+---
 # Operator Rules and Guidelines
 
 ## Overview
 
 This document defines the operational guidelines for team members running agent workflows in the TSD Agent Lab. These rules ensure safe, auditable, and productive use of agentic coding tools.
 
-**Target Audience**: Software engineers operating the agent lab  
-**Scope**: Local agent workflows (Claude Code, Superpowers, OpenCode)  
+**Target Audience**: Software engineers operating the agent lab
+**Scope**: Local agent workflows (Claude Code, Superpowers, OpenCode)
 **Last Updated**: 2026-06-12
 
 ## Core Responsibilities
 
-### As an Agent Operator, You Are Responsible For:
+### As an Agent Operator, You Are Responsible For
 
 1. **Safety First**
    - Never expose production credentials to agent workflows
@@ -43,16 +47,19 @@ This document defines the operational guidelines for team members running agent 
 ### 1. Environment Verification
 
 - [ ] **Logged in as agent user** (not your primary account)
+
   ```bash
   whoami  # Should output: tsd-agent (or your agent username)
   ```
 
 - [ ] **No production credentials in environment**
+
   ```bash
   env | grep -E '(AWS|GCP|AZURE|DATABASE|PROD)'  # Should be empty
   ```
 
 - [ ] **Working directory is appropriate**
+
   ```bash
   pwd  # Should be in ~/tsd-agent-lab or allowlisted repo
   ```
@@ -75,6 +82,7 @@ This document defines the operational guidelines for team members running agent 
 ### 3. Policy Verification
 
 - [ ] **Policies are up to date**
+
   ```bash
   cd ~/tsd-agent-lab
   git pull origin main
@@ -109,6 +117,7 @@ This document defines the operational guidelines for team members running agent 
 ### 5. Tool Verification
 
 - [ ] **Tool version confirmed**
+
   ```bash
   # For Claude Code:
   claude --version
@@ -180,9 +189,11 @@ When the agent requests confirmation (e.g., "Push to origin?"):
 **How to stop:**
 1. Press `Ctrl+C` to interrupt the agent process
 2. Kill all agent processes:
+
    ```bash
    killall -u tsd-agent
    ```
+
 3. Review logs to understand what happened
 4. Document incident before cleanup
 
@@ -194,9 +205,11 @@ When the agent requests confirmation (e.g., "Push to origin?"):
 
 - [ ] **Workflow completed or aborted cleanly**
   - No hanging processes:
+
     ```bash
     ps aux | grep tsd-agent
     ```
+
   - No unexpected background jobs
 
 - [ ] **Logs captured**
@@ -206,6 +219,7 @@ When the agent requests confirmation (e.g., "Push to origin?"):
 ### 2. Output Review
 
 - [ ] **Files modified are expected**
+
   ```bash
   git status
   git diff
@@ -246,6 +260,7 @@ When the agent requests confirmation (e.g., "Push to origin?"):
 ### 4. Allowlist Compliance
 
 - [ ] **No allowlist violations in logs**
+
   ```bash
   grep -i "violation" logs/latest-workflow.log
   ```
@@ -347,11 +362,9 @@ Apply these labels to every agent-generated PR:
 - **Always create as draft first**
   - Convert to "Ready for Review" only after your own review
   - Gives you time to catch issues before bothering reviewers
-
 - **Request reviewers explicitly**
   - Don't rely on auto-assignment
   - Ping on Slack if urgent
-
 - **Never merge your own agent PRs**
   - Even if you have permission
   - Second pair of eyes is critical
@@ -519,6 +532,7 @@ Occasionally you may need to override a policy (e.g., access repository not in a
 **For Critical/High Severity:**
 
 1. **STOP EVERYTHING**
+
    ```bash
    # Kill all agent processes
    killall -u tsd-agent
@@ -804,6 +818,6 @@ Team discusses:
 
 These rules will evolve based on team experience. Propose improvements via PR to this document.
 
-**Last Updated**: 2026-06-12  
-**Next Review**: 2026-07-12  
+**Last Updated**: 2026-06-12
+**Next Review**: 2026-07-12
 **Owner**: Engineering Team

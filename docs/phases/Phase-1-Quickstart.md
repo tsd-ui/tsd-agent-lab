@@ -1,3 +1,7 @@
+---
+aliases: 
+tags: 
+---
 # Phase 1 Quick Start Guide
 
 This guide helps you execute Phase 1: Dedicated Local User Setup.
@@ -20,6 +24,7 @@ Phase 1 generated all documentation and scripts needed to create and configure t
 7. Click **Create User**
 
 **Option B: Command Line Method**
+
 ```bash
 sudo dscl . -create /Users/agent-lab
 sudo dscl . -create /Users/agent-lab UserShell /bin/zsh
@@ -51,11 +56,13 @@ Setup a convenient alias to switch to the agent-lab user:
 ```
 
 Then activate it:
+
 ```bash
 source ~/.zshrc    # or ~/.bashrc if using bash
 ```
 
 Now you can easily switch:
+
 ```bash
 agent    # Switch to agent-lab
 exit     # Return to your account
@@ -66,11 +73,13 @@ exit     # Return to your account
 ### Step 4: Switch to agent-lab and Clone Repository
 
 From your admin terminal:
+
 ```bash
 agent    # This will prompt for your admin password
 ```
 
 Now as agent-lab:
+
 ```bash
 cd ~
 mkdir -p workspaces/repos
@@ -93,6 +102,7 @@ This will:
 ### Step 6: Install Missing Tools (If Needed)
 
 If the bootstrap script reports missing tools, see:
+
 ```bash
 cat docs/setup/tool-installation-notes.md
 ```
@@ -148,11 +158,12 @@ For complete details, troubleshooting, and security notes:
 - **docs/setup/macos-agent-lab-user.md** - Full setup guide
 - **docs/setup/bootstrap-agent-lab.md** - Bootstrap details
 - **docs/setup/tool-installation-notes.md** - Tool installation
-- **docs/phases/phase1-completion.md** - Phase 1 summary
+- **docs/phases/Phase-1-Summary.md** - Phase 1 summary
 
 ## Common Issues
 
 **"command not found" when running scripts**
+
 ```bash
 # Make sure you're in the repo directory
 cd ~/workspaces/repos/tsd-agent-lab
@@ -162,6 +173,7 @@ ls -la scripts/bootstrap/bootstrap-agent-lab.sh
 ```
 
 **"Permission denied"**
+
 ```bash
 # Make scripts executable
 chmod +x scripts/macos/check-agent-lab-user.sh
@@ -169,6 +181,7 @@ chmod +x scripts/bootstrap/bootstrap-agent-lab.sh
 ```
 
 **"agent-lab is an administrator"**
+
 ```bash
 # From admin account, remove admin privileges
 sudo dseditgroup -o edit -d agent-lab -t user admin

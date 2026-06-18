@@ -12,12 +12,12 @@ Quick start guide for the TSD Agent Lab.
 
 Before using the lab, ensure you have:
 
-- [ ] Claude Code access and license
-- [ ] Mac workstation (macOS 11.0+)
-- [ ] GitHub account with appropriate org access
-- [ ] Git command-line tools installed
-- [ ] Admin access for initial setup (Phase 1)
-- [ ] Understanding of basic Git workflows
+- [x] Claude Code access and license
+- [x] Mac workstation (macOS 11.0+)
+- [x] GitHub account with appropriate org access
+- [x] Git command-line tools installed
+- [x] Admin access for initial setup (Phase 1)
+- [x] Understanding of basic Git workflows
 
 ## Phase 0A Completion
 

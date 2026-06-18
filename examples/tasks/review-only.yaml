@@ -1,0 +1,17 @@
+task_id: review-only
+title: "Review error handling in API routes"
+mode: review-only
+repo_url: "https://github.com/example-org-1/demo-app.git"
+base_ref: main
+agent: claude-code
+
+verification_commands:
+  - "test -f agent-output.md"
+
+expected_outputs:
+  - "agent-output.md"
+
+notes: >
+  Code review task. The agent reads the codebase and produces a
+  structured review document covering error handling patterns,
+  missing edge cases, and recommendations. No file changes allowed.

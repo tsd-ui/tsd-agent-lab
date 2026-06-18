@@ -1,3 +1,7 @@
+---
+aliases: 
+tags: 
+---
 # Repository Structure
 
 ## Overview
@@ -95,6 +99,7 @@ Safe space for testing workflows, skills, and agent behaviors.
 Execution logs for all agent operations.
 
 **Organization**:
+
 ```
 logs/
 ├── 2026-06/
@@ -121,21 +126,25 @@ Runner scripts and utilities (created in Phase 3+).
 ## File Naming Conventions
 
 ### Documentation Files
+
 - Use kebab-case: `operator-rules.md`
 - Descriptive names: `threat-model.md` not `tm.md`
 - Date prefix for ADRs: `0001-description.md`
 
 ### Policy Files
+
 - YAML extension: `.yaml` (not `.yml`)
 - Descriptive names: `command-allowlist.yaml`
 - Example suffix for templates: `.example.yaml`
 
 ### Log Files
+
 - ISO date prefix: `2026-06-12-session-001.log`
 - Session identifier included
 - Chronological sorting
 
 ### Experiment Files
+
 - Descriptive directory names
 - Self-contained per experiment
 - Include README.md in each experiment
@@ -172,6 +181,7 @@ main                    # Stable, reviewed changes
 ## Configuration Hierarchy
 
 ### Lab-Wide Configuration
+
 ```
 tsd-agent-lab/
 └── policies/
@@ -180,6 +190,7 @@ tsd-agent-lab/
 ```
 
 ### Per-Experiment Configuration
+
 ```
 experiments/skill-experiment-01/
 ├── .agent-config.yaml            # Experiment-specific config
@@ -188,6 +199,7 @@ experiments/skill-experiment-01/
 ```
 
 ### User-Specific Configuration
+
 ```
 ~/.tsd-agent-lab/                 # User home, not in repo
 ├── credentials/
@@ -197,18 +209,21 @@ experiments/skill-experiment-01/
 ## Security Boundaries
 
 ### Public (in git)
+
 - Documentation
 - Policies
 - Example configurations
 - Non-sensitive logs (redacted)
 
 ### Private (local only)
+
 - Actual credentials
 - Full execution logs
 - API tokens
 - Personal configurations
 
 ### Sensitive (never written)
+
 - Production credentials
 - Production repository contents
 - Personal data
@@ -217,6 +232,7 @@ experiments/skill-experiment-01/
 ## Expansion Plan
 
 ### Phase 3 Additions
+
 ```
 bin/
 └── agent-run
@@ -226,6 +242,7 @@ lib/
 ```
 
 ### Phase 4 Additions
+
 ```
 workflows/
 ├── templates/
@@ -235,6 +252,7 @@ results/
 ```
 
 ### Phase 11 Additions
+
 ```
 docs/
 └── guides/
@@ -246,6 +264,7 @@ docs/
 ## Maintenance
 
 ### Regular Updates
+
 - Keep ADR index current
 - Update implementation plan status
 - Review and prune old experiments
@@ -253,6 +272,7 @@ docs/
 - Update documentation for new patterns
 
 ### Quarterly Review
+
 - Validate structure still appropriate
 - Archive completed experiments
 - Review security boundaries

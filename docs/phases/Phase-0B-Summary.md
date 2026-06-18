@@ -1,7 +1,11 @@
+---
+aliases: 
+tags: 
+---
 # Phase 0B Summary: Threat Model and Policy Hardening
 
-**Completion Date**: 2026-06-12  
-**Phase**: Phase 0B - Tighten the Threat Model  
+**Completion Date**: 2026-06-12
+**Phase**: Phase 0B - Tighten the Threat Model
 **Status**: ✅ Complete
 
 ## Overview
@@ -11,6 +15,7 @@ Phase 0B focused on hardening the TSD Agent Lab for operation in a corporate eng
 ## Deliverables Created
 
 ### 1. Comprehensive Threat Model
+
 **File**: `docs/threat-model.md`
 
 A detailed security analysis covering:
@@ -32,6 +37,7 @@ A detailed security analysis covering:
 **Key Innovation**: STRIDE-based analysis tailored for agentic workflows, with explicit trust boundaries and residual risk assessments.
 
 ### 2. Default Policy Configuration
+
 **File**: `policies/default-policy.yaml`
 
 Runtime controls enforcing safety at multiple layers:
@@ -40,47 +46,39 @@ Runtime controls enforcing safety at multiple layers:
   - Allowed variables for lab operation only
   - Credential pattern detection in logs (AWS keys, GitHub PATs, etc.)
   - Sensitive file pattern blocking
-  
 - **Repository Controls**:
   - Strict allowlist enforcement mode
   - Protected branch operations blocked (force push, hard reset)
   - High-risk git operations require confirmation
   - Blocked patterns for production repositories
-  
 - **Command Controls**:
   - Strict command allowlist enforcement
   - Always-blocked commands (rm -rf /, sudo, nohup, cryptocurrency miners)
   - Confirmation-required commands (git push, gh pr create)
   - Maximum 1-hour execution timeout
-  
 - **File System Controls**:
   - Writable path allowlist (lab repo, tmp only)
   - Blocked system directories (/System, /usr, ~/.ssh, ~/.aws)
   - 100MB max file size, 10GB max disk usage
-  
 - **Network Controls**:
   - Allowed domains (GitHub, Anthropic, package managers, docs)
   - Blocked exfiltration targets (pastebin sites)
   - Allowed ports (80, 443, 22, 9418)
-  
 - **Audit and Logging**:
   - JSON-formatted comprehensive logs
   - 90-day retention
   - Credential pattern sanitization
   - Alert triggers for violations
-  
 - **Workflow Controls**:
   - Pre-flight and post-flight checklists
   - 2-hour max workflow duration
   - Pause on policy violation
   - Override logging with justification
-  
 - **Pull Request Controls**:
   - Human review required (no auto-merge)
   - PR description minimum 50 characters
   - Required labels (`agent-generated`)
   - Max 50 files / 2000 lines per PR
-  
 - **Incident Response**:
   - Emergency stop procedures
   - Severity levels and thresholds
@@ -89,6 +87,7 @@ Runtime controls enforcing safety at multiple layers:
 **Key Innovation**: Defense-in-depth policy covering every layer from OS to PR review.
 
 ### 3. Repository Allowlist Template
+
 **File**: `policies/repo-allowlist.example.yaml`
 
 Multi-organization repository access control:
@@ -96,39 +95,32 @@ Multi-organization repository access control:
   - Default block action for unknown repos
   - Cross-org approval required
   - Max 5 repos per workflow
-  
 - **Per-Organization Policies**:
   - Example configurations for `example-org-1`, `example-org-2`, and personal accounts
   - Org-specific branch naming conventions
   - Signed commit requirements per org
   - Custom command overrides per org
-  
 - **Repository Specifications**:
   - Read-only vs read-write access
   - Protected branch configuration
   - Allowed/blocked operations per repo
   - Pattern-based matching for repo families
   - Explicit blocked repositories with reasons
-  
 - **Pattern-Based Allowlists**:
   - Global patterns with auto-expiration
   - Block patterns for production/secrets/customer repos
-  
 - **Audit Configuration**:
   - Access logging
   - Weekly summary reports
   - Alert triggers
-  
 - **Cross-Org Rules**:
   - Org isolation enforcement
   - Allowed org pairs for joint work
   - Confirmation requirements
-  
 - **Temporary Allowlist**:
   - Time-based exceptions with expiration
   - Approval tracking
   - Auto-removal of expired entries
-  
 - **Emergency Overrides**:
   - Justification requirements
   - Approval tracking
@@ -137,6 +129,7 @@ Multi-organization repository access control:
 **Key Innovation**: Multi-org support with per-org policy customization, critical for teams working across multiple GitHub organizations.
 
 ### 4. Command Allowlist
+
 **File**: `policies/command-allowlist.yaml`
 
 Comprehensive command execution control:
@@ -145,22 +138,18 @@ Comprehensive command execution control:
   - Monitored write operations (clone, checkout, add, commit, push, pull)
   - Dangerous operations with safeguards (reset --soft, revert, stash)
   - Explicitly blocked (push --force, reset --hard, clean -fd, filter-branch)
-  
 - **GitHub CLI** (gh):
   - Repository viewing and cloning
   - PR list, view, create, diff, checks
   - Issue list, view, create
   - Blocked: pr merge, pr close, repo delete, secret set
-  
 - **File System**:
   - Read: ls, cat, head, tail, find (without -exec), grep, wc, file
   - Write: mkdir, touch, cp, mv
   - Dangerous: rm (confirmation required, -rf blocked), chmod, chown
   - Blocked: dd, mkfs, fdisk
-  
 - **Text Processing**:
   - sed, awk, sort, uniq, cut, paste, tr, jq
-  
 - **Development Tools**:
   - Node.js: node, npm (install/test/run, publish blocked), yarn
   - Ruby: ruby, bundle, gem (push blocked)
@@ -168,34 +157,30 @@ Comprehensive command execution control:
   - Go: go (build/test/run/fmt/vet)
   - Rust: cargo (publish blocked)
   - Build: make (deploy target blocked)
-  
 - **Testing and Linting**:
   - jest, pytest, rspec, eslint, rubocop, flake8, prettier, black
-  
 - **System Info** (read-only):
   - whoami, pwd, date, hostname, uname, which, env (sanitized), ps, df, du
-  
 - **Network** (restricted):
   - curl, wget (confirmation required, POST/PUT/DELETE blocked)
   - Blocked: nc, telnet, ssh, scp, sftp, ftp, rsync, nmap, ping
-  
 - **Explicitly Blocked**:
   - Privilege escalation (sudo, su, doas)
   - Backgrounding (nohup, disown, screen, tmux)
   - System control (reboot, shutdown, systemctl, launchctl)
   - System packages (apt, yum, brew)
   - Dangerous utilities (dd, crontab, at)
-  - Binary compilation (gcc, clang) – language-specific allowed
+  - Binary compilation (gcc, clang)–language-specific allowed
 
 **Key Innovation**: Granular per-command control with flag-level restrictions and separate read/write/dangerous categorization.
 
 ### 5. Operator Rules and Guidelines
+
 **File**: `docs/operator-rules.md`
 
 Comprehensive operational handbook for team members:
 - **Core Responsibilities**:
   - Safety first, audit trail, team learning, compliance
-  
 - **Pre-Flight Checklist** (6 sections, 20+ items):
   1. Environment verification (user, credentials, directory)
   2. Repository verification (allowlist, non-production, org context)
@@ -203,49 +188,42 @@ Comprehensive operational handbook for team members:
   4. Workflow planning (purpose, outcome, time budget, review plan)
   5. Tool verification (version, configuration)
   6. Ready to start confirmation
-  
+
 - **During Workflow Execution**:
   - Active monitoring guidelines
   - Confirmation handling decision matrix
   - Emergency stop procedures
-  
 - **Post-Execution Review** (5 sections):
   1. Process review (cleanup, logs)
   2. Output review (files, sizes)
   3. Code review (security, quality, diff)
   4. Allowlist compliance check
   5. Incident check
-  
+
 - **Pull Request Creation**:
   - Required PR template with security review section
   - Required labels (agent-generated, needs-review, tool-specific, size, type)
   - Draft-first workflow
   - Never self-merge rule
-  
 - **Code Review as Reviewer**:
   - 10-item review checklist
   - Review mindset and red flags
   - Approval decision criteria
-  
 - **Policy Overrides**:
   - When acceptable
   - 5-step override process
   - JSON log format
-  
 - **Incident Response**:
   - 4 severity levels (P0-P3)
   - 4-phase response (immediate, assessment, remediation, documentation)
   - Incident report template
-  
 - **Best Practices**:
   - Do's: Start small, review everything, document decisions, share knowledge, ask for help, test thoroughly
   - Don'ts: Skip checklists, merge without review, expose credentials, ignore warnings, work in isolation, override casually
-  
 - **Training and Onboarding**:
   - New operator 5-step onboarding
   - Training workflow
   - Ongoing training schedule
-  
 - **Metrics and Reporting**:
   - Weekly self-check
   - Monthly team review
@@ -255,6 +233,7 @@ Comprehensive operational handbook for team members:
 ## Design Principles Applied
 
 ### 1. Defense in Depth
+
 Multiple overlapping controls at different layers:
 - OS-level isolation (user accounts, file permissions)
 - Policy enforcement (allowlists, command filtering)
@@ -262,6 +241,7 @@ Multiple overlapping controls at different layers:
 - Human review (code review, PR approval)
 
 ### 2. Fail Secure
+
 Default-deny stance throughout:
 - Unknown repositories → blocked
 - Unknown commands → blocked
@@ -269,6 +249,7 @@ Default-deny stance throughout:
 - Unknown network destinations → blocked
 
 ### 3. Pragmatic Security
+
 Balanced approach for prototype lab:
 - Not aiming for formal certification
 - Simple controls small teams can follow
@@ -276,6 +257,7 @@ Balanced approach for prototype lab:
 - Emphasis on learning over perfection
 
 ### 4. Auditability
+
 Everything logged for review:
 - Command execution with arguments and outputs
 - Repository access attempts
@@ -283,6 +265,7 @@ Everything logged for review:
 - Incident reports with timelines
 
 ### 5. Escape Hatches
+
 Flexibility when needed:
 - Policy overrides with justification
 - Emergency stop procedures
@@ -305,6 +288,7 @@ As explicitly stated in the threat model:
 ## Security Innovations
 
 ### Multi-Org Policy Support
+
 Unlike single-org solutions, this lab explicitly handles:
 - Different GitHub organizations with different rules
 - Cross-org boundary enforcement
@@ -312,6 +296,7 @@ Unlike single-org solutions, this lab explicitly handles:
 - Org-specific commit signing / branch naming
 
 ### Agent-Specific Threat Modeling
+
 Threats unique to agentic workflows:
 - AI-generated malicious code (not intentional malware, but emergent bugs)
 - Prompt injection via repository contents
@@ -319,6 +304,7 @@ Threats unique to agentic workflows:
 - Comment-triggered abuse (eliminated by design)
 
 ### Human-in-the-Loop by Design
+
 Not just policy, but architectural:
 - No webhooks or comment triggers possible
 - All workflows initiated by logged-in operator
@@ -326,6 +312,7 @@ Not just policy, but architectural:
 - Confirmation prompts for risky operations
 
 ### Comprehensive Operator Handbook
+
 Going beyond policy to actual operational practice:
 - Checklists operators can actually use
 - Templates for consistent PR descriptions
@@ -335,21 +322,25 @@ Going beyond policy to actual operational practice:
 ## Next Steps
 
 ### Immediate (Phase 1)
+
 - Create dedicated Mac user account (`tsd-agent`)
 - Test OS-level isolation
 - Verify file permission restrictions
 
 ### Short-Term (Phase 2-3)
+
 - Implement CLAUDE.md global instructions
 - Build policy enforcement harness
 - Automate pre-flight checklist validation
 
 ### Medium-Term (Phase 4-6)
+
 - Test policies with real Claude Code workflows
 - Iterate based on operator feedback
 - Add Superpowers/OpenCode support
 
 ### Long-Term (Phase 7+)
+
 - Real-time alerting integration
 - Multi-user support
 - Advanced threat detection
@@ -403,12 +394,14 @@ Phase 0B goals achieved:
 ## Metrics
 
 ### Documentation
+
 - **Total pages**: 5 new documents
 - **Total lines**: ~2,500 lines of policy and guidance
 - **Policy coverage**: Credentials, repositories, commands, filesystem, network, workflow, PR, incidents
 - **Threat scenarios analyzed**: 12 (8 critical, 4 moderate)
 
 ### Policy Specificity
+
 - **Blocked environment variables**: 30+
 - **Allowed environment variables**: 10+
 - **Git commands specified**: 60+
@@ -417,6 +410,7 @@ Phase 0B goals achieved:
 - **Credential patterns**: 8+ regex patterns
 
 ### Operational Guidance
+
 - **Checklists**: 3 (pre-flight, post-execution, code review)
 - **Checklist items**: 40+ total
 - **Templates**: 2 (PR description, incident report)
@@ -438,6 +432,7 @@ After Phase 0B, the team has:
 ## Lessons Learned
 
 ### What Went Well
+
 - Comprehensive threat modeling provided clear risk picture
 - Multi-org support designed in from the start
 - Defense-in-depth approach provides multiple layers
@@ -445,12 +440,14 @@ After Phase 0B, the team has:
 - Templates and checklists make policies actionable
 
 ### What Could Be Improved
+
 - Some policies can only be validated once harness is built (Phase 3)
 - Network isolation requires external tools (Little Snitch, corporate proxy)
 - Real-time alerting deferred to future phases
 - Multi-user support not yet addressed
 
 ### Risks Identified for Future Phases
+
 - Policy complexity may be overwhelming for new operators → training critical
 - Manual checklist discipline required until automation in Phase 3
 - Tool diversity (Claude Code, Superpowers, OpenCode) may require policy updates
@@ -466,8 +463,8 @@ Phase 0B successfully hardened the TSD Agent Lab design for corporate engineerin
 
 ---
 
-**Completion Date**: 2026-06-12  
-**Documents Created**: 5  
-**Total Policy Lines**: 2,500+  
-**Threats Analyzed**: 12  
+**Completion Date**: 2026-06-12
+**Documents Created**: 5
+**Total Policy Lines**: 2,500+
+**Threats Analyzed**: 12
 **Next Phase**: Phase 1 - Dedicated Local User Setup

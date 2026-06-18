@@ -1,0 +1,386 @@
+{
+  "main": {
+    "id": "3458878672af81ff",
+    "type": "split",
+    "children": [
+      {
+        "id": "61131f4237d469ba",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b19abfe790777854",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/implementation-plan.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "implementation-plan"
+            }
+          },
+          {
+            "id": "84a64d04711af444",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/lab-strategy.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "lab-strategy"
+            }
+          },
+          {
+            "id": "4b0331ceb2f10a12",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/operator-rules.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "operator-rules"
+            }
+          },
+          {
+            "id": "d73a8efeeaba0ba5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-3-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Phase-3-Prompt"
+            }
+          },
+          {
+            "id": "8896b5468cdee93e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-6-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Phase-6-Prompt"
+            }
+          },
+          {
+            "id": "70c1fb3f601d08ed",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "README.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "README"
+            }
+          },
+          {
+            "id": "df812d44e728ad8b",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/repository-structure.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "repository-structure"
+            }
+          },
+          {
+            "id": "0ffbc24adeb9531d",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/safety-model.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "safety-model"
+            }
+          },
+          {
+            "id": "7510328256e44651",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/threat-model.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "threat-model"
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "78f73f35fc1e6f72",
+    "type": "split",
+    "children": [
+      {
+        "id": "c827b0ac2a629418",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "12ab6144f19c9022",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "def3253a1fc89159",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "2e1cdec54cf70b6e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      },
+      {
+        "id": "f8ddbc4bd7b274fd",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "580131725ef5a37a",
+            "type": "leaf",
+            "state": {
+              "type": "vertical-tabs",
+              "state": {},
+              "icon": "vertical-tabs",
+              "title": "Vertical tabs"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 238.5
+  },
+  "right": {
+    "id": "b302ad5c9d83c5af",
+    "type": "split",
+    "children": [
+      {
+        "id": "315b39f0eeebe6e2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "81aaf1437c4985b0",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Setting up Fullsend Mint.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Setting up Fullsend Mint"
+            }
+          },
+          {
+            "id": "799415cde97c7676",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "TSD Lab/Initial Setup/Phase 1—Dedicated local user setup.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Phase 1—Dedicated local user setup"
+            }
+          },
+          {
+            "id": "a942cfa3a902789d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "fc5b9326413b7132",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "3f6891c6e61817c4",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "TSD Lab/Initial Setup/Phase 1—Dedicated local user setup.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Phase 1—Dedicated local user setup"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "markdown-importer:Open format converter": false,
+      "random-note:Open random note": false,
+      "workspaces:Manage workspace layouts": false,
+      "publish:Publish changes...": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "obsidian-read-it-later:ReadItLater: Create from clipboard": false,
+      "smart-connections:Smart Connections: Open connections view": false,
+      "smart-connections:Toggle Footer Connections": false,
+      "smart-connections:Smart Connections: Open random connection": false,
+      "smart-lookup:Smart Lookup: Open lookup view": false
+    }
+  },
+  "active": "d73a8efeeaba0ba5",
+  "lastOpenFiles": [
+    "docs/phases/Phase-3-Summary.md",
+    "docs/harness.md",
+    "harness/prepare-repo.sh",
+    "harness/lib/git.sh",
+    "examples/reports/example-run-report.md",
+    "harness/write-report.sh",
+    "harness/create-run.sh",
+    "docs/task-format.md",
+    "examples/tasks/review-only.yaml",
+    "examples/tasks/bugfix-patch-only.yaml",
+    "examples/tasks/read-only-codebase-map.yaml",
+    "schemas/task.schema.json",
+    "harness/lib/common.sh",
+    "examples/tasks",
+    "docs/lab-strategy.md",
+    "docs/safety-model.md",
+    "docs/phases/Phase-6-Prompt.md",
+    "docs/phases/Phase-3-Prompt.md",
+    "docs/operator-rules.md",
+    "README.md",
+    "docs/phases/Phase-2-Prompt.md",
+    "docs/setup/install-claude-global-instructions.md",
+    "templates/claude/global-CLAUDE.md",
+    "docs/agent-guidance.md",
+    "CLAUDE.md",
+    "docs/repository-structure.md",
+    "docs/phases/Phase-13-Prompt.md",
+    "docs/phases/Phase-12-Prompt.md",
+    "docs/phases/Phase-11-Prompt.md",
+    "docs/phases/Phase-10-Prompt.md",
+    "docs/phases/Phase-9-Prompt.md",
+    "docs/phases/Phase-8-Prompt.md",
+    "docs/phases/Phase-7-Prompt.md",
+    "docs/phases/Phase-5-Prompt.md",
+    "docs/phases/Phase-4-Prompt.md",
+    "docs/phases/Phase-1-Prompt.md",
+    "Pasted image 20260611114223.png",
+    "Pasted image 20260608140039.png",
+    "Pasted image 20260608135528.png",
+    "TSD UI/Agentic Guardrails/tsd_ui_agentic_quality_supply_chain.svg",
+    "TSD UI/Agentic Guardrails/Agent Gate v1/agentic_pipeline_gating_architecture.svg",
+    "TSD UI/Agentic Guardrails/Agent Gate v1/agentic_gating_micro_app_concept.svg",
+    "Screenshot 2026-06-01 at 1.13.19 PM.png",
+    "TPA/TPA Product Explorer Ideas.svg",
+    "Excalidraw/SSCS Board.svg",
+    "Excalidraw/Software Supply Chain Security Board.svg"
+  ]
+}

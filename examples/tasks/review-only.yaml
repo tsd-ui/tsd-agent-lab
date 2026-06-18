@@ -4,6 +4,7 @@ mode: review-only
 repo_url: "https://github.com/example-org-1/demo-app.git"
 base_ref: main
 agent: claude-code
+prompt_file: prompts/claude/review-only.md
 
 verification_commands:
   - "test -f agent-output.md"

@@ -33,15 +33,20 @@ tsd-agent-lab/
 │   ├── harness.md    # Harness usage guide
 │   └── task-format.md # Task specification format
 ├── harness/          # Local harness scripts
-│   ├── lib/          # Shared libraries (common.sh, git.sh)
+│   ├── lib/          # Shared libraries (common.sh, git.sh, agent.sh, verify.sh)
 │   ├── create-run.sh # Create a timestamped run directory
-│   ├── write-report.sh # Generate markdown report from a run
-│   └── prepare-repo.sh # Safe clone + worktree creation
+│   ├── prepare-repo.sh # Safe clone + worktree creation
+│   ├── run-claude.sh # Run Claude Code against a prepared task
+│   ├── verify-run.sh # Run verification commands
+│   └── write-report.sh # Generate markdown report from a run
 ├── schemas/          # JSON schemas
 │   └── task.schema.json
 ├── examples/         # Example task specs and reports
 │   ├── tasks/        # Sample task YAML files
 │   └── reports/      # Sample run reports
+├── prompts/          # Agent prompt files
+│   ├── common/       # Shared preambles (safety-preamble.md)
+│   └── claude/       # Claude Code task prompts
 ├── policies/         # Safety policies and allowlists
 │   ├── default-policy.yaml
 │   ├── command-allowlist.yaml
@@ -68,7 +73,7 @@ tsd-agent-lab/
 2. [x] **Phase 1**: Dedicated local user setup
 3. [x] **Phase 2**: Global and repo instructions (`CLAUDE.md`, etc.)
 4. [x] **Phase 3**: Local harness v0
-5. [ ] **Phase 4**: Runner mode
+5. [x] **Phase 4**: Runner mode
 6. [ ] **Phase 5**: Skills and workflow experiments
 7. [ ] **Phase 6**: First real pilot task
 8. [ ] **Phase 7**: Patch-only mode
@@ -78,7 +83,7 @@ tsd-agent-lab/
 12. [ ] **Phase 11**: Team documentation
 13. [ ] **Phase 12**: GitHub Actions experiment (optional)
 
-Current phase: **Phase 4 - Runner mode**
+Current phase: **Phase 5 - Skills and workflow experiments**
 
 ## Non-Goals
 

@@ -2,7 +2,7 @@
 
 The TSD Agent Lab harness provides scaffolding for running agent tasks safely. It manages task specifications, run directories, repository isolation via git worktrees, and run reporting.
 
-The harness intentionally does NOT run agents, enforce policies, or push code. It creates the infrastructure for those capabilities.
+As of Phase 4, the harness can also compose prompts and invoke Claude Code against a prepared worktree, and run verification commands defined in task specifications.
 
 ## Scripts
 
@@ -70,7 +70,49 @@ Generates a markdown report from a run directory.
 
 Reads whatever exists in the run directory and assembles a report in `summary.md`. If `~/workspaces/reports/` exists, copies the report there too.
 
-**Sections:** Run Info, Repository, Agent Output, Changed Files, Verification Results, Directory Contents.
+**Sections:** Run Info, Repository, Agent Output, Changed Files, Verification Summary, Known Issues, Next Steps, Directory Contents.
+
+### `harness/run-claude.sh`
+
+Composes a safety-bounded prompt and runs Claude Code inside the task's worktree.
+
+```bash
+./harness/run-claude.sh examples/tasks/read-only-codebase-map.yaml --run-dir "$RUN_DIR"
+
+# Preview without executing
+./harness/run-claude.sh examples/tasks/read-only-codebase-map.yaml --run-dir "$RUN_DIR" --dry-run
+```
+
+**What it does:**
+
+1. Validates the task agent is `claude-code`
+2. Resolves the worktree from `run-metadata.json`
+3. Resolves the prompt file (explicit `prompt_file` field or default-by-mode)
+4. Composes safety preamble + task prompt → `composed-prompt.md`
+5. Runs `claude -p` inside the worktree, captures to `agent-output.md`
+6. Updates `run-metadata.json` with exit code, timestamps, status
+
+See [docs/run-claude.md](run-claude.md) for full documentation.
+
+### `harness/verify-run.sh`
+
+Runs verification commands defined in the task specification inside the worktree.
+
+```bash
+./harness/verify-run.sh examples/tasks/bugfix-patch-only.yaml --run-dir "$RUN_DIR"
+
+# Preview without executing
+./harness/verify-run.sh examples/tasks/bugfix-patch-only.yaml --run-dir "$RUN_DIR" --dry-run
+```
+
+**What it does:**
+
+1. Reads `verification_commands` from the task YAML
+2. Runs each command inside the worktree (fail-fast on first failure)
+3. Captures output to `verification.log`
+4. Updates `run-metadata.json` with verification result and timestamp
+
+See [docs/verification.md](verification.md) for full documentation.
 
 ## Libraries
 
@@ -82,7 +124,25 @@ Shared utilities sourced by all harness scripts. Provides:
 - **YAML reading:** `read_yaml_field` (yq with grep/sed fallback), `read_yaml_field_required`
 - **Run management:** `generate_run_id`, `is_dry_run`, `ensure_directory`
 - **Tool checks:** `require_command`, `check_command`
+- **YAML arrays:** `read_yaml_array` — reads list fields as newline-separated values
 - **Workspace paths:** `TSD_RUNS_DIR`, `TSD_REPOS_DIR`, `TSD_REPORTS_DIR` (env-overridable)
+
+### `harness/lib/agent.sh`
+
+Agent invocation utilities sourced by `run-claude.sh`. Provides:
+
+- `resolve_prompt_file` — reads `prompt_file` from task YAML; derives default from `agent` + `mode` if unset
+- `compose_prompt` — concatenates safety preamble + task prompt into `composed-prompt.md`
+- `resolve_worktree` — reads `worktree_path` from `run-metadata.json`, with fallback
+- `run_claude` — invokes `claude -p` with optional timeout
+
+### `harness/lib/verify.sh`
+
+Verification utilities sourced by `verify-run.sh`. Provides:
+
+- `check_command_allowed` — soft policy check against command allowlist (warn only)
+- `run_verification_command` — runs a single command in the worktree, appends to log
+- `run_verification_suite` — reads commands from task, runs each with fail-fast
 
 ### `harness/lib/git.sh`
 
@@ -125,15 +185,20 @@ Git utility functions sourced by `prepare-repo.sh`. Provides:
 ## Typical Workflow
 
 ```bash
+TASK=examples/tasks/read-only-codebase-map.yaml
+
 # 1. Create a run from a task spec
-RUN_DIR=$(./harness/create-run.sh examples/tasks/read-only-codebase-map.yaml)
+RUN_DIR=$(./harness/create-run.sh "$TASK")
 
 # 2. Clone repo and create worktree
-./harness/prepare-repo.sh examples/tasks/read-only-codebase-map.yaml --run-dir "$RUN_DIR"
+./harness/prepare-repo.sh "$TASK" --run-dir "$RUN_DIR"
 
-# 3. (Future) Run the agent in the worktree
-# cd "$RUN_DIR/worktree" && claude ...
+# 3. Run the agent in the worktree
+./harness/run-claude.sh "$TASK" --run-dir "$RUN_DIR"
 
-# 4. Generate a report
+# 4. Run verification commands
+./harness/verify-run.sh "$TASK" --run-dir "$RUN_DIR"
+
+# 5. Generate a report
 ./harness/write-report.sh "$RUN_DIR"
 ```

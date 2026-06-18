@@ -63,13 +63,16 @@ fi
 
 require_command jq
 
-run_id=$(jq -r '.run_id' "${RUN_DIR}/run-metadata.json")
-task_id=$(jq -r '.task_id' "${RUN_DIR}/run-metadata.json")
-title=$(jq -r '.title' "${RUN_DIR}/run-metadata.json")
-mode=$(jq -r '.mode' "${RUN_DIR}/run-metadata.json")
-repo_url=$(jq -r '.repo_url' "${RUN_DIR}/run-metadata.json")
-created_at=$(jq -r '.created_at' "${RUN_DIR}/run-metadata.json")
-status=$(jq -r '.status' "${RUN_DIR}/run-metadata.json")
+META="${RUN_DIR}/run-metadata.json"
+run_id=$(jq -r '.run_id' "$META")
+task_id=$(jq -r '.task_id' "$META")
+title=$(jq -r '.title' "$META")
+mode=$(jq -r '.mode' "$META")
+repo_url=$(jq -r '.repo_url' "$META")
+created_at=$(jq -r '.created_at' "$META")
+status=$(jq -r '.status' "$META")
+agent=$(jq -r '.agent // "unknown"' "$META")
+verification_result=$(jq -r '.verification_result // "not run"' "$META")
 
 REPORT="${RUN_DIR}/summary.md"
 
@@ -85,6 +88,7 @@ REPORT="${RUN_DIR}/summary.md"
   echo "| Task ID | \`${task_id}\` |"
   echo "| Title | ${title} |"
   echo "| Mode | \`${mode}\` |"
+  echo "| Agent | \`${agent}\` |"
   echo "| Status | \`${status}\` |"
   echo "| Created | ${created_at} |"
 
@@ -92,11 +96,11 @@ REPORT="${RUN_DIR}/summary.md"
   echo "| Field | Value |"
   echo "|-------|-------|"
   echo "| URL | ${repo_url} |"
-  worktree_path=$(jq -r '.worktree_path // empty' "${RUN_DIR}/run-metadata.json" 2>/dev/null || echo "")
+  worktree_path=$(jq -r '.worktree_path // empty' "$META" 2>/dev/null || echo "")
   if [[ -n "$worktree_path" ]]; then
     echo "| Worktree | \`${worktree_path}\` |"
   fi
-  base_ref=$(jq -r '.base_ref // empty' "${RUN_DIR}/run-metadata.json" 2>/dev/null || echo "")
+  base_ref=$(jq -r '.base_ref // empty' "$META" 2>/dev/null || echo "")
   if [[ -n "$base_ref" ]]; then
     echo "| Base ref | \`${base_ref}\` |"
   fi
@@ -107,8 +111,49 @@ REPORT="${RUN_DIR}/summary.md"
   section "Changed Files"
   include_file_if_exists "${RUN_DIR}/changed-files.txt" "changed files"
 
-  section "Verification Results"
-  include_file_if_exists "${RUN_DIR}/verification.log" "verification results"
+  section "Verification Summary"
+  echo "| Field | Value |"
+  echo "|-------|-------|"
+  echo "| Result | \`${verification_result}\` |"
+  verified_at=$(jq -r '.verified_at // empty' "$META" 2>/dev/null || echo "")
+  if [[ -n "$verified_at" ]]; then
+    echo "| Verified at | ${verified_at} |"
+  fi
+  echo ""
+  include_file_if_exists "${RUN_DIR}/verification.log" "verification log"
+
+  section "Known Issues"
+  if [[ -f "${RUN_DIR}/known-issues.md" && -s "${RUN_DIR}/known-issues.md" ]]; then
+    cat "${RUN_DIR}/known-issues.md"
+  else
+    echo "_No known issues recorded._"
+  fi
+
+  section "Next Steps"
+  if [[ "$verification_result" == "passed" ]]; then
+    case "$mode" in
+      read-only|review-only)
+        echo "- Review agent output for accuracy and completeness"
+        echo "- Extract actionable items into new task specifications"
+        ;;
+      patch-only)
+        echo "- Review the diff in the worktree: \`cd ${worktree_path} && git diff\`"
+        echo "- If acceptable, apply the patch to a working branch"
+        echo "- Create a PR for human review"
+        ;;
+      commit-allowed)
+        echo "- Review commits in the worktree: \`cd ${worktree_path} && git log --oneline\`"
+        echo "- If acceptable, push to a draft branch for review"
+        ;;
+    esac
+  elif [[ "$verification_result" == "failed" ]]; then
+    echo "- Review verification log for failure details"
+    echo "- Check agent output for context on what was attempted"
+    echo "- Consider re-running with adjusted task parameters"
+  else
+    echo "- Run verification: \`./harness/verify-run.sh <task-file> --run-dir ${RUN_DIR}\`"
+    echo "- Review agent output for completeness"
+  fi
 
   section "Directory Contents"
   echo '```'

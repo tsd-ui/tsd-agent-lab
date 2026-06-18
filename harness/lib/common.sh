@@ -109,6 +109,33 @@ read_yaml_field_required() {
   echo "$value"
 }
 
+# Read a YAML list field as newline-separated values
+read_yaml_array() {
+  local file="$1"
+  local field="$2"
+
+  if check_command yq; then
+    yq eval ".${field}[]" "$file" 2>/dev/null || echo ""
+  else
+    local in_field=false
+    while IFS= read -r line; do
+      if [[ "$line" =~ ^${field}: ]]; then
+        in_field=true
+        continue
+      fi
+      if $in_field; then
+        if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+(.*) ]]; then
+          local val="${BASH_REMATCH[1]}"
+          val=$(echo "$val" | sed 's/^["'"'"']//' | sed 's/["'"'"']$//')
+          echo "$val"
+        elif [[ "$line" =~ ^[a-zA-Z_] ]]; then
+          break
+        fi
+      fi
+    done < "$file"
+  fi
+}
+
 # ---------------------------------------------------------------------------
 # Run ID generation
 # ---------------------------------------------------------------------------

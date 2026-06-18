@@ -21,11 +21,11 @@ Phased implementation of a local agentic SDLC lab for safe experimentation with 
 ### Phase 0B: Threat Model Hardening
 
 **Deliverables**:
-- [ ] `docs/threat-model.md` - Comprehensive threat analysis
-- [ ] `policies/default-policy.yaml` - Default safety policy
-- [ ] `policies/repo-allowlist.example.yaml` - Repository allowlist template
-- [ ] `policies/command-allowlist.yaml` - Approved command list
-- [ ] `docs/operator-rules.md` - Lab operator guidelines
+- [x] `docs/threat-model.md` - Comprehensive threat analysis
+- [x] `policies/default-policy.yaml` - Default safety policy
+- [x] `policies/repo-allowlist.example.yaml` - Repository allowlist template
+- [x] `policies/command-allowlist.yaml` - Approved command list
+- [x] `docs/operator-rules.md` - Lab operator guidelines
 
 **Focus Areas**:
 - Credential isolation mechanisms
@@ -86,23 +86,17 @@ Phased implementation of a local agentic SDLC lab for safe experimentation with 
 - `docs/harness-design.md`
 - ADR for harness architecture
 
-## Phase 4: Runner Mode
+## Phase 4: Runner Mode ✓
 
 **Goal**: Enable agent-driven workflows with safety rails
 
-**Tasks**:
-- Implement task queue mechanism
-- Add workflow templates
-- Build result capture system
-- Create status reporting
-- Test with Claude Code
-
 **Deliverables**:
-- Workflow templates
-- Task queue implementation
-- Result storage format
-- Status dashboard/reporter
-- Example workflows
+- [x] Prompt file system (`prompts/common/`, `prompts/claude/`)
+- [x] Claude runner script (`harness/run-claude.sh`, `harness/lib/agent.sh`)
+- [x] Verification step (`harness/verify-run.sh`, `harness/lib/verify.sh`)
+- [x] Enhanced report generation (agent info, verification summary, next steps)
+- [x] Documentation (`docs/prompts.md`, `docs/run-claude.md`, `docs/verification.md`)
+- [x] Updated example tasks with `prompt_file` references
 
 ## Phase 5: Skills and Workflow Experiments
 

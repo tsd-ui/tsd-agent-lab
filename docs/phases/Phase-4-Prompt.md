@@ -1,3 +1,7 @@
+---
+aliases: 
+tags: 
+---
 # Phase 4—Claude runner mode
 
 This is where the harness starts invoking Claude, but only locally and safely.

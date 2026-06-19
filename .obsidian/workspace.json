@@ -8,22 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "b19abfe790777854",
-            "type": "leaf",
-            "pinned": true,
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/implementation-plan.md",
-                "mode": "source",
-                "source": false
-              },
-              "pinned": true,
-              "icon": "lucide-file",
-              "title": "implementation-plan"
-            }
-          },
-          {
             "id": "84a64d04711af444",
             "type": "leaf",
             "pinned": true,
@@ -40,24 +24,73 @@
             }
           },
           {
-            "id": "4b0331ceb2f10a12",
+            "id": "f9089ef3559ebe86",
             "type": "leaf",
             "pinned": true,
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/operator-rules.md",
+                "file": "docs/phases/Phase-10-Prompt.md",
                 "mode": "source",
                 "source": false
               },
               "pinned": true,
               "icon": "lucide-file",
-              "title": "operator-rules"
+              "title": "Phase-10-Prompt"
+            }
+          },
+          {
+            "id": "dde7c95f09e08957",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-11-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-11-Prompt"
+            }
+          },
+          {
+            "id": "c8d88dca80e39bb7",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-12-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-12-Prompt"
+            }
+          },
+          {
+            "id": "791142a52f8fc0b4",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-13-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-13-Prompt"
             }
           },
           {
             "id": "d73a8efeeaba0ba5",
             "type": "leaf",
+            "pinned": true,
             "state": {
               "type": "markdown",
               "state": {
@@ -65,13 +98,79 @@
                 "mode": "source",
                 "source": false
               },
+              "pinned": true,
               "icon": "lucide-file",
               "title": "Phase-3-Prompt"
             }
           },
           {
+            "id": "7234bd49a5f94288",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-3-Summary.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-3-Summary"
+            }
+          },
+          {
             "id": "8896b5468cdee93e",
             "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-4-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-4-Prompt"
+            }
+          },
+          {
+            "id": "c456927f1c4c1195",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-4-Summary.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-4-Summary"
+            }
+          },
+          {
+            "id": "0d756fdd059477b7",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-5-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-5-Prompt"
+            }
+          },
+          {
+            "id": "34a227671819bb05",
+            "type": "leaf",
+            "pinned": true,
             "state": {
               "type": "markdown",
               "state": {
@@ -79,8 +178,57 @@
                 "mode": "source",
                 "source": false
               },
+              "pinned": true,
               "icon": "lucide-file",
               "title": "Phase-6-Prompt"
+            }
+          },
+          {
+            "id": "786e0ae085fae861",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-7-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-7-Prompt"
+            }
+          },
+          {
+            "id": "ccc1c4e42e99685e",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-8-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-8-Prompt"
+            }
+          },
+          {
+            "id": "89784c2e6ae5ec04",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/phases/Phase-9-Prompt.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Phase-9-Prompt"
             }
           },
           {
@@ -146,9 +294,23 @@
               "icon": "lucide-file",
               "title": "threat-model"
             }
+          },
+          {
+            "id": "d8f3235ee9551936",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/setup/tool-installation-notes.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "tool-installation-notes"
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -336,32 +498,25 @@
   },
   "active": "d73a8efeeaba0ba5",
   "lastOpenFiles": [
+    "AGENTS.md",
     "docs/phases/Phase-3-Summary.md",
-    "docs/harness.md",
-    "harness/prepare-repo.sh",
-    "harness/lib/git.sh",
-    "examples/reports/example-run-report.md",
-    "harness/write-report.sh",
-    "harness/create-run.sh",
-    "docs/task-format.md",
-    "examples/tasks/review-only.yaml",
-    "examples/tasks/bugfix-patch-only.yaml",
-    "examples/tasks/read-only-codebase-map.yaml",
-    "schemas/task.schema.json",
-    "harness/lib/common.sh",
-    "examples/tasks",
-    "docs/lab-strategy.md",
-    "docs/safety-model.md",
-    "docs/phases/Phase-6-Prompt.md",
-    "docs/phases/Phase-3-Prompt.md",
-    "docs/operator-rules.md",
+    "docs/phases/Phase-4-Summary.md",
     "README.md",
-    "docs/phases/Phase-2-Prompt.md",
-    "docs/setup/install-claude-global-instructions.md",
-    "templates/claude/global-CLAUDE.md",
-    "docs/agent-guidance.md",
-    "CLAUDE.md",
-    "docs/repository-structure.md",
+    "docs/setup/tool-installation-notes.md",
+    "docs/verification.md",
+    "harness/verify-run.sh",
+    "harness/lib/verify.sh",
+    "docs/run-claude.md",
+    "harness/run-claude.sh",
+    "harness/lib/agent.sh",
+    "docs/prompts.md",
+    "prompts/claude/review-only.md",
+    "prompts/claude/bugfix-patch-only.md",
+    "prompts/claude/read-only-codebase-map.md",
+    "prompts/common/safety-preamble.md",
+    "prompts/common",
+    "prompts/claude",
+    "prompts",
     "docs/phases/Phase-13-Prompt.md",
     "docs/phases/Phase-12-Prompt.md",
     "docs/phases/Phase-11-Prompt.md",
@@ -369,9 +524,16 @@
     "docs/phases/Phase-9-Prompt.md",
     "docs/phases/Phase-8-Prompt.md",
     "docs/phases/Phase-7-Prompt.md",
+    "docs/phases/Phase-6-Prompt.md",
     "docs/phases/Phase-5-Prompt.md",
     "docs/phases/Phase-4-Prompt.md",
-    "docs/phases/Phase-1-Prompt.md",
+    "docs/phases/Phase-3-Prompt.md",
+    "docs/operator-rules.md",
+    "docs/lab-strategy.md",
+    "docs/implementation-plan.md",
+    "harness/prepare-repo.sh",
+    "harness/lib/git.sh",
+    "harness/write-report.sh",
     "Pasted image 20260611114223.png",
     "Pasted image 20260608140039.png",
     "Pasted image 20260608135528.png",

@@ -1,3 +1,7 @@
+---
+aliases: 
+tags: 
+---
 # Running Claude
 
 `harness/run-claude.sh` invokes Claude Code against a prepared task. It composes a safety-bounded prompt and runs `claude -p` inside the task's isolated worktree.
@@ -29,7 +33,7 @@ RUN_DIR=$(./harness/create-run.sh examples/tasks/read-only-codebase-map.yaml)
 
 ## How Prompts Are Composed
 
-1. The runner resolves the prompt file — either from the task's `prompt_file` field, or by deriving a default from `agent` + `mode`.
+1. The runner resolves the prompt file—either from the task's `prompt_file` field, or by deriving a default from `agent` + `mode`.
 2. It concatenates the safety preamble (`prompts/common/safety-preamble.md`) with the task prompt.
 3. The composed prompt is written to `composed-prompt.md` in the run directory for auditability.
 4. Claude receives the composed prompt via stdin: `claude -p --output-format text < composed-prompt.md`.
@@ -59,7 +63,7 @@ After execution, `run-metadata.json` gains these fields:
 
 ## Safety Notes
 
-- The agent runs inside an isolated, detached worktree — no branch to push.
+- The agent runs inside an isolated, detached worktree—no branch to push.
 - The safety preamble is always prepended, regardless of the task prompt.
 - If `max_runtime_minutes` is set in the task, the runner uses `timeout` to enforce it.
 - The runner only supports `agent: claude-code`. Other agents will be rejected.

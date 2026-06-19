@@ -44,6 +44,12 @@ tsd-agent-lab/
 ├── examples/         # Example task specs and reports
 │   ├── tasks/        # Sample task YAML files
 │   └── reports/      # Sample run reports
+├── skills/           # Portable skill packages (SKILL.md format)
+│   ├── codebase-map/ # Read-only repo exploration
+│   ├── bugfix-minimal/ # Minimal targeted bugfix
+│   ├── test-generation/ # Test creation
+│   ├── pr-review/    # Structured code review
+│   └── adr-writer/   # ADR drafting
 ├── prompts/          # Agent prompt files
 │   ├── common/       # Shared preambles (safety-preamble.md)
 │   └── claude/       # Claude Code task prompts
@@ -74,7 +80,7 @@ tsd-agent-lab/
 3. [x] **Phase 2**: Global and repo instructions (`CLAUDE.md`, etc.)
 4. [x] **Phase 3**: Local harness v0
 5. [x] **Phase 4**: Runner mode
-6. [ ] **Phase 5**: Skills and workflow experiments
+6. [x] **Phase 5**: Skills and workflow experiments
 7. [ ] **Phase 6**: First real pilot task
 8. [ ] **Phase 7**: Patch-only mode
 9. [ ] **Phase 8**: Draft PR mode (manual, explicit)
@@ -83,7 +89,7 @@ tsd-agent-lab/
 12. [ ] **Phase 11**: Team documentation
 13. [ ] **Phase 12**: Fullsend hosted lane and GitHub Actions
 
-Current phase: **Phase 5 - Skills and workflow experiments**
+Current phase: **Phase 6 - First real pilot task**
 
 ## Integration Strategy
 

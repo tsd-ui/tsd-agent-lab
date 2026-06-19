@@ -273,9 +273,9 @@
       "enabled": false
     }
   },
-  "lintOnSave": false,
+  "lintOnSave": true,
   "recordLintOnSaveLogs": false,
-  "displayChanged": true,
+  "displayChanged": false,
   "suppressMessageWhenNoChange": false,
   "suppressLintAllFilesConfirmationModal": false,
   "suppressLintAllFilesInFolderConfirmationModal": false,

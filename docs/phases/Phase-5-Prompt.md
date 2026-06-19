@@ -1,3 +1,7 @@
+---
+aliases: 
+tags: 
+---
 # Phase 5—Skills and Superpowers-style workflows
 
 Claude Code skills are reusable packages with a required `SKILL.md`, plus optional scripts/resources. This provides a way to package task-specific capabilities and reusable workflows that can be shared across the team.

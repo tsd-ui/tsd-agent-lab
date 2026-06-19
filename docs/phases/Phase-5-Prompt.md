@@ -33,9 +33,20 @@ Design the skills to be:
 - Well-documented with clear use cases
 - Focused on practical team workflows
 - Built around what we ARE using (Claude, GitHub, local environment)
+- Compatible with Fullsend skill conventions (SKILL.md structure, companion files)
+
+Follow Fullsend's SKILL.md format where practical—same field names (name, description,
+when to use, workflow steps, expected output). This avoids a format migration later when
+we integrate Fullsend locally. Where Fullsend conventions don't apply (e.g. pre/post-scripts,
+sandbox config), note the gap but don't invent placeholders.
+
+For each skill, include a `fullsend_role` note indicating which Fullsend agent role
+it maps to (code, review, triage, or quality). This is informational only—it documents
+intent for the future hosted lane.
 
 Do not assume a specific framework-specific feature unless clearly marked.
 Do not add scripts yet unless truly useful.
+Do not install or depend on Fullsend runtime.
 ```
 
 ## Prompt 5B—Add Superpowers compatibility notes
@@ -63,5 +74,5 @@ Focus on:
 
 Do not install Superpowers.
 Do not assume Superpowers is present.
-Do not depend on Fullsend.
+Do not depend on Fullsend runtime, but follow Fullsend skill format conventions where practical.
 ```

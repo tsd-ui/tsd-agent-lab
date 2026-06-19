@@ -39,28 +39,39 @@ Focus on:
 Do not add cloud automation or GitHub Actions yet.
 ```
 
-## Prompt 9B—Add comparison runner
+## Prompt 9B—Agent comparison via agent-eval-harness
 
 ```markdown
-Create a comparison workflow for running the same task with multiple agents.
+Use agent-eval-harness to systematically compare agents on the same tasks.
+
+By this phase, agent-eval-harness should already be set up (Phase 6B) with
+eval.yaml configs and baseline results from Claude Code pilot runs.
+
+Steps:
+1. For each agent adapter (claude, gemini, opencode), run `/eval-run` against
+   the same eval.yaml and test cases. Use `runner.type` to switch agents:
+   - `claude-code` for Claude Code
+   - `cli` with appropriate wrapper for Gemini/OpenCode
+2. Run `/eval-run --baseline <claude-run-id>` for non-Claude agents to
+   compare against the Claude Code baseline.
+3. Use pairwise comparison judges to score quality differences.
+4. Log all results to MLflow for longitudinal tracking.
 
 Create:
-- `harness/compare-agents.sh`
-- `docs/comparing-agents.md`
-- `templates/reports/agent-comparison-template.md`
-- `examples/tasks/comparison-read-only.yaml`
+- `harness/compare-agents.sh` — thin wrapper that runs `/eval-run` per agent
+- `docs/comparing-agents.md` — documents the comparison methodology
+- `examples/tasks/comparison-read-only.yaml` — shared task for comparison
 
-Requirements:
-- Start with read-only tasks only.
-- Create separate run directories per agent.
-- Do not allow patch/branch/draft-pr comparison mode yet.
-- Summarize outputs side by side.
-- Capture:
-  - completion status
-  - command failures
-  - summary quality
-  - likely hallucinations
-  - usefulness
-  - reviewer burden
-- Keep the implementation simple.
+Do not build custom scoring scripts, templates, or side-by-side summaries.
+agent-eval-harness provides:
+- Multi-judge scoring (inline, LLM, pairwise)
+- Regression detection (min_mean, min_pass_rate, min_win_rate thresholds)
+- Baseline comparison (--baseline flag)
+- MLflow experiment tracking
+
+The custom comparison template from the original plan is replaced by
+agent-eval-harness's built-in reporting and MLflow dashboards.
+
+Start with read-only tasks only.
+Do not allow patch/branch/draft-pr comparison mode yet.
 ```

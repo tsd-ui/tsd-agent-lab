@@ -1,6 +1,6 @@
 ---
-aliases: 
-tags: 
+aliases: []
+tags: []
 ---
 # Phase 4—Claude runner mode
 

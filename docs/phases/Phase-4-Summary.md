@@ -1,3 +1,7 @@
+---
+aliases: []
+tags: []
+---
 # Phase 4 Summary: Runner Mode
 
 **Status:** Complete
@@ -19,26 +23,26 @@
 | File | Description |
 |------|-------------|
 | `harness/lib/agent.sh` | Agent invocation library (resolve_prompt_file, compose_prompt, resolve_worktree, run_claude) |
-| `harness/run-claude.sh` | Main runner script — composes prompt and invokes `claude -p` |
+| `harness/run-claude.sh` | Main runner script—composes prompt and invokes `claude -p` |
 | `docs/run-claude.md` | Runner documentation |
 
 **Updated files:**
-- `harness/lib/common.sh` — added `read_yaml_array` function
-- `docs/harness.md` — added run-claude.sh and verify-run.sh to Scripts, agent.sh and verify.sh to Libraries, updated Typical Workflow
+- `harness/lib/common.sh`—added `read_yaml_array` function
+- `docs/harness.md`—added run-claude.sh and verify-run.sh to Scripts, agent.sh and verify.sh to Libraries, updated Typical Workflow
 
 ### Sub-phase 4C: Verification Step
 
 | File | Description |
 |------|-------------|
 | `harness/lib/verify.sh` | Verification library (check_command_allowed, run_verification_command, run_verification_suite) |
-| `harness/verify-run.sh` | Verification runner — reads commands from task, runs in worktree |
+| `harness/verify-run.sh` | Verification runner—reads commands from task, runs in worktree |
 | `docs/verification.md` | Verification documentation |
 
 **Updated files:**
-- `harness/write-report.sh` — enhanced report with Agent field, Verification Summary, Known Issues, Next Steps sections
-- `examples/tasks/bugfix-patch-only.yaml` — added `prompt_file` reference
-- `examples/tasks/read-only-codebase-map.yaml` — added `prompt_file` reference
-- `examples/tasks/review-only.yaml` — added `prompt_file` reference
+- `harness/write-report.sh`—enhanced report with Agent field, Verification Summary, Known Issues, Next Steps sections
+- `examples/tasks/bugfix-patch-only.yaml`—added `prompt_file` reference
+- `examples/tasks/read-only-codebase-map.yaml`—added `prompt_file` reference
+- `examples/tasks/review-only.yaml`—added `prompt_file` reference
 
 ## Verification
 
@@ -57,4 +61,4 @@
 
 ## Next Steps
 
-- **Phase 5:** Skills and workflow experiments — test the runner with real repositories, experiment with Claude Code skills, and compare approaches.
+- **Phase 5:** Skills and workflow experiments—test the runner with real repositories, experiment with Claude Code skills, and compare approaches.

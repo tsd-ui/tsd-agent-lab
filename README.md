@@ -81,14 +81,31 @@ tsd-agent-lab/
 10. [ ] **Phase 9**: Multi-agent comparison
 11. [ ] **Phase 10**: Protocol playground
 12. [ ] **Phase 11**: Team documentation
-13. [ ] **Phase 12**: GitHub Actions experiment (optional)
+13. [ ] **Phase 12**: Fullsend hosted lane and GitHub Actions
 
 Current phase: **Phase 5 - Skills and workflow experiments**
+
+## Integration Strategy
+
+This lab is designed to complement—not replace—two external tools:
+
+- **[Fullsend](https://github.com/fullsend-ai/fullsend)**: An open-source framework for fully autonomous agentic development on GitHub. Fullsend provides the production lifecycle (issue triage, code generation, review, merge) with secure credential delivery via a GCP-hosted mint service. As of mid-2026, Fullsend's authorization guardrails for public repositories are not yet complete, so public repos stay local-only until those guardrails ship and are verified.
+
+- **[agent-eval-harness](https://github.com/opendatahub-io/agent-eval-harness)**: A systematic evaluation framework for measuring agent and skill quality. Provides multi-judge scoring, baseline comparison, regression detection, and MLflow tracking—replacing the need for custom evaluation scripts.
+
+The three tools form complementary layers:
+
+| Layer | Tool | Purpose |
+|-------|------|---------|
+| **Orchestration** | This lab's harness | Run agents safely against repos locally |
+| **Context assembly** | Fullsend (local CLI, then hosted) | Assemble skills, prompts, and tools per agent role |
+| **Evaluation** | agent-eval-harness | Score quality, detect regressions, compare agents |
+
+Skills written in this lab follow Fullsend's SKILL.md conventions for portability. Evaluation baselines established here carry forward into multi-agent comparison. When Fullsend's public-repo guardrails are ready, enrolled repositories move to a hosted mint service (GCP) while this lab remains the team's interactive experimentation workshop. See [docs/lab-strategy.md](docs/lab-strategy.md) for the full three-lane strategy.
 
 ## Non-Goals
 
 - Production deployment (this is a prototype lab only)
-- GCP integration (avoiding cloud dependency initially)
 - Autonomous merging or deployment
 - GitHub Copilot integration (not available to team)
 - Long-running daemon services (initially)

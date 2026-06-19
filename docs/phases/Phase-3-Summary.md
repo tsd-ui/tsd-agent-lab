@@ -1,6 +1,6 @@
 ---
-aliases: 
-tags: 
+aliases: []
+tags: []
 ---
 # Phase 3 Completion: Local Harness v0
 
@@ -15,7 +15,7 @@ The harness intentionally does NOT run agents, enforce policies, or push code. I
 
 ## Deliverables
 
-### Phase 3A — Task Spec Format
+### Phase 3A—Task Spec Format
 
 1. **schemas/task.schema.json**
    - JSON Schema (draft-07) for task specifications
@@ -36,7 +36,7 @@ The harness intentionally does NOT run agents, enforce policies, or push code. I
 5. **docs/task-format.md**
    - Task format documentation with field reference and mode matrix
 
-### Phase 3B — Run Directory and Report Generator
+### Phase 3B—Run Directory and Report Generator
 
 1. **harness/lib/common.sh**
    - Shared utilities sourced by all harness scripts
@@ -62,14 +62,14 @@ The harness intentionally does NOT run agents, enforce policies, or push code. I
 4. **examples/reports/example-run-report.md**
    - Example of a completed run report
 
-### Phase 3C — Safe Clone/Worktree Support
+### Phase 3C—Safe Clone/Worktree Support
 
 1. **harness/lib/git.sh**
-   - `git_clone_if_needed` — clone if target doesn't exist, verify remote URL if it does
-   - `git_fetch_ref` — fetch a specific ref from origin
-   - `git_create_worktree` / `git_remove_worktree` — detached worktree management
-   - `git_is_repo` / `git_verify_remote` — validation helpers
-   - `check_repo_allowlist` — soft check against `policies/repo-allowlist.yaml`
+   - `git_clone_if_needed`—clone if target doesn't exist, verify remote URL if it does
+   - `git_fetch_ref`—fetch a specific ref from origin
+   - `git_create_worktree` / `git_remove_worktree`—detached worktree management
+   - `git_is_repo` / `git_verify_remote`—validation helpers
+   - `check_repo_allowlist`—soft check against `policies/repo-allowlist.yaml`
 
 2. **harness/prepare-repo.sh** (executable)
    - Safe clone + worktree creation for a run
@@ -102,14 +102,14 @@ All scripts passed:
 
 - **`bash -n`** syntax check on all 5 shell files
 - **Smoke tests**:
-  - `create-run.sh` — creates run directory with correct structure
-  - `create-run.sh --dry-run` — prints plan without creating anything
-  - `create-run.sh /nonexistent.yaml` — exits with code 2
-  - `create-run.sh` with invalid mode — exits with code 1 and clear error
-  - `create-run.sh` with missing fields — exits with code 1 and clear error
-  - `write-report.sh` — generates correct markdown report
-  - `prepare-repo.sh --dry-run` — prints plan without executing
-  - Idempotency — second `create-run.sh` call produces different run directory
+  - `create-run.sh`—creates run directory with correct structure
+  - `create-run.sh --dry-run`—prints plan without creating anything
+  - `create-run.sh /nonexistent.yaml`—exits with code 2
+  - `create-run.sh` with invalid mode—exits with code 1 and clear error
+  - `create-run.sh` with missing fields—exits with code 1 and clear error
+  - `write-report.sh`—generates correct markdown report
+  - `prepare-repo.sh --dry-run`—prints plan without executing
+  - Idempotency—second `create-run.sh` call produces different run directory
 
 Note: `shellcheck` was not available on the test machine. Running it when available is recommended.
 
@@ -175,6 +175,6 @@ This will involve:
 ## Notes
 
 - All scripts follow the style established in `scripts/bootstrap/bootstrap-agent-lab.sh` (ANSI colors, status marks, `set -euo pipefail`)
-- YAML reading uses `yq` when available but falls back to `grep`/`sed` for top-level scalars — no hard dependency on `yq`
-- The harness is designed to be extended incrementally — each script is self-contained and can be run independently
+- YAML reading uses `yq` when available but falls back to `grep`/`sed` for top-level scalars—no hard dependency on `yq`
+- The harness is designed to be extended incrementally—each script is self-contained and can be run independently
 - Phase summaries are stored under `docs/phases/` with the naming convention `Phase-N-Summary.md`

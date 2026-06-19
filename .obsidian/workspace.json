@@ -310,7 +310,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -496,11 +496,13 @@
       "smart-lookup:Smart Lookup: Open lookup view": false
     }
   },
-  "active": "d73a8efeeaba0ba5",
+  "active": "c456927f1c4c1195",
   "lastOpenFiles": [
-    "AGENTS.md",
-    "docs/phases/Phase-3-Summary.md",
+    "docs/phases/Phase-4-Prompt.md",
     "docs/phases/Phase-4-Summary.md",
+    "docs/phases/Phase-3-Summary.md",
+    "docs/phases/Phase-3-Prompt.md",
+    "AGENTS.md",
     "README.md",
     "docs/setup/tool-installation-notes.md",
     "docs/verification.md",
@@ -526,8 +528,6 @@
     "docs/phases/Phase-7-Prompt.md",
     "docs/phases/Phase-6-Prompt.md",
     "docs/phases/Phase-5-Prompt.md",
-    "docs/phases/Phase-4-Prompt.md",
-    "docs/phases/Phase-3-Prompt.md",
     "docs/operator-rules.md",
     "docs/lab-strategy.md",
     "docs/implementation-plan.md",

@@ -13,15 +13,14 @@ Tools are categorized as:
 ### System-Wide (Requires Admin)
 
 If you have admin access or can request installation:
-- Homebrew (macOS package manager)
-- Official installers
-- Direct downloads
+- **macOS**: Homebrew, official installers, direct downloads
+- **Fedora**: `dnf install <package>`, official installers, direct downloads
 
 ### User-Local (No Admin Required)
 
 If you're running as non-admin `agent-lab`:
-- Version managers (nvm, pyenv)
-- User-local Homebrew installation
+- Version managers (nvm, pyenv) — same on both platforms
+- User-local Homebrew installation (macOS only)
 - Manual installation to `~/bin` or `~/.local`
 
 ## Required Tools
@@ -37,13 +36,14 @@ git --version
 
 **Installation**:
 
-System-wide (admin):
+macOS (admin):
 ```bash
-# Homebrew
 brew install git
+```
 
-# Or download from
-# https://git-scm.com/download/mac
+Fedora (admin):
+```bash
+sudo dnf install -y git
 ```
 
 Verify:
@@ -69,28 +69,36 @@ gh --version
 
 **Installation**:
 
-System-wide (admin):
+macOS (admin):
 ```bash
-# Homebrew
 brew install gh
-
-# Or download from
-# https://cli.github.com/
 ```
 
-User-local (no admin):
+Fedora (admin, Fedora 36+):
 ```bash
-# Download binary
+sudo dnf install -y gh
+```
+
+User-local macOS (no admin):
+```bash
 mkdir -p ~/bin
 cd ~/bin
 curl -LO https://github.com/cli/cli/releases/latest/download/gh_*_macOS_amd64.tar.gz
 tar -xzf gh_*_macOS_amd64.tar.gz
 mv gh_*/bin/gh .
-rm -rf gh_* 
+rm -rf gh_*
 
-# Add to PATH in ~/.zshrc or ~/.bash_profile
 echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
+```
+
+User-local Linux (no admin):
+```bash
+mkdir -p ~/bin
+curl -L https://github.com/cli/cli/releases/latest/download/gh_*_linux_amd64.tar.gz \
+  | tar -xz --strip-components=2 --wildcards '*/bin/gh' -C ~/bin
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 Authentication:
@@ -110,13 +118,17 @@ npm --version
 
 **Installation**:
 
-System-wide (admin):
+macOS (admin):
 ```bash
-# Homebrew
 brew install node
 ```
 
-User-local (no admin) - **Recommended**:
+Fedora (admin):
+```bash
+sudo dnf install -y nodejs npm
+```
+
+User-local (no admin) - **Recommended** on both platforms:
 ```bash
 # Install nvm (Node Version Manager)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
@@ -148,12 +160,16 @@ python3 --version
 
 **Installation**:
 
-macOS usually includes Python 3, but you may want a newer version.
+macOS usually includes Python 3, but you may want a newer version. Fedora also ships Python 3 by default.
 
-System-wide (admin):
+macOS (admin):
 ```bash
-# Homebrew
 brew install python3
+```
+
+Fedora (admin):
+```bash
+sudo dnf install -y python3
 ```
 
 User-local (no admin):
@@ -186,26 +202,36 @@ jq --version
 
 **Installation**:
 
-System-wide (admin):
+macOS (admin):
 ```bash
-# Homebrew
 brew install jq
 ```
 
-User-local (no admin):
+Fedora (admin):
 ```bash
-# Download binary
-mkdir -p ~/bin
-cd ~/bin
-curl -LO https://github.com/jqlang/jq/releases/download/jq-1.7/jq-macos-amd64
-mv jq-macos-amd64 jq
-chmod +x jq
+sudo dnf install -y jq
+```
 
-# Add to PATH in ~/.zshrc
+User-local macOS (no admin):
+```bash
+mkdir -p ~/bin
+curl -L https://github.com/jqlang/jq/releases/download/jq-1.7/jq-macos-amd64 -o ~/bin/jq
+chmod +x ~/bin/jq
 echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
+```
 
-# Verify
+User-local Linux (no admin):
+```bash
+mkdir -p ~/bin
+curl -L https://github.com/jqlang/jq/releases/download/jq-1.7/jq-linux-amd64 -o ~/bin/jq
+chmod +x ~/bin/jq
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Verify:
+```bash
 jq --version
 ```
 
@@ -249,52 +275,49 @@ podman --version
 
 **Installation**:
 
-System-wide (admin):
+macOS (admin):
 ```bash
 brew install podman
 ```
 
-User-local setup:
+Fedora (admin):
 ```bash
-# Install Homebrew in user directory (if not already)
+sudo dnf install -y podman
+```
+
+macOS user-local setup:
+```bash
 mkdir -p ~/.homebrew
 curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C ~/.homebrew
-
-# Add to PATH
 echo 'export PATH="$HOME/.homebrew/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
-
-# Install podman
 brew install podman
 ```
 
-**Initial Setup**:
+**Initial Setup — macOS** (requires a VM):
 ```bash
-# Initialize podman machine (one-time setup)
 podman machine init
-
-# Start the podman machine
 podman machine start
-
-# Verify podman works
 podman ps
+podman run --rm hello-world
+```
 
-# Test with a simple container
+**Initial Setup — Fedora** (no VM needed; runs natively):
+```bash
+# No machine init required on Linux
+podman ps
 podman run --rm hello-world
 ```
 
 **Usage**:
 ```bash
-# Start podman machine (if not running)
+# macOS: start podman machine if not running
 podman machine start
 
-# Run containers (Docker-compatible commands)
+# Run containers (Docker-compatible)
 podman run -d --name myapp myimage
 podman ps
 podman stop myapp
-
-# Stop podman machine when done (optional)
-podman machine stop
 ```
 
 **Docker Compatibility**:
@@ -316,49 +339,56 @@ code --version
 
 **Installation**:
 
-Download from: https://code.visualstudio.com/
-
-Or with Homebrew:
+macOS:
 ```bash
 brew install --cask visual-studio-code
+# Or download from https://code.visualstudio.com/
 ```
 
-Enable `code` command:
+Fedora (via Microsoft RPM repo):
+```bash
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+sudo dnf install -y code
+```
+
+Enable `code` command (macOS):
 - Open VS Code
 - CMD+Shift+P → "Shell Command: Install 'code' command in PATH"
 
-## Homebrew Installation Methods
+Enable `code` command (Fedora):
+- The `code` command is available immediately after dnf install.
 
-### System-Wide Homebrew (Requires Admin)
+## Package Managers
 
-Standard installation:
+### macOS: Homebrew
+
+System-wide (requires admin):
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-This installs to `/usr/local` (Intel) or `/opt/homebrew` (Apple Silicon) and requires admin.
+This installs to `/usr/local` (Intel) or `/opt/homebrew` (Apple Silicon).
 
-### User-Local Homebrew (No Admin)
-
-Install Homebrew in your home directory:
-
+User-local (no admin):
 ```bash
-# Create local homebrew directory
 mkdir -p ~/.homebrew
-
-# Download and extract
-cd ~/.homebrew
-curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1
-
-# Add to PATH in ~/.zshrc
+curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C ~/.homebrew
 echo 'export PATH="$HOME/.homebrew/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
-
-# Verify
 brew --version
 ```
 
 Note: User-local Homebrew may have limitations with some packages that expect system paths.
+
+### Fedora: dnf
+
+Most required tools are available in a single command (run as admin):
+```bash
+sudo dnf install -y git gh jq python3 podman
+```
+
+Node.js is best installed via `nvm` instead (no admin required — see [Node.js section](#nodejs-and-npm)).
 
 ## Verification Script
 

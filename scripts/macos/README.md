@@ -54,7 +54,7 @@ These scripts are specifically for macOS and use:
 - `id` - User/group ID utilities
 - `stat` - File status (BSD syntax: `stat -f`)
 
-They will not work on Linux or Windows without modification.
+They will not work on Linux or Windows without modification. For Linux/Fedora equivalents, see [`scripts/linux/`](../linux/).
 
 ## Development
 

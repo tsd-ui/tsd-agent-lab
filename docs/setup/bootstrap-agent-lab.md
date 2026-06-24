@@ -6,6 +6,17 @@ tags:
 
 This document describes the bootstrap process for the `agent-lab` user after initial account creation.
 
+## Platform Support
+
+The bootstrap script works on **macOS** and **Fedora**. It detects the OS automatically and routes platform-specific checks accordingly.
+
+| Platform | Setup guide |
+|---|---|
+| macOS | [macos-agent-lab-user.md](./macos-agent-lab-user.md) |
+| Fedora | [fedora-agent-lab-user.md](./fedora-agent-lab-user.md) |
+
+All other steps (directory creation, tool checks, git setup) are cross-platform and work as-is.
+
 ## Purpose
 
 The bootstrap script (`scripts/bootstrap/bootstrap-agent-lab.sh`) performs first-time setup for the agent-lab user environment:
@@ -18,7 +29,7 @@ The bootstrap script (`scripts/bootstrap/bootstrap-agent-lab.sh`) performs first
 
 Before running the bootstrap script:
 
-1. **User created**: The `agent-lab` user must exist (see [macos-agent-lab-user.md](./macos-agent-lab-user.md))
+1. **User created**: The `agent-lab` user must exist (see [macos-agent-lab-user.md](./macos-agent-lab-user.md) or [fedora-agent-lab-user.md](./fedora-agent-lab-user.md))
 2. **Logged in**: You must be logged in as the `agent-lab` user
 3. **Repository cloned**: The `tsd-agent-lab` repository should be cloned locally
 
@@ -152,9 +163,14 @@ After bootstrap and configuration, verify the setup:
 
 ### From Your Admin Account
 
+**macOS:**
 ```bash
-# Run the check script from the repo
 ./scripts/macos/check-agent-lab-user.sh
+```
+
+**Fedora:**
+```bash
+./scripts/linux/check-agent-lab-user.sh
 ```
 
 ### From the agent-lab Account

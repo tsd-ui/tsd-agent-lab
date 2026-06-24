@@ -19,6 +19,16 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
+# OS detection
+OS="$(uname -s)"
+case "$OS" in
+  Darwin) PLATFORM="macos" ;;
+  Linux)
+    if [ -f /etc/fedora-release ]; then PLATFORM="fedora"
+    else PLATFORM="linux-generic"; fi ;;
+  *) PLATFORM="unknown" ;;
+esac
+
 # Track if any issues were found
 MISSING_REQUIRED=0
 MISSING_OPTIONAL=0
@@ -44,20 +54,41 @@ echo ""
 
 # Verify we're NOT admin
 echo -e "${BLUE}Step 2: Verify Non-Admin Status${NC}"
-if dseditgroup -o checkmember -m agent-lab admin &>/dev/null; then
-    echo -e "${RED}✗ WARNING: agent-lab user has admin privileges${NC}"
-    echo "  This is a security concern. This user should be non-admin."
-    echo ""
-    echo "Ask your administrator to remove admin privileges:"
-    echo "  sudo dseditgroup -o edit -d agent-lab -t user admin"
-    echo ""
-    read -p "Continue anyway? (y/N) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        exit 1
+if [ "${PLATFORM}" = "macos" ]; then
+    if dseditgroup -o checkmember -m agent-lab admin &>/dev/null; then
+        echo -e "${RED}✗ WARNING: agent-lab user has admin privileges${NC}"
+        echo "  This is a security concern. This user should be non-admin."
+        echo ""
+        echo "Ask your administrator to remove admin privileges:"
+        echo "  sudo dseditgroup -o edit -d agent-lab -t user admin"
+        echo ""
+        read -p "Continue anyway? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            exit 1
+        fi
+    else
+        echo -e "${GREEN}✓ User is non-admin (correct)${NC}"
+    fi
+elif [ "${PLATFORM}" = "fedora" ] || [ "${PLATFORM}" = "linux-generic" ]; then
+    USER_GROUPS=$(id -Gn agent-lab 2>/dev/null || echo "")
+    if echo "${USER_GROUPS}" | grep -qwE 'wheel|sudo'; then
+        echo -e "${RED}✗ WARNING: agent-lab user is in the wheel/sudo group${NC}"
+        echo "  This is a security concern. This user should not have sudo privileges."
+        echo ""
+        echo "Ask your administrator to remove sudo privileges:"
+        echo "  sudo gpasswd -d agent-lab wheel"
+        echo ""
+        read -p "Continue anyway? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            exit 1
+        fi
+    else
+        echo -e "${GREEN}✓ User is non-admin (correct)${NC}"
     fi
 else
-    echo -e "${GREEN}✓ User is non-admin (correct)${NC}"
+    echo -e "${YELLOW}○ Admin check skipped (unknown platform: ${PLATFORM})${NC}"
 fi
 echo ""
 
@@ -130,7 +161,13 @@ echo ""
 # Check for package managers
 echo -e "${BLUE}Step 5: Check Package Managers${NC}"
 
-check_tool "brew" "optional"
+if [ "${PLATFORM}" = "macos" ]; then
+    check_tool "brew" "optional"
+elif [ "${PLATFORM}" = "fedora" ]; then
+    check_tool "dnf" "optional"
+else
+    check_tool "brew" "optional"
+fi
 
 echo ""
 

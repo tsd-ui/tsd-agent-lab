@@ -1,0 +1,4 @@
+repo_description: A Node.js web application for task management with Express backend, React frontend, and PostgreSQL database
+focus_areas:
+  - authentication flow
+  - database schema

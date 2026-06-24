@@ -48,8 +48,9 @@ check_command_allowed() {
 
 run_verification_command() {
   local cmd="$1"
-  local worktree_path="$2"
-  local log_file="$3"
+  local run_dir="$2"
+  local worktree_path="$3"
+  local log_file="$4"
 
   {
     echo "$ ${cmd}"
@@ -57,7 +58,9 @@ run_verification_command() {
   } >> "$log_file"
 
   local exit_code=0
-  (cd "$worktree_path" && eval "$cmd" >> "$log_file" 2>&1) || exit_code=$?
+  # Run from the run directory (where agent-output.md and other outputs live).
+  # WORKTREE_PATH is exported so commands can still reference the worktree.
+  (cd "$run_dir" && export WORKTREE_PATH="$worktree_path" && eval "$cmd" >> "$log_file" 2>&1) || exit_code=$?
 
   {
     echo ""
@@ -78,8 +81,9 @@ run_verification_command() {
 
 run_verification_suite() {
   local task_file="$1"
-  local worktree_path="$2"
-  local log_file="$3"
+  local run_dir="$2"
+  local worktree_path="$3"
+  local log_file="$4"
 
   local commands
   commands=$(read_yaml_array "$task_file" "verification_commands")
@@ -110,7 +114,7 @@ run_verification_suite() {
 
     log_info "  [${total}] ${cmd}"
 
-    if run_verification_command "$cmd" "$worktree_path" "$log_file"; then
+    if run_verification_command "$cmd" "$run_dir" "$worktree_path" "$log_file"; then
       log_success "  [${total}] PASS"
       passed=$((passed + 1))
     else

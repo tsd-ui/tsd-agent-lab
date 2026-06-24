@@ -83,6 +83,7 @@ agent=$(read_yaml_field "$TASK_FILE" "agent")
 agent="${agent:-claude-code}"
 mode=$(read_yaml_field_required "$TASK_FILE" "mode")
 max_runtime=$(read_yaml_field "$TASK_FILE" "max_runtime_minutes")
+max_turns=$(read_yaml_field "$TASK_FILE" "max_turns")
 
 # ---------------------------------------------------------------------------
 # Validate agent
@@ -110,6 +111,9 @@ if [[ "$DRY_RUN_FLAG" == "true" ]]; then
   log_info "Run directory: ${RUN_DIR}"
   if [[ -n "$max_runtime" ]]; then
     log_info "Max runtime:   ${max_runtime} minutes"
+  fi
+  if [[ -n "$max_turns" ]]; then
+    log_info "Max turns:     ${max_turns}"
   fi
   echo ""
   log_info "Would perform:"
@@ -152,8 +156,27 @@ echo ""
 
 log_step "Step 5: Run Claude"
 start_time=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+
+# Show elapsed time so the user knows Claude is still running
+_show_elapsed() {
+  local start=$SECONDS
+  while kill -0 "$1" 2>/dev/null; do
+    local elapsed=$(( SECONDS - start ))
+    local mins=$(( elapsed / 60 ))
+    local secs=$(( elapsed % 60 ))
+    printf "\r  ⏱  Elapsed: %dm%02ds" "$mins" "$secs"
+    sleep 5
+  done
+  printf "\r%40s\r" ""
+}
+
 exit_code=0
-run_claude "$composed" "$worktree_path" "$RUN_DIR" "$max_runtime" || exit_code=$?
+run_claude "$composed" "$worktree_path" "$RUN_DIR" "$max_runtime" "$max_turns" &
+agent_pid=$!
+_show_elapsed "$agent_pid" &
+timer_pid=$!
+wait "$agent_pid" || exit_code=$?
+kill "$timer_pid" 2>/dev/null; wait "$timer_pid" 2>/dev/null
 end_time=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
 
 if [[ "$exit_code" -eq 0 ]]; then

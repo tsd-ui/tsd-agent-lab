@@ -1,6 +1,6 @@
 ---
-aliases: 
-tags: 
+aliases: []
+tags: []
 ---
 # Repository Structure
 

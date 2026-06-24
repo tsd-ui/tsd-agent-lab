@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "csv2json"
+version = "0.3.1"
+description = "A simple CLI tool for converting CSV files to JSON format"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+dependencies = [
+    "click>=8.0",
+    "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+csv2json = "csv2json.cli:cli"
+
+[tool.ruff]
+target-version = "py39"
+line-length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -29,7 +29,9 @@ See [docs/getting-started.md](docs/getting-started.md) for setup instructions.
 tsd-agent-lab/
 ├── docs/              # Documentation and ADRs
 │   ├── phases/       # Phase prompts and completion summaries
+│   ├── pilot/        # Pilot guides, rubric, and comparison docs
 │   ├── setup/        # Setup guides
+│   ├── evaluation.md # agent-eval-harness setup and usage
 │   ├── harness.md    # Harness usage guide
 │   └── task-format.md # Task specification format
 ├── harness/          # Local harness scripts
@@ -61,6 +63,7 @@ tsd-agent-lab/
 │   ├── bootstrap/
 │   └── macos/
 ├── templates/        # Reusable templates
+│   └── reports/      # Pilot result and evaluation templates
 └── README.md         # This file
 ```
 
@@ -81,15 +84,15 @@ tsd-agent-lab/
 4. [x] **Phase 3**: Local harness v0
 5. [x] **Phase 4**: Runner mode
 6. [x] **Phase 5**: Skills and workflow experiments
-7. [ ] **Phase 6**: First real pilot task
-8. [ ] **Phase 7**: Patch-only mode
+7. [x] **Phase 6**: First real pilot task
+8. [x] **Phase 7**: Patch-only mode
 9. [ ] **Phase 8**: Draft PR mode (manual, explicit)
 10. [ ] **Phase 9**: Multi-agent comparison
 11. [ ] **Phase 10**: Protocol playground
 12. [ ] **Phase 11**: Team documentation
 13. [ ] **Phase 12**: Fullsend hosted lane and GitHub Actions
 
-Current phase: **Phase 6 - First real pilot task**
+Current phase: **Phase 8 - Draft PR mode**
 
 ## Integration Strategy
 

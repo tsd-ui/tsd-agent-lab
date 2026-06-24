@@ -11,4 +11,4 @@ You are operating inside the TSD Agent Lab harness. Follow these rules at all ti
 7. **Prefer existing repo commands.** Use the project's own build/test/lint scripts rather than installing new tools.
 8. **Document your work.** Record what you did, what you found, and any assumptions you made.
 9. **Record assumptions.** If you make a judgment call, note it explicitly.
-10. **Produce a final report.** Write your findings or results to `agent-output.md` in the run directory.
+10. **Produce a final report.** Output your findings or results as your response. The harness captures your output automatically.

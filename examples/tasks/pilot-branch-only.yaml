@@ -1,0 +1,35 @@
+task_id: pilot-branch-only
+title: "Fix null-check bug in user validation (branch-only pilot)"
+mode: branch-only
+repo_url: "https://github.com/YOUR_ORG/YOUR_REPO.git"
+base_ref: main
+agent: claude-code
+# prompt_file: optional — defaults to prompts/claude/bugfix-patch-only.md
+working_directory: src
+
+allowed_commands:
+  - "npm test"
+  - "npm run lint"
+  - "python -m pytest"
+  - "go test ./..."
+
+denied_commands:
+  - "git push"
+  - "git commit"
+  - "npm publish"
+
+verification_commands:
+  - "git diff --stat"
+  - "test -f changed-files.txt"
+
+max_runtime_minutes: 15
+
+expected_outputs:
+  - "changed-files.txt"
+  - "agent-output.md"
+
+notes: >
+  Pilot template for branch-only tasks. The agent edits files and runs tests
+  but does not commit or push. After the run completes, create a local branch
+  with: ./harness/create-local-branch.sh <run-dir>
+  Then push when ready: cd <worktree> && git push -u origin agent-lab/pilot-branch-only

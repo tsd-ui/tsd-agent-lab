@@ -1,0 +1,35 @@
+task_id: pilot-bugfix-patch-only
+title: "Fix null-check bug in user validation (patch-only pilot)"
+mode: patch-only
+repo_url: "https://github.com/YOUR_ORG/YOUR_REPO.git"
+base_ref: main
+agent: claude-code
+# prompt_file: optional — defaults to prompts/claude/bugfix-patch-only.md
+working_directory: src
+
+allowed_commands:
+  - "npm test"
+  - "npm run lint"
+  - "python -m pytest"
+  - "go test ./..."
+
+denied_commands:
+  - "git push"
+  - "git commit"
+  - "npm publish"
+
+verification_commands:
+  - "git diff --stat"
+  - "test -f changed-files.txt"
+
+max_runtime_minutes: 15
+
+expected_outputs:
+  - "changed-files.txt"
+  - "agent-output.md"
+
+notes: >
+  Pilot template for patch-only bugfix tasks. The agent edits files and runs
+  tests but does not commit or push. After the run completes, export the diff
+  with: ./harness/export-patch.sh <run-dir>
+  Then apply to a working branch: git apply <run-dir>/changes.patch

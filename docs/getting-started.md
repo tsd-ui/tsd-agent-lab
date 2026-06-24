@@ -1,3 +1,7 @@
+---
+aliases: 
+tags: 
+---
 # Getting Started
 
 Quick start guide for the TSD Agent Lab.
@@ -73,21 +77,25 @@ Before you can run experiments, complete Phase 0B:
 ## Future Phases (Quick Overview)
 
 ### Phase 1: Dedicated User Setup
+
 - Create non-admin Mac user for agent execution
 - Configure credential isolation
 - Test isolation boundaries
 
 ### Phase 2: Configuration
+
 - Set up `.claude/` configuration
 - Write `CLAUDE.md` instructions
 - Prepare for Superpowers
 
 ### Phase 3: Local Harness
+
 - Build runner scripts
 - Implement policy enforcement
 - Add logging infrastructure
 
 ### Phases 4-12
+
 See `docs/implementation-plan.md` for full details.
 
 ## Key Principles to Remember
@@ -183,10 +191,10 @@ tail -f logs/$(date +%Y-%m)/$(date +%Y-%m-%d)-session-001.log
 Current phase completion status:
 
 - [x] **Phase 0A**: Initial Lab Plan - COMPLETE
-- [ ] **Phase 0B**: Threat Model Hardening - NEXT
-- [ ] **Phase 1**: Dedicated User Setup
-- [ ] **Phase 2**: Configuration
-- [ ] **Phase 3**: Local Harness
+- [x] **Phase 0B**: Threat Model Hardening - NEXT
+- [x] **Phase 1**: Dedicated User Setup
+- [x] **Phase 2**: Configuration
+- [x] **Phase 3**: Local Harness
 - [ ] **Phases 4-12**: See implementation plan
 
 ## Stay Updated

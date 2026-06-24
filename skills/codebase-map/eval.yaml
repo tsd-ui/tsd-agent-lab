@@ -1,0 +1,160 @@
+name: codebase-map-eval
+description: Evaluate the codebase-map skill's ability to produce structured, accurate, actionable repository maps
+skill: codebase-map
+
+execution:
+  mode: case
+  arguments: ""
+  timeout: 600
+
+runner:
+  type: claude-code
+
+models:
+  skill: claude-opus-4-6
+  judge: claude-opus-4-6
+
+permissions:
+  allow:
+    - Read
+    - Write
+    - Bash
+    - Edit
+  deny: []
+
+mlflow:
+  experiment: codebase-map-eval
+
+dataset:
+  path: cases
+  workspace:
+    files:
+      - README.md
+      - pyproject.toml
+      - package.json
+      - Cargo.toml
+      - go.mod
+      - Makefile
+      - Dockerfile
+      - docker-compose.yml
+      - requirements.txt
+      - main.py
+      - .env.example
+      - src
+      - tests
+      - packages
+      - api
+      - cmd
+      - internal
+      - crates
+  schema: |
+    Each case directory represents a target repository to map. Contains:
+    - input.yaml: YAML file with 'repo_description' (brief description of the
+      repo for context) and 'focus_areas' (optional list of areas to emphasize).
+      The test case directory itself should contain representative project files
+      (README.md, package.json/pyproject.toml, src/ structure, etc.) that the
+      skill will explore as its working directory.
+    - annotations.yaml: Expected evaluation metadata with 'expected_sections'
+      (list of section headings that must appear in output), 'repo_language'
+      (primary language), and 'repo_complexity' (simple|medium|complex).
+
+outputs:
+  - path: output
+    schema: |
+      Single file 'agent-output.md' — a markdown document with these sections:
+      - Directory structure with descriptions
+      - Architecture overview (modules, entry points, data flow, patterns)
+      - Build and test commands
+      - Key dependencies and what they provide
+      - Risk areas (fragile, under-tested, complex code)
+      - Recommended first tasks (3-5 actionable items)
+      Each section should be specific to the analyzed repository, not generic.
+
+traces:
+  stdout: true
+  stderr: true
+  events: true
+  metrics: true
+
+judges:
+  - name: budget_check
+    builtin: cost_budget
+    arguments:
+      max_cost_usd: 3.0
+
+  - name: output_file_exists
+    description: Verify that agent-output.md was produced and is non-trivial
+    check: |
+      files = outputs.get("files", {})
+      matches = [k for k in files if k.endswith("agent-output.md")]
+      if not matches:
+          text = outputs.get("conversation", "")
+          if len(text.strip()) > 200:
+              return (True, f"No agent-output.md but conversation has {len(text)} chars")
+          return (False, "No agent-output.md and no substantial conversation output")
+      content = files[matches[0]]
+      if len(content.strip()) < 200:
+          return (False, f"agent-output.md too short ({len(content.strip())} chars)")
+      return (True, f"agent-output.md: {len(content)} chars")
+
+  - name: sections_present
+    description: Check that all six required sections appear in the output
+    check: |
+      files = outputs.get("files", {})
+      matches = [k for k in files if k.endswith("agent-output.md")]
+      text = files[matches[0]] if matches else outputs.get("conversation", "")
+      if not text.strip():
+          return (False, "No output to check")
+      lower = text.lower()
+      required = ["directory", "architecture", "build", "dependenc", "risk", "recommend"]
+      found = [r for r in required if r in lower]
+      missing = [r for r in required if r not in lower]
+      if missing:
+          return (False, f"Missing sections matching: {missing}")
+      return (True, f"All {len(found)} section keywords found")
+
+  - name: read_only_compliance
+    description: Verify the skill did not modify any repo files (agent-output.md is expected output)
+    check: |
+      modified = outputs.get("modified_files", {})
+      unexpected = {k: v for k, v in modified.items() if k != "agent-output.md"}
+      if unexpected:
+          return (False, f"Repo files modified: {list(unexpected.keys())}")
+      return (True, "No repo files modified — read-only compliance confirmed")
+
+  - name: output_quality
+    description: Assess whether the codebase map is comprehensive, accurate, and actionable
+    prompt: |
+      You are evaluating a codebase map produced by an AI agent. The agent explored
+      a repository and produced a structured analysis.
+
+      Here is the agent's output:
+
+      {{ outputs }}
+
+      {{ conversation }}
+
+      Score the output on a 1-5 scale based on these criteria:
+
+      Score 1: Most sections missing or empty. Generic boilerplate not specific to the repo.
+      Score 2: Some sections present but shallow. Mentions files/dirs without explaining purpose.
+      Score 3: All major sections present with reasonable depth. Repo-specific details included.
+               Minor gaps in architecture or risk analysis.
+      Score 4: Comprehensive coverage. Architecture clearly explained with data flow.
+               Build commands verified against actual config files. Risk areas are specific
+               and justified. Recommendations are actionable.
+      Score 5: Exceptional depth. Non-obvious architectural insights. Dependencies explained
+               in context of the architecture. Risk areas include reasoning about why they
+               are risky. Recommendations are prioritized and immediately actionable.
+
+thresholds:
+  budget_check:
+    min_pass_rate: 1.0
+  output_file_exists:
+    min_pass_rate: 1.0
+  sections_present:
+    min_pass_rate: 1.0
+  read_only_compliance:
+    min_pass_rate: 1.0
+  output_quality:
+    min_mean: 3.0

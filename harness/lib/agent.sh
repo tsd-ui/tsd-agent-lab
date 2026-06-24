@@ -25,6 +25,7 @@ _default_prompt_file() {
       case "${mode}" in
         read-only)       echo "prompts/claude/read-only-codebase-map.md" ;;
         patch-only)      echo "prompts/claude/bugfix-patch-only.md" ;;
+        branch-only)     echo "prompts/claude/bugfix-patch-only.md" ;;
         review-only)     echo "prompts/claude/review-only.md" ;;
         commit-allowed)  echo "prompts/claude/bugfix-patch-only.md" ;;
         *)               echo "" ;;
@@ -92,7 +93,7 @@ compose_prompt() {
     cat "$prompt_file"
   } > "$composed"
 
-  log_success "Composed prompt: ${composed}"
+  log_success "Composed prompt: ${composed}" >&2
   echo "$composed"
 }
 
@@ -136,7 +137,12 @@ run_claude() {
   local max_runtime="${4:-}"
   local output="${run_dir}/agent-output.md"
 
+  local max_turns="${5:-}"
   local cmd="claude -p --output-format text"
+
+  if [[ -n "$max_turns" && "$max_turns" -gt 0 ]] 2>/dev/null; then
+    cmd="${cmd} --max-turns ${max_turns}"
+  fi
 
   if [[ -n "$max_runtime" && "$max_runtime" -gt 0 ]] 2>/dev/null; then
     local timeout_seconds=$((max_runtime * 60))
@@ -153,7 +159,8 @@ run_claude() {
   log_info "Output: ${output}"
 
   local exit_code=0
-  (cd "$worktree_path" && $cmd < "$composed_prompt" > "$output" 2>&1) || exit_code=$?
+  local stderr_log="${run_dir}/agent-stderr.log"
+  (cd "$worktree_path" && $cmd < "$composed_prompt" > "$output" 2>"$stderr_log") || exit_code=$?
 
   return "$exit_code"
 }

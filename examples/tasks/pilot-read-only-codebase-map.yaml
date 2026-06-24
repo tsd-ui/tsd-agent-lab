@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=
+task_id: pilot-read-only-codebase-map
+title: "Pilot: Generate a codebase map for a real repository"
+mode: read-only
+repo_url: "<REPO_URL>"
+base_ref: "<BASE_REF>"
+working_directory: "<WORKING_DIRECTORY>"
+agent: claude-code
+prompt_file: prompts/claude/read-only-codebase-map.md
+max_turns: 25
+
+verification_commands:
+  - "test -f agent-output.md"
+  - "grep -q '## Architecture' agent-output.md && grep -q '## Risk' agent-output.md && grep -q '## Build' agent-output.md"
+
+expected_outputs:
+  - "agent-output.md"
+
+notes: >
+  Pilot task for Phase 6. Replace <REPO_URL>, <BASE_REF>, and
+  <WORKING_DIRECTORY> with real values before running.
+  See docs/pilot/phase-1-read-only-pilot.md for the full pilot guide.
+  Read-only mode — no file modifications are permitted.

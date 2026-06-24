@@ -1,6 +1,6 @@
 # Task: Codebase Map (Read-Only)
 
-Explore this repository and produce a structured codebase map in `agent-output.md`.
+Explore this repository and produce a structured codebase map.
 
 ## What to include
 
@@ -13,6 +13,6 @@ Explore this repository and produce a structured codebase map in `agent-output.m
 
 ## Constraints
 
-- **Read-only.** Do not modify any files.
-- Write all output to `agent-output.md`.
+- **Read-only.** Do not modify, create, or write any files. Do not use the Write or Edit tools.
+- Output your findings as your response. The harness captures your output automatically.
 - If you cannot determine something, say so rather than guessing.

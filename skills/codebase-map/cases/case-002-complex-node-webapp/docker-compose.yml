@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./packages/api
+    ports:
+      - '3001:3001'
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./packages/api/src:/app/src
+
+  web:
+    build: ./packages/web
+    ports:
+      - '5173:5173'
+    depends_on:
+      - api
+    volumes:
+      - ./packages/web/src:/app/src
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: taskflow
+      POSTGRES_DB: taskflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+
+volumes:
+  pgdata:

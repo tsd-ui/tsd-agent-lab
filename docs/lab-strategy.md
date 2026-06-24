@@ -1,6 +1,6 @@
 ---
-aliases: 
-tags: 
+aliases: []
+tags: []
 ---
 # TSD Agent Lab Strategy
 
@@ -8,15 +8,46 @@ Summarized from the full planning document. See the original for detailed ration
 
 ## Core Principle
 
-**Fullsend-first, but not Fullsend-everywhere yet.** As of 2026-06-11, anyone who can comment on a public repository can trigger an agent. Public repos stay local-only until authorization guardrails ship and are verified.
+**Fullsend-first, but not Fullsend-everywhere yet.** As of 2026-06-11, anyone who can comment on a public repository can trigger an agent (expected to be resolved by early Q3). Public repos stay local-only until authorization guardrails ship and are verified.
 
 ## Three Lanes
+
+```mermaid
+flowchart TD
+    LAB["tsd-agent-lab<br/>Governance, templates, experiments,<br/>repo catalogue, evaluations, runbooks"]
+
+    LOCAL["Local Mac lab<br/>Interactive and experimental execution"]
+    GCP["GCP Fullsend infrastructure<br/>Mint + WIF + inference access"]
+
+    R1["Target repository A<br/>.fullsend/customized + AGENTS.md"]
+    R2["Target repository B<br/>.fullsend/customized + AGENTS.md"]
+    R3["Target repository C<br/>.fullsend/customized + AGENTS.md"]
+
+    LAB --> LOCAL
+    LAB --> GCP
+    LOCAL --> R1
+    LOCAL --> R2
+    GCP --> R2
+    GCP --> R3
+```
 
 | Lane | Repositories | Runtime | Purpose |
 |------|-------------|---------|---------|
 | Hosted Fullsend pilot | One dedicated private test repo | GCP mint + GitHub Actions | Exercise complete issue-to-agent-to-PR lifecycle |
 | Local Fullsend evaluation | Selected public team repos | Mac lab, manually triggered | Test Fullsend against real code without public triggers |
 | Interactive experimentation | Selected repos | Claude Code / Codex / Gemini | Learn effective human-agent workflows, compare results |
+
+## Workflow
+
+```mermaid
+flowchart LR
+  T[task.yaml] --> CR[create-run.sh]
+  CR --> PR[prepare-repo.sh]
+  PR --> RC[run-claude.sh]
+  RC --> VR[verify-run.sh]
+  VR --> WR[write-report.sh]
+  WR --> R[summary.md / report.html]
+```
 
 ## Key Decisions
 

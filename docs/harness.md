@@ -1,8 +1,24 @@
+---
+aliases: []
+tags: []
+---
 # Harness
 
 The TSD Agent Lab harness provides scaffolding for running agent tasks safely. It manages task specifications, run directories, repository isolation via git worktrees, and run reporting.
 
 As of Phase 4, the harness can also compose prompts and invoke Claude Code against a prepared worktree, and run verification commands defined in task specifications.
+
+## Workflow
+
+```mermaid
+flowchart LR
+  T[task.yaml] --> CR[create-run.sh]
+  CR --> PR[prepare-repo.sh]
+  PR --> RC[run-claude.sh]
+  RC --> VR[verify-run.sh]
+  VR --> WR[write-report.sh]
+  WR --> R[summary.md / report.html]
+```
 
 ## Scripts
 
@@ -24,12 +40,12 @@ RUN_DIR=$(./harness/create-run.sh examples/tasks/read-only-codebase-map.yaml)
 2. Validates `mode` is one of: `read-only`, `patch-only`, `commit-allowed`, `review-only`
 3. Generates a run ID: `${task_id}-YYYY-MM-DD-HHMMSS`
 4. Creates `~/workspaces/runs/${run_id}/` with placeholder files:
-   - `task.yaml` — copy of the task specification
-   - `agent-output.md` — agent output goes here
-   - `verification.log` — verification command results
-   - `summary.md` — generated report
-   - `changed-files.txt` — list of modified files
-   - `run-metadata.json` — machine-readable run state
+   - `task.yaml`—copy of the task specification
+   - `agent-output.md`—agent output goes here
+   - `verification.log`—verification command results
+   - `summary.md`—generated report
+   - `changed-files.txt`—list of modified files
+   - `run-metadata.json`—machine-readable run state
 
 **Exit codes:** 0 on success, 1 on validation error, 2 if task file not found.
 
@@ -47,7 +63,7 @@ Clones the task's repository and creates an isolated git worktree in the run dir
 
 **What it does:**
 
-1. Checks the repository against `policies/repo-allowlist.yaml` (soft check — warns but does not block)
+1. Checks the repository against `policies/repo-allowlist.yaml` (soft check—warns but does not block)
 2. Clones to `~/workspaces/repos/${repo_name}/` (reuses existing clone if remote URL matches)
 3. Fetches `origin/${base_ref}` (defaults to `main`)
 4. Creates a detached worktree at `${run_dir}/worktree/`
@@ -55,7 +71,7 @@ Clones the task's repository and creates an isolated git worktree in the run dir
 
 **Safety model:**
 
-- Detached HEAD — no branch exists to push
+- Detached HEAD—no branch exists to push
 - The reference clone is never modified (only fetched)
 - The script never pushes or creates remote branches
 - The worktree is fully isolated from the reference clone
@@ -124,36 +140,36 @@ Shared utilities sourced by all harness scripts. Provides:
 - **YAML reading:** `read_yaml_field` (yq with grep/sed fallback), `read_yaml_field_required`
 - **Run management:** `generate_run_id`, `is_dry_run`, `ensure_directory`
 - **Tool checks:** `require_command`, `check_command`
-- **YAML arrays:** `read_yaml_array` — reads list fields as newline-separated values
+- **YAML arrays:** `read_yaml_array`—reads list fields as newline-separated values
 - **Workspace paths:** `TSD_RUNS_DIR`, `TSD_REPOS_DIR`, `TSD_REPORTS_DIR` (env-overridable)
 
 ### `harness/lib/agent.sh`
 
 Agent invocation utilities sourced by `run-claude.sh`. Provides:
 
-- `resolve_prompt_file` — reads `prompt_file` from task YAML; derives default from `agent` + `mode` if unset
-- `compose_prompt` — concatenates safety preamble + task prompt into `composed-prompt.md`
-- `resolve_worktree` — reads `worktree_path` from `run-metadata.json`, with fallback
-- `run_claude` — invokes `claude -p` with optional timeout
+- `resolve_prompt_file`—reads `prompt_file` from task YAML; derives default from `agent` + `mode` if unset
+- `compose_prompt`—concatenates safety preamble + task prompt into `composed-prompt.md`
+- `resolve_worktree`—reads `worktree_path` from `run-metadata.json`, with fallback
+- `run_claude`—invokes `claude -p` with optional timeout
 
 ### `harness/lib/verify.sh`
 
 Verification utilities sourced by `verify-run.sh`. Provides:
 
-- `check_command_allowed` — soft policy check against command allowlist (warn only)
-- `run_verification_command` — runs a single command in the worktree, appends to log
-- `run_verification_suite` — reads commands from task, runs each with fail-fast
+- `check_command_allowed`—soft policy check against command allowlist (warn only)
+- `run_verification_command`—runs a single command in the worktree, appends to log
+- `run_verification_suite`—reads commands from task, runs each with fail-fast
 
 ### `harness/lib/git.sh`
 
 Git utility functions sourced by `prepare-repo.sh`. Provides:
 
-- `git_clone_if_needed` — clone if target doesn't exist; verify remote URL if it does
-- `git_fetch_ref` — fetch a specific ref from origin
-- `git_create_worktree` — create a detached worktree
-- `git_remove_worktree` — cleanup utility
-- `git_is_repo` / `git_verify_remote` — validation helpers
-- `check_repo_allowlist` — soft check against `policies/repo-allowlist.yaml`
+- `git_clone_if_needed`—clone if target doesn't exist; verify remote URL if it does
+- `git_fetch_ref`—fetch a specific ref from origin
+- `git_create_worktree`—create a detached worktree
+- `git_remove_worktree`—cleanup utility
+- `git_is_repo` / `git_verify_remote`—validation helpers
+- `check_repo_allowlist`—soft check against `policies/repo-allowlist.yaml`
 
 ## Directory Layout
 

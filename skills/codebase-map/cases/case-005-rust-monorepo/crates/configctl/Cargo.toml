@@ -1,0 +1,10 @@
+[package]
+name = "configctl"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "CLI tool for validating and converting configuration files"
+
+[dependencies]
+config-core = { path = "../config-core" }
+clap.workspace = true

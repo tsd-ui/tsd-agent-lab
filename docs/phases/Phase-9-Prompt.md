@@ -1,3 +1,7 @@
+---
+aliases: 
+tags: 
+---
 # Phase 9—Multi-agent comparison
 
 Now you can compare Claude Code vs Gemini vs other agents without changing the harness design. Claude is the primary agent, but the harness should support experimentation with alternatives.

@@ -1,0 +1,9 @@
+expected_sections:
+  - Directory structure
+  - Architecture
+  - Build and test commands
+  - Key dependencies
+  - Risk areas
+  - Recommended first tasks
+repo_language: rust
+repo_complexity: medium

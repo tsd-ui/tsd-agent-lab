@@ -138,8 +138,14 @@ REPORT="${RUN_DIR}/summary.md"
         ;;
       patch-only)
         echo "- Review the diff in the worktree: \`cd ${worktree_path} && git diff\`"
-        echo "- If acceptable, apply the patch to a working branch"
-        echo "- Create a PR for human review"
+        echo "- Export a patch: \`./harness/export-patch.sh ${RUN_DIR}\`"
+        echo "- Apply the patch: \`cd <target-repo> && git apply ${RUN_DIR}/changes.patch\`"
+        echo "- Create a PR for human review after applying"
+        ;;
+      branch-only)
+        echo "- Create a local branch: \`./harness/create-local-branch.sh ${RUN_DIR}\`"
+        echo "- Review commits: \`cd ${worktree_path} && git log --oneline\`"
+        echo "- Push when ready: \`cd ${worktree_path} && git push -u origin agent-lab/<task_id>\`"
         ;;
       commit-allowed)
         echo "- Review commits in the worktree: \`cd ${worktree_path} && git log --oneline\`"

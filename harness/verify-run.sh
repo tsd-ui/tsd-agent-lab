@@ -124,7 +124,7 @@ else
 
   log_step "Step 3: Run verification commands"
   exit_code=0
-  run_verification_suite "$TASK_FILE" "$worktree_path" "$log_file" || exit_code=$?
+  run_verification_suite "$TASK_FILE" "$RUN_DIR" "$worktree_path" "$log_file" || exit_code=$?
 
   if [[ "$exit_code" -eq 0 ]]; then
     verification_result="passed"

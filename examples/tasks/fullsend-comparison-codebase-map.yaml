@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=
+task_id: fullsend-comparison-codebase-map
+title: "Phase 6C: Codebase map for Fullsend comparison"
+mode: read-only
+repo_url: "/Users/ryordan/Obsidian/tsd-agent-lab"
+base_ref: main
+agent: claude-code
+prompt_file: prompts/claude/read-only-codebase-map.md
+max_turns: 25
+
+verification_commands:
+  - "test -f agent-output.md"
+  - "grep -q '## Architecture' agent-output.md && grep -q '## Risk' agent-output.md && grep -q '## Build' agent-output.md"
+
+expected_outputs:
+  - "agent-output.md"
+
+notes: >
+  Phase 6C comparison task. Runs the codebase-map skill against
+  tsd-agent-lab itself via the lab harness. Output is compared
+  with a parallel Fullsend CLI run on the same repo.
+  Read-only mode — no file modifications are permitted.

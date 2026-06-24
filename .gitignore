@@ -108,3 +108,9 @@ bin/*.bin
 # Keep directory structure
 !logs/.gitkeep
 !experiments/.gitkeep
+
+# Obsidian workspace (local-only)
+.obsidian/
+
+# Smart Environment embeddings (local-only)
+.smart-env/

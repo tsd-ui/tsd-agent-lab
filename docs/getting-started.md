@@ -79,7 +79,6 @@ tsd-agent-lab/
 ├── examples/tasks/     # Sample task YAML files
 ├── policies/           # Repo and command allowlists
 ├── prompts/            # Safety preamble and prompt files
-├── scripts/            # Setup and utility scripts
 └── eval/               # Evaluation runs and baselines
 ```
 

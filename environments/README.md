@@ -18,10 +18,6 @@ tsd-agent-lab/
 │   └── repo-onboarding.md
 ├── catalog/
 │   └── repositories.yaml
-├── templates/
-│   ├── AGENTS.md
-│   ├── fullsend/
-│   └── repo-manifest.yaml
 ├── evaluations/
 ├── experiments/
 ├── environments/

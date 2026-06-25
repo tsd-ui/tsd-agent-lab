@@ -127,7 +127,7 @@ Use this checklist to evaluate whether the output is genuinely useful:
 - [ ] **Useful for onboarding**—would a new team member find this document helpful for getting oriented?
 - [ ] **Factually accurate**—spot-check 3-5 specific claims (file paths, dependency names, entry points) against the actual repo
 
-For structured scoring, use the [evaluation rubric](evaluation-rubric.md) and [pilot result template](../../templates/reports/pilot-result-template.md).
+For structured scoring, use the [evaluation rubric](evaluation-rubric.md) and [pilot result template](pilot-result-template.md).
 
 ## What Not to Do Yet
 
@@ -147,7 +147,7 @@ Before sharing pilot results with the team:
 - [ ] Verification passed—`verification.log` shows all checks passing
 - [ ] Team review done—at least one other team member has reviewed the output for accuracy
 - [ ] Lessons captured—any surprises, prompt adjustments, or process improvements are documented
-- [ ] Result template filled—[pilot-result-template.md](../../templates/reports/pilot-result-template.md) completed with ratings and observations
+- [ ] Result template filled—[pilot-result-template.md](pilot-result-template.md) completed with ratings and observations
 
 ---
 

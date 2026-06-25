@@ -70,8 +70,6 @@ tsd-agent-lab/
 ├── scripts/          # Setup and utility scripts
 │   ├── bootstrap/
 │   └── macos/
-├── templates/        # Reusable templates
-│   └── reports/      # Pilot result and evaluation templates
 └── README.md         # This file
 ```
 

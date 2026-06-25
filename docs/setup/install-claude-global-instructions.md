@@ -27,7 +27,7 @@ if [ -f ~/.claude/CLAUDE.md ]; then
 fi
 
 # Copy the template
-cp templates/claude/global-CLAUDE.md ~/.claude/CLAUDE.md
+cp docs/setup/global-CLAUDE.md ~/.claude/CLAUDE.md
 echo "Installed global CLAUDE.md"
 ```
 

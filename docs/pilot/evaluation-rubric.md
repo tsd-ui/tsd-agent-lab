@@ -1,6 +1,6 @@
 # Evaluation Rubric
 
-Rating dimensions and scoring protocol for pilot task evaluation. Used alongside the [pilot result template](../../templates/reports/pilot-result-template.md).
+Rating dimensions and scoring protocol for pilot task evaluation. Used alongside the [pilot result template](pilot-result-template.md).
 
 ## Rating Dimensions
 
@@ -118,5 +118,5 @@ OpenCode integration is pending. Document any prompt format differences.
 - **Minimum reviewers:** 1 (ideally 2 for comparison runs)
 - **Who scores:** Any team member familiar with the target repository
 - **When:** Within 2 business days of the pilot run
-- **How:** Fill in the ratings table in the [pilot result template](../../templates/reports/pilot-result-template.md) with scores and brief notes justifying each rating
+- **How:** Fill in the ratings table in the [pilot result template](pilot-result-template.md) with scores and brief notes justifying each rating
 - **Disagreements:** If reviewers diverge by more than 1 point on any dimension, discuss and document the reasoning

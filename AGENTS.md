@@ -42,7 +42,6 @@ This repository is a local agentic SDLC lab for a small software engineering tea
 - Skills go under `skills/`.
 - Docs go under `docs/`.
 - Example tasks go under `examples/tasks/`.
-- Templates go under `templates/`.
 - Phase prompts go under `docs/phases/` as `Phase-N-Prompt.md`.
 - Phase summaries go under `docs/phases/` as `Phase-N-Summary.md`.
 

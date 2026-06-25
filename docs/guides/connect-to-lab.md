@@ -10,7 +10,7 @@ How to switch to the agent-lab user, verify your environment, and access repos.
 
 ## One-Time Alias Setup
 
-> **Remote colleagues (SSH via Tailscale):** skip this section. SSH authenticates you directly as `agent-lab` — no alias needed. Jump to [Remote Access via Tailscale](#remote-access-via-tailscale-colleagues-on-fedora).
+> **Remote colleagues (VS Code tunnel):** skip this section. You connect directly as `agent-lab` via the tunnel — no alias needed. Jump to [Remote Access via VS Code Tunnel](#remote-access-via-vs-code-tunnel).
 
 From your main account, run:
 
@@ -23,7 +23,7 @@ This adds an `agent` alias so you can switch users with a single command.
 
 ## Daily Connection
 
-> **Remote colleagues (SSH via Tailscale):** your daily connection is `ssh agent-lab@ryordan-mac.tail9cbf83.ts.net` — skip the `agent` steps below. See [step 5 in the Remote Access section](#remote-access-via-tailscale-colleagues-on-fedora) for the pre-flight Tailscale checks.
+> **Remote colleagues (VS Code tunnel):** connect via the Remote Explorer sidebar in VS Code (see [Remote Access via VS Code Tunnel](#remote-access-via-vs-code-tunnel)). You'll be connected directly as `agent-lab` — skip the `agent` steps below and go straight to Verify the Environment.
 
 ```bash
 # From your main account terminal
@@ -109,96 +109,61 @@ exit   # returns you to your main account shell
 
 ---
 
-## Remote Access via Tailscale (Colleagues on Fedora)
+## Remote Access via VS Code Tunnel
 
-Colleagues on other machines can SSH into the lab over Tailscale. The Mac's Tailscale address is:
+Colleagues connect to the lab through a VS Code Remote Tunnel running on the Mac. No VPN client or SSH keys required — authentication uses your existing GitHub or Microsoft account.
 
-```
-ryordan-mac.tail9cbf83.ts.net   (100.121.85.22)
-```
+### One-Time Setup (ryordan's Mac)
 
-### Colleague Setup (Fedora)
-
-**1. Generate an SSH key (if you don't have one)**
+Run the tunnel as `agent-lab` so colleagues connect directly as that user:
 
 ```bash
-ls ~/.ssh/id_ed25519.pub 2>/dev/null || \
-  ssh-keygen -t ed25519 -C "$(whoami)@$(hostname)" -f ~/.ssh/id_ed25519 -N ""
+sudo su - agent-lab
+code tunnel --accept-server-license-terms --name tsd-agent-lab
+# Copy the GitHub auth URL printed in the terminal, open it in your browser, and authorize
+code tunnel service install
+exit
 ```
 
-Remove `-N ""` if you'd prefer a passphrase (recommended for personal keys).
-
-**2. Share your public key with ryordan**
+Confirm the service started:
 
 ```bash
-cat ~/.ssh/id_ed25519.pub
+sudo su - agent-lab -c 'code tunnel service log'
 ```
 
-Copy the output and send it via Slack or email. ryordan will add it to `agent-lab`'s `authorized_keys`.
+### Colleague Setup (one-time)
 
-**3. Install Tailscale on Fedora**
+1. Open VS Code
+2. Open the **Remote Explorer** sidebar (Activity Bar icon, or **View → Remote Explorer**)
+3. Sign in with your GitHub or Microsoft account when prompted
+4. The tunnel `tsd-agent-lab` will appear — click **Connect in New Window**
 
-```bash
-curl -fsSL https://tailscale.com/install.sh | sh
-sudo systemctl enable --now tailscaled
-sudo tailscale up
-```
+Each person authenticates with their own GitHub/Microsoft account. No keys or credentials need to be shared.
 
-Follow the browser link to authenticate. Mention your machine name to ryordan — they need to approve it in the Tailscale admin console before you can reach the Mac.
+### Daily Connection (colleagues)
 
-**4. Verify Tailscale is working**
+Open VS Code → Remote Explorer → click `tsd-agent-lab`. VS Code opens a window connected to the Mac directly as `agent-lab`.
 
-```bash
-tailscale status       # should show the Mac: ryordan-mac
-tailscale ip -4        # your own Tailscale IP
-```
-
-**5. SSH in (once your key and device are approved)**
-
-Tailscale must be running each time you connect. `tailscaled` is enabled to autostart on boot, but verify if anything seems off:
-
-```bash
-systemctl status tailscaled   # should be active (running)
-tailscale status               # should show ryordan-mac in the list
-```
-
-Then connect:
-
-```bash
-ssh agent-lab@ryordan-mac.tail9cbf83.ts.net
-```
-
-Verify you're in the right environment:
+Open a terminal (`Ctrl+`` ` or **Terminal → New Terminal**) and verify:
 
 ```bash
 whoami   # → agent-lab
 cd ~/workspaces/repos/tsd-agent-lab
-git log --oneline -3
 ```
 
-### Adding a Colleague's Key (ryordan's steps)
+### Web UI / Local Server Access
 
-For each colleague who sends you their public key:
+VS Code auto-detects ports opened in the remote terminal and offers to forward them. To forward manually:
 
-```bash
-sudo su - agent-lab
-mkdir -p ~/.ssh && chmod 700 ~/.ssh
-echo "ssh-ed25519 AAAA... colleague-name@hostname" >> ~/.ssh/authorized_keys
-chmod 600 ~/.ssh/authorized_keys
-exit
-```
-
-Confirm it landed correctly:
-
-```bash
-sudo su - agent-lab -c 'cat ~/.ssh/authorized_keys'
-```
+1. Open the **Ports** panel (**Terminal → Ports** or the port count badge in the status bar)
+2. Click **Forward a Port** → enter the port number (e.g. `8080`, `3000`)
+3. Open `localhost:<port>` in your local browser
 
 ### Troubleshooting Remote Access
 
 | Symptom | Check |
 |---------|-------|
-| `Connection refused` | Is Tailscale running on both sides? `tailscale status` |
-| `Permission denied (publickey)` | Did ryordan add your key? Run the `cat authorized_keys` check above |
-| `Host not found` | Try IP directly: `ssh agent-lab@100.121.85.22` |
-| Device not visible on tailnet | ryordan needs to approve it at [tailscale.com/admin](https://login.tailscale.com/admin/machines) |
+| Tunnel not visible in Remote Explorer | Run `sudo su - agent-lab -c 'code tunnel status'` on the Mac |
+| "Sign in required" loop | Sign out and back in to GitHub in VS Code settings |
+| Terminal opens as wrong user | Tunnel service may not be running as `agent-lab` — re-run setup steps |
+| Port not reachable in browser | Check the Ports panel; confirm the process is listening (`lsof -i :<port>`) |

@@ -114,3 +114,6 @@ bin/*.bin
 
 # Smart Environment embeddings (local-only)
 .smart-env/
+
+# Claude Code session files (local-only)
+.claude/

@@ -102,3 +102,90 @@ When done, simply:
 ```bash
 exit   # returns you to your main account shell
 ```
+
+---
+
+## Remote Access via Tailscale (Colleagues on Fedora)
+
+Colleagues on other machines can SSH into the lab over Tailscale. The Mac's Tailscale address is:
+
+```
+ryordan-mac.tail9cbf83.ts.net   (100.121.85.22)
+```
+
+### Colleague Setup (Fedora)
+
+**1. Generate an SSH key (if you don't have one)**
+
+```bash
+ls ~/.ssh/id_ed25519.pub 2>/dev/null || \
+  ssh-keygen -t ed25519 -C "$(whoami)@$(hostname)" -f ~/.ssh/id_ed25519 -N ""
+```
+
+Remove `-N ""` if you'd prefer a passphrase (recommended for personal keys).
+
+**2. Share your public key with ryordan**
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Copy the output and send it via Slack or email. ryordan will add it to `agent-lab`'s `authorized_keys`.
+
+**3. Install Tailscale on Fedora**
+
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo systemctl enable --now tailscaled
+sudo tailscale up
+```
+
+Follow the browser link to authenticate. Mention your machine name to ryordan — they need to approve it in the Tailscale admin console before you can reach the Mac.
+
+**4. Verify Tailscale is working**
+
+```bash
+tailscale status       # should show the Mac: ryordan-mac
+tailscale ip -4        # your own Tailscale IP
+```
+
+**5. SSH in (once your key and device are approved)**
+
+```bash
+ssh agent-lab@ryordan-mac.tail9cbf83.ts.net
+```
+
+Verify you're in the right environment:
+
+```bash
+whoami   # → agent-lab
+cd ~/workspaces/repos/tsd-agent-lab
+git log --oneline -3
+```
+
+### Adding a Colleague's Key (ryordan's steps)
+
+For each colleague who sends you their public key:
+
+```bash
+sudo su - agent-lab
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+echo "ssh-ed25519 AAAA... colleague-name@hostname" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+exit
+```
+
+Confirm it landed correctly:
+
+```bash
+sudo su - agent-lab -c 'cat ~/.ssh/authorized_keys'
+```
+
+### Troubleshooting Remote Access
+
+| Symptom | Check |
+|---------|-------|
+| `Connection refused` | Is Tailscale running on both sides? `tailscale status` |
+| `Permission denied (publickey)` | Did ryordan add your key? Run the `cat authorized_keys` check above |
+| `Host not found` | Try IP directly: `ssh agent-lab@100.121.85.22` |
+| Device not visible on tailnet | ryordan needs to approve it at [tailscale.com/admin](https://login.tailscale.com/admin/machines) |

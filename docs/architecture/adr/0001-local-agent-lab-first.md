@@ -119,6 +119,6 @@ The lab is explicitly **not** a production service. Success criteria focus on le
 
 ## References
 
-- Phase 0 documentation: `Phase 0—Discovery and safety boundaries.md`
-- Threat model: `docs/threat-model.md` (to be created in Phase 0B)
-- Operator rules: `docs/operator-rules.md` (to be created in Phase 0B)
+- Phase 0 documentation: `docs/archive/phases/Phase-0-Prompt.md`
+- Threat model: `docs/architecture/threat-model.md`
+- Operator checklists: `docs/admin/operator-checklist.md`

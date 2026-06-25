@@ -21,19 +21,27 @@ This repository serves as a safe, isolated prototype lab for the software engine
 
 ## Quick Start
 
-See [docs/getting-started.md](docs/getting-started.md) for setup instructions.
+See [docs/getting-started.md](docs/getting-started.md) for setup instructions and current status.
+
+## Documentation
+
+- **[docs/getting-started.md](docs/getting-started.md)** — What the lab is, current status, quick start commands
+- **[docs/README.md](docs/README.md)** — Full documentation map by audience (teammates, admins, architecture, setup)
 
 ## Repository Structure
 
 ```
 tsd-agent-lab/
-├── docs/              # Documentation and ADRs
-│   ├── phases/       # Phase prompts and completion summaries
-│   ├── pilot/        # Pilot guides, rubric, and comparison docs
-│   ├── setup/        # Setup guides
-│   ├── evaluation.md # agent-eval-harness setup and usage
-│   ├── harness.md    # Harness usage guide
-│   └── task-format.md # Task specification format
+├── docs/              # Documentation
+│   ├── getting-started.md  # Entry point — start here
+│   ├── README.md      # Documentation map with audience labels
+│   ├── guides/        # Scenario-based how-to guides for teammates
+│   ├── reference/     # Technical reference (harness, task format, evaluation)
+│   ├── admin/         # Operator checklists, incident response, lab strategy
+│   ├── architecture/  # Safety model, threat model, ADRs
+│   ├── setup/         # One-time setup guides
+│   ├── pilot/         # Pilot guides, rubric, and comparison docs
+│   └── archive/       # Historical phase docs and superseded files
 ├── harness/          # Local harness scripts
 │   ├── lib/          # Shared libraries (common.sh, git.sh, agent.sh, verify.sh)
 │   ├── create-run.sh # Create a timestamped run directory
@@ -110,7 +118,7 @@ The three tools form complementary layers:
 | **Context assembly** | Fullsend (local CLI, then hosted) | Assemble skills, prompts, and tools per agent role |
 | **Evaluation** | agent-eval-harness | Score quality, detect regressions, compare agents |
 
-Skills written in this lab follow Fullsend's SKILL.md conventions for portability. Evaluation baselines established here carry forward into multi-agent comparison. When Fullsend's public-repo guardrails are ready, enrolled repositories move to a hosted mint service (GCP) while this lab remains the team's interactive experimentation workshop. See [docs/lab-strategy.md](docs/lab-strategy.md) for the full three-lane strategy.
+Skills written in this lab follow Fullsend's SKILL.md conventions for portability. Evaluation baselines established here carry forward into multi-agent comparison. When Fullsend's public-repo guardrails are ready, enrolled repositories move to a hosted mint service (GCP) while this lab remains the team's interactive experimentation workshop. See [docs/admin/lab-strategy.md](docs/admin/lab-strategy.md) for the full three-lane strategy.
 
 ## Non-Goals
 
@@ -133,7 +141,7 @@ Skills written in this lab follow Fullsend's SKILL.md conventions for portabilit
 
 ## Contributing
 
-See [docs/operator-rules.md](docs/operator-rules.md) for lab operation guidelines.
+See [docs/guides/review-agent-output.md](docs/guides/review-agent-output.md) for PR creation and code review guidelines. For operator checklists and incident response, see [docs/admin/](docs/admin/).
 
 ## License
 

@@ -81,7 +81,7 @@ Checks that `agent-output.md` exists and contains expected section headings.
 ./harness/write-report.sh "$RUN_DIR"
 ```
 
-Produces `$RUN_DIR/summary.md`. See [docs/harness.md](../harness.md) for details on each script.
+Produces `$RUN_DIR/summary.md`. See [docs/reference/harness.md](../reference/harness.md) for details on each script.
 
 ### Dry-run option
 

@@ -1,209 +1,92 @@
----
-aliases: 
-tags: 
----
 # Getting Started
 
-Quick start guide for the TSD Agent Lab.
+The TSD Agent Lab is a safe, local experimentation environment for AI-assisted software development. The team uses it to run coding agents (Claude Code) against real repositories, review their output, build reusable skills, and measure quality — all without touching production systems.
 
 ## Current Status
 
-**Phase**: 0A - Initial Lab Plan Complete
+**Phase 8 — Draft PR mode (in progress)**
 
-**Next Phase**: 0B - Threat Model Hardening
+Agents can now create draft PRs for human review. Phases 0–7 are complete. See the checkboxes in [README.md](../README.md) for the full phase list.
 
-## Prerequisites
+## Key Concepts
 
-Before using the lab, ensure you have:
+| Term | What It Means |
+|------|---------------|
+| **Harness** | Shell scripts (`harness/`) that run an agent safely against a repo — clone, run, verify, report |
+| **Skill** | A reusable `SKILL.md` file that tells an agent what task to perform (e.g., `codebase-map`, `bugfix-minimal`) |
+| **Task** | A YAML file specifying a job: which repo, which skill, which mode, what to verify |
+| **Mode** | How much the agent is allowed to do: `read-only`, `patch-only`, `commit-allowed`, or PR creation |
+| **Run** | A timestamped directory under `~/workspaces/runs/` created for one task execution |
+| **Evaluation** | Scoring a skill's output quality using agent-eval-harness (`/eval-*` commands) |
 
-- [x] Claude Code access and license
-- [x] Mac workstation (macOS 11.0+)
-- [x] GitHub account with appropriate org access
-- [x] Git command-line tools installed
-- [x] Admin access for initial setup (Phase 1)
-- [x] Understanding of basic Git workflows
+## Quick Start: Your First Run
 
-## Phase 0A Completion
+```bash
+# 1. Switch to the agent-lab user
+agent
 
-Phase 0A has created the foundational documentation:
+# 2. Go to the lab repo
+cd ~/workspaces/repos/tsd-agent-lab
 
-### Created Files
+# 3. Create a run from an example task
+RUN_DIR=$(./harness/create-run.sh examples/tasks/read-only-codebase-map.yaml)
 
-- `README.md` - Main repository overview
-- `docs/adr/0001-local-agent-lab-first.md` - Architecture decision
-- `docs/implementation-plan.md` - Phased development plan
-- `docs/safety-model.md` - Security and safety controls
-- `docs/assumptions-and-non-goals.md` - Scope boundaries
-- `docs/repository-structure.md` - Repository organization
-- This getting started guide
+# 4. Run the full pipeline: clone → run agent → verify → report
+./harness/prepare-repo.sh examples/tasks/read-only-codebase-map.yaml --run-dir "$RUN_DIR"
+./harness/run-claude.sh   examples/tasks/read-only-codebase-map.yaml --run-dir "$RUN_DIR"
+./harness/verify-run.sh   examples/tasks/read-only-codebase-map.yaml --run-dir "$RUN_DIR"
+./harness/write-report.sh "$RUN_DIR"
 
-### Repository Structure
+# Result is in $RUN_DIR/summary.md
+```
+
+## Common Workflows
+
+| What you want to do | Where to start |
+|---------------------|---------------|
+| Connect to the lab for the first time | [guides/connect-to-lab.md](guides/connect-to-lab.md) |
+| Add a new repo and run an agent against it | [guides/onboard-a-repo.md](guides/onboard-a-repo.md) |
+| Understand how a run works end-to-end | [guides/run-a-task.md](guides/run-a-task.md) |
+| Create a new skill | [guides/write-a-skill.md](guides/write-a-skill.md) |
+| Test and score a skill's quality | [guides/test-a-skill.md](guides/test-a-skill.md) |
+| Review an agent-generated PR | [guides/review-agent-output.md](guides/review-agent-output.md) |
+| Look up eval slash commands | [guides/slash-commands.md](guides/slash-commands.md) |
+
+## Safety in 30 Seconds
+
+- Always run as the **agent-lab user**, not your primary account
+- No production credentials in the environment — verify with `env | grep -E '(AWS|GCP|AZURE|PROD)'`
+- Check `policies/repo-allowlist.yaml` before pointing the agent at any repo
+- Review all agent output before merging — never auto-merge
+- If something unexpected happens: `Ctrl+C`, then `killall -u agent-lab`
+
+Full safety model: [architecture/safety-model.md](architecture/safety-model.md)
+
+## Repository Layout
 
 ```
 tsd-agent-lab/
-├── docs/              # Documentation
-│   ├── adr/          # Architecture decisions
-│   └── ...
-├── policies/         # Safety policies (Phase 0B)
-├── experiments/      # Experimental workspace
-└── logs/            # Audit trail
+├── docs/               # Documentation (you are here)
+│   ├── guides/         # Scenario-based how-to guides
+│   ├── reference/      # Technical reference for harness and tools
+│   ├── admin/          # Operator checklists, incident response, strategy
+│   ├── architecture/   # Safety model, threat model, ADRs
+│   ├── setup/          # One-time setup guides
+│   ├── pilot/          # Pilot evaluation docs
+│   └── archive/        # Historical phase docs
+├── harness/            # Run scripts (create-run, prepare-repo, run-claude, verify, report)
+├── skills/             # Reusable SKILL.md packages
+├── examples/tasks/     # Sample task YAML files
+├── policies/           # Repo and command allowlists
+├── prompts/            # Safety preamble and prompt files
+├── scripts/            # Setup and utility scripts
+└── eval/               # Evaluation runs and baselines
 ```
-
-## Next Steps (Phase 0B)
-
-Before you can run experiments, complete Phase 0B:
-
-1. **Review Current Documentation**
-   - Read `README.md`
-   - Review `docs/safety-model.md`
-   - Understand `docs/adr/0001-local-agent-lab-first.md`
-
-2. **Create Threat Model**
-   - Create `docs/threat-model.md`
-   - Identify specific threats for your environment
-   - Document mitigations and controls
-
-3. **Define Policies**
-   - Create `policies/default-policy.yaml`
-   - Create `policies/command-allowlist.yaml`
-   - Create `policies/repo-allowlist.example.yaml`
-   - Customize for your organization
-
-4. **Write Operator Rules**
-   - Create `docs/operator-rules.md`
-   - Document procedures and guidelines
-   - Include emergency procedures
-
-## Future Phases (Quick Overview)
-
-### Phase 1: Dedicated User Setup
-
-- Create non-admin Mac user for agent execution
-- Configure credential isolation
-- Test isolation boundaries
-
-### Phase 2: Configuration
-
-- Set up `.claude/` configuration
-- Write `CLAUDE.md` instructions
-- Prepare for Superpowers
-
-### Phase 3: Local Harness
-
-- Build runner scripts
-- Implement policy enforcement
-- Add logging infrastructure
-
-### Phases 4-12
-
-See `docs/implementation-plan.md` for full details.
-
-## Key Principles to Remember
-
-1. **Safety First**: All experiments must follow safety policies
-2. **Human in Loop**: Every merge requires human review
-3. **Isolated Environment**: No production access from agent user
-4. **Audit Everything**: Comprehensive logging required
-5. **Learn by Doing**: Expect and document failures
-
-## Common Questions
-
-### Can I use this for production work?
-
-No. This is a prototype lab for experimentation only. Production workflows are separate.
-
-### What if I need access to a repository not on the allowlist?
-
-Update `policies/repo-allowlist.yaml` and get team review before adding.
-
-### What if an experiment fails?
-
-Document it! Failures are valuable learning. Write up what happened in the experiment README.
-
-### Can I skip safety checks for quick tests?
-
-No. Safety controls exist for good reasons. If they're blocking you, understand why and update policies thoughtfully.
-
-### How do I share my experiment results?
-
-Update your experiment's README, mention in team chat/meeting, and link from relevant documentation.
 
 ## Getting Help
 
-- **Documentation Issues**: Check `docs/` directory first
-- **Policy Questions**: Review `policies/` and safety model
-- **Technical Problems**: Check logs in `logs/` directory
-- **Team Questions**: Discuss in team channel/meeting
-
-## Contributing
-
-1. Work on a feature branch
-2. Make changes
-3. Update relevant documentation
-4. Create PR to `main`
-5. Get team review
-6. Merge after approval
-
-All changes to `main` require pull request review.
-
-## Useful Commands
-
-### Repository Navigation
-
-```bash
-# View repository structure
-tree -L 2 -a
-
-# Find documentation
-find docs -name "*.md"
-
-# View ADRs
-ls docs/adr/
-```
-
-### Future Phases
-
-```bash
-# Run experiment (Phase 5+)
-cd experiments/my-experiment
-./run.sh
-
-# Execute workflow (Phase 4+)
-bin/agent-run workflow-name
-
-# View logs (Phase 3+)
-tail -f logs/$(date +%Y-%m)/$(date +%Y-%m-%d)-session-001.log
-```
-
-## Important Files
-
-| File | Purpose |
-|------|---------|
-| `README.md` | Main repository overview |
-| `docs/implementation-plan.md` | Phased development plan |
-| `docs/safety-model.md` | Security controls |
-| `docs/threat-model.md` | Threat analysis (Phase 0B) |
-| `docs/operator-rules.md` | Operating procedures (Phase 0B) |
-| `docs/adr/` | Architecture decisions |
-
-## Status Tracking
-
-Current phase completion status:
-
-- [x] **Phase 0A**: Initial Lab Plan - COMPLETE
-- [x] **Phase 0B**: Threat Model Hardening - NEXT
-- [x] **Phase 1**: Dedicated User Setup
-- [x] **Phase 2**: Configuration
-- [x] **Phase 3**: Local Harness
-- [ ] **Phases 4-12**: See implementation plan
-
-## Stay Updated
-
-Review these documents as the lab evolves:
-- `docs/implementation-plan.md` for phase status
-- `docs/adr/` for architecture decisions
-- `CHANGELOG.md` for notable changes (if created)
-
----
-
-Welcome to the TSD Agent Lab! Start with Phase 0B when ready.
+- **Can't find a command**: Check [guides/slash-commands.md](guides/slash-commands.md)
+- **Harness script failing**: Check [reference/harness.md](reference/harness.md)
+- **Allowlist or policy question**: Check `policies/` and [admin/operator-checklist.md](admin/operator-checklist.md)
+- **Security concern**: Follow [admin/incident-response.md](admin/incident-response.md) — escalate immediately
+- **Team questions**: `#agent-lab` Slack channel

@@ -54,6 +54,21 @@ When completing a phase:
 2. Update `README.md`: mark the phase checkbox as complete and advance the "Current phase" line.
 3. Commit all phase artifacts together.
 
+## Scripts and Automation
+
+- Write scripts in shell, Node, or Python. Keep dependencies minimal.
+- Prefer `set -euo pipefail` in shell scripts.
+- Include a `--dry-run` flag for scripts that modify state.
+- Make scripts idempotent where possible.
+- Add usage comments or `--help` output.
+
+## Testing Expectations
+
+- **Shell scripts**: Run `shellcheck` if available. Test with `bash -n` at minimum.
+- **Non-trivial logic**: Add unit or integration tests.
+- **Setup scripts**: Verify idempotency by running twice.
+- **Manual steps**: Document exact commands to verify behavior.
+
 ## Verification
 
 - Add or update tests for non-trivial scripts.

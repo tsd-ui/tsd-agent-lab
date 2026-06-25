@@ -177,7 +177,7 @@ Allowlist enforcement provides strong control, though human override is possible
 
 **Mitigations**:
 1. **Primary**: Human code review (mandatory)
-   - Checklist-based review process (see `operator-rules.md`)
+   - Checklist-based review process (see `docs/admin/operator-checklist.md`)
    - Focus on security-sensitive patterns
    - Explicit approval required for merge
    - No auto-merge under any circumstances
@@ -554,7 +554,7 @@ While this is a prototype lab (not SOC 2 certified), these controls align with c
 
 If your organization has specific requirements (FedRAMP, HIPAA, PCI-DSS, etc.):
 - Review `repo-allowlist.example.yaml` per-org policy sections
-- Add compliance-specific checks to `operator-rules.md` checklist
+- Add compliance-specific checks to `docs/admin/operator-checklist.md`
 - Document exceptions in ADR format
 
 ## Threat Model Maintenance

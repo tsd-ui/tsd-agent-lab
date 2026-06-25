@@ -10,6 +10,8 @@ How to switch to the agent-lab user, verify your environment, and access repos.
 
 ## One-Time Alias Setup
 
+> **Remote colleagues (SSH via Tailscale):** skip this section. SSH authenticates you directly as `agent-lab` — no alias needed. Jump to [Remote Access via Tailscale](#remote-access-via-tailscale-colleagues-on-fedora).
+
 From your main account, run:
 
 ```bash
@@ -150,6 +152,15 @@ tailscale ip -4        # your own Tailscale IP
 ```
 
 **5. SSH in (once your key and device are approved)**
+
+Tailscale must be running each time you connect. `tailscaled` is enabled to autostart on boot, but verify if anything seems off:
+
+```bash
+systemctl status tailscaled   # should be active (running)
+tailscale status               # should show ryordan-mac in the list
+```
+
+Then connect:
 
 ```bash
 ssh agent-lab@ryordan-mac.tail9cbf83.ts.net

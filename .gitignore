@@ -1,5 +1,8 @@
 # TSD Agent Lab - Git Ignore
 
+# Eval run outputs (generated artifacts, accumulate quickly)
+eval/runs/
+
 # Logs - contain sensitive execution data
 logs/*.log
 logs/**/*.log

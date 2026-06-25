@@ -1,4 +1,0 @@
-repo_description: A Go microservice for user authentication with gRPC API, PostgreSQL storage, and Redis caching
-focus_areas:
-  - gRPC service definition
-  - error handling patterns

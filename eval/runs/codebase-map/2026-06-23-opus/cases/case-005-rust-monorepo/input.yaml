@@ -1,4 +1,0 @@
-repo_description: A Rust workspace with a CLI tool and shared library for parsing and validating configuration files (TOML, YAML, JSON)
-focus_areas:
-  - workspace structure
-  - shared library API

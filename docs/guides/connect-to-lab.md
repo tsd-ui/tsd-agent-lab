@@ -23,6 +23,8 @@ This adds an `agent` alias so you can switch users with a single command.
 
 ## Daily Connection
 
+> **Remote colleagues (SSH via Tailscale):** your daily connection is `ssh agent-lab@ryordan-mac.tail9cbf83.ts.net` — skip the `agent` steps below. See [step 5 in the Remote Access section](#remote-access-via-tailscale-colleagues-on-fedora) for the pre-flight Tailscale checks.
+
 ```bash
 # From your main account terminal
 agent

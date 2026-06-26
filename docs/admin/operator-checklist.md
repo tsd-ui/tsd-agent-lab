@@ -45,6 +45,8 @@ Pre-flight and post-execution checklists for every agent workflow execution.
 
 - [ ] **Policies are up to date**
 
+  The repo auto-syncs every 5 minutes via a LaunchDaemon (see [macos-agent-lab-user.md](../setup/macos-agent-lab-user.md#repo-auto-sync-launchdaemon)). To force an immediate pull:
+
   ```bash
   cd ~/workspaces/repos/tsd-agent-lab
   git pull origin main

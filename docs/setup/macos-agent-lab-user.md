@@ -258,6 +258,28 @@ After completing this setup:
 
 ## Maintenance
 
+### Repo Auto-Sync (LaunchDaemon)
+
+A system LaunchDaemon keeps the `agent-lab` clone of this repo current automatically.
+
+- **Plist**: `/Library/LaunchDaemons/com.tsd.sync-agent-lab.plist`
+- **Script**: `/Users/agent-lab/.local/bin/sync-tsd-agent-lab.sh`
+- **Interval**: every 5 minutes (`StartInterval: 300`)
+- **Log**: `/Users/agent-lab/.local/log/sync-tsd-agent-lab.log`
+
+The daemon runs as the `agent-lab` user and does a `git fetch` + `git pull origin main` only when the local branch is behind. To check its last run:
+
+```bash
+tail -5 /Users/agent-lab/.local/log/sync-tsd-agent-lab.log
+```
+
+To reload after editing the plist:
+
+```bash
+sudo launchctl unload /Library/LaunchDaemons/com.tsd.sync-agent-lab.plist
+sudo launchctl load   /Library/LaunchDaemons/com.tsd.sync-agent-lab.plist
+```
+
 ### Regular Review
 - Periodically audit what repositories are cloned
 - Review and rotate access tokens

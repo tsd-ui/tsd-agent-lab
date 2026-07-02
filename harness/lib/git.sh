@@ -6,8 +6,8 @@
 [[ -n "${_GIT_SH_LOADED:-}" ]] && return 0
 _GIT_SH_LOADED=1
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/common.sh"
+_GIT_SH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_GIT_SH_DIR}/common.sh"
 
 # ---------------------------------------------------------------------------
 # Validation helpers
@@ -17,12 +17,21 @@ git_is_repo() {
   git -C "$dir" rev-parse --is-inside-work-tree &>/dev/null
 }
 
+# Normalizes a remote URL for comparison: strips a trailing ".git" and any
+# trailing slash, so equivalent URLs (with/without .git suffix) match.
+git_normalize_url() {
+  local url="$1"
+  url="${url%/}"
+  url="${url%.git}"
+  echo "$url"
+}
+
 git_verify_remote() {
   local dir="$1"
   local expected_url="$2"
   local actual_url
   actual_url=$(git -C "$dir" remote get-url origin 2>/dev/null || echo "")
-  [[ "$actual_url" == "$expected_url" ]]
+  [[ "$(git_normalize_url "$actual_url")" == "$(git_normalize_url "$expected_url")" ]]
 }
 
 # ---------------------------------------------------------------------------

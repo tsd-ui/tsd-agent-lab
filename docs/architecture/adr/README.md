@@ -80,6 +80,7 @@ Skip the ADR for:
 ### Active ADRs
 
 - [ADR 0001: Local Agent Lab First](0001-local-agent-lab-first.md) - Core architecture: local-first, human-in-loop, multi-tool evaluation
+- [ADR 0002: RHTAS Console DB Removal — UI Impact](0002-rhtas-console-db-removal-ui-impact.md) - Impact assessment of database removal on Trust Coverage and System Health UI designs
 
 ### Superseded ADRs
 

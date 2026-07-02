@@ -17,13 +17,22 @@ git_is_repo() {
   git -C "$dir" rev-parse --is-inside-work-tree &>/dev/null
 }
 
-# Normalizes a remote URL for comparison: strips a trailing ".git" and any
-# trailing slash, so equivalent URLs (with/without .git suffix) match.
+# Normalizes a remote URL for comparison: strips scheme/user (https://,
+# ssh://git@, git@host: scp-syntax), trailing ".git", and trailing slash,
+# then lowercases the result. This makes equivalent URLs match regardless
+# of protocol, e.g. "git@github.com:org/repo.git" == "https://github.com/org/repo".
 git_normalize_url() {
   local url="$1"
   url="${url%/}"
   url="${url%.git}"
-  echo "$url"
+  if [[ "$url" =~ ^[^/@]+@([^:/]+):(.+)$ ]]; then
+    # scp-like SSH syntax: git@host:org/repo
+    url="${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+  else
+    url="${url#*://}"  # strip scheme (https://, ssh://, git://)
+    url="${url#*@}"    # strip user@ prefix (ssh://git@host/org/repo)
+  fi
+  echo "$url" | tr '[:upper:]' '[:lower:]'
 }
 
 git_verify_remote() {

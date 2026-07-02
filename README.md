@@ -143,4 +143,6 @@ See [docs/guides/review-agent-output.md](docs/guides/review-agent-output.md) for
 
 ## License
 
-Internal team use only.
+Apache License 2.0 - see [LICENSE](LICENSE) file for details.
+
+This repository is made public for educational purposes and to share agent-assisted development patterns with the broader community.

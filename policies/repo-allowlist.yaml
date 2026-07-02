@@ -1,0 +1,82 @@
+# Repository Allowlist
+#
+# Defines which GitHub repositories agents are permitted to access.
+# The harness checks for repo URL or repo name matches in this file.
+#
+# Version: 1.1
+# Last Updated: 2026-07-02
+
+metadata:
+  version: "1.1"
+  updated: "2026-07-02"
+  owner: "Engineering Team"
+  description: "Repository access allowlist for tsd-agent-lab workflows"
+
+# =============================================================================
+# ALLOWED REPOSITORIES
+# =============================================================================
+
+# tsd-ui organization - all repos allowed
+organizations:
+  - name: "TSD UI"
+    github_org: "tsd-ui"
+    url_pattern: "https://github.com/tsd-ui/*"
+    repos:
+      - "*"  # All repos under tsd-ui allowed
+    access: "read-write"
+    notes: "All repositories under tsd-ui organization are allowed"
+
+  - name: "Securesign"
+    github_org: "securesign"
+    repos:
+      - "rhtas-console-ui"
+      - "rhtas-console"
+    access: "read-write"
+    notes: "RHTAS Console UI (frontend) and backend - these repos often work together"
+
+# Explicit repository entries (for simple grep matching)
+repositories:
+  # tsd-ui org
+  - "https://github.com/tsd-ui/tsd-agent-lab"
+  - "tsd-ui/tsd-agent-lab"
+  - "tsd-agent-lab"
+  # Pattern for all tsd-ui repos
+  - "github.com/tsd-ui/"
+
+  # securesign org
+  - "https://github.com/securesign/rhtas-console-ui"
+  - "securesign/rhtas-console-ui"
+  - "rhtas-console-ui"
+  - "https://github.com/securesign/rhtas-console"
+  - "securesign/rhtas-console"
+  - "rhtas-console"
+
+# =============================================================================
+# BLOCKED PATTERNS
+# =============================================================================
+
+# Block production repositories by pattern
+blocked_patterns:
+  - pattern: "*/production-*"
+    reason: "Production repositories"
+  - pattern: "*-prod"
+    reason: "Production repositories"
+  - pattern: "*/customer-*"
+    reason: "Customer data repositories"
+  - pattern: "*/pii-*"
+    reason: "PII repositories"
+  - pattern: "*/secrets-*"
+    reason: "Secrets management repositories"
+
+# =============================================================================
+# NOTES
+# =============================================================================
+
+# Review this allowlist:
+# - When adding team members
+# - When creating new repositories
+# - Monthly security review
+# - After any security incident
+#
+# Keep this file in version control for audit trail.
+# Use pull requests to modify the allowlist.

@@ -29,15 +29,64 @@ This directory contains macOS-specific scripts for setting up and managing the a
 
 **Safe to run**: Yes, this script only reads system state and makes no modifications.
 
+### health-report.sh
+
+**Purpose**: Produce a daily health report for the agent-lab environment.
+
+**Usage**:
+```bash
+# Print to stdout (no file written)
+./scripts/macos/health-report.sh --dry-run
+
+# Write to docs/admin/reports/health-YYYY-MM-DD.md
+./scripts/macos/health-report.sh
+```
+
+**What it checks**:
+- tsd-agent-lab launchd agents and their run/exit status
+- Failed tsd-agent-lab jobs (non-zero exit status)
+- System log errors/faults from the last 24 hours
+- Disk usage on local volumes (warns above 80%)
+- Notable background processes (claude, node, python, fullsend)
+
+**Scheduling**: A launchd plist is provided at `com.tsd-agent-lab.health-report.plist` for daily runs at 06:00. See [health-report docs](../../docs/admin/health-report.md) for load/unload instructions.
+
+**Safe to run**: Yes, this script only reads system state and writes a markdown report.
+
+### stale-docs-check.sh
+
+**Purpose**: Mechanical (path/link existence) staleness scan across the repo's Markdown docs.
+
+**Usage**:
+```bash
+# Print report to stdout (no file written)
+./scripts/macos/stale-docs-check.sh --dry-run
+
+# Write report to docs/admin/reports/stale-docs-YYYY-MM-DD.md
+./scripts/macos/stale-docs-check.sh
+```
+
+**What it checks**:
+- Broken markdown links
+- Bare file/script path references that no longer resolve
+- Scripts referenced as invocations (`./scripts/<name>.sh`-style) that exist but aren't executable
+
+Excludes `docs/archive/`. For semantic review (directory structure, setup steps, feature drift) layered on top of this mechanical pass, see [skills/stale-docs-check/SKILL.md](../../skills/stale-docs-check/SKILL.md) and [docs/admin/stale-docs-check.md](../../docs/admin/stale-docs-check.md).
+
+**Safe to run**: Yes, this script only reads repo files and writes a markdown report.
+
 ## Directory Structure
 
 ```
 scripts/
 ├── macos/
-│   ├── README.md                    # This file
-│   └── check-agent-lab-user.sh     # User configuration inspector
+│   ├── README.md                                    # This file
+│   ├── check-agent-lab-user.sh                     # User configuration inspector
+│   ├── health-report.sh                            # Daily health report generator
+│   ├── stale-docs-check.sh                         # Mechanical doc staleness scanner
+│   └── com.tsd-agent-lab.health-report.plist       # launchd plist for scheduling
 └── bootstrap/
-    └── bootstrap-agent-lab.sh      # First-time setup for agent-lab user
+    └── bootstrap-agent-lab.sh                      # First-time setup for agent-lab user
 ```
 
 ## Related Documentation

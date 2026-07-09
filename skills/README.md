@@ -19,8 +19,10 @@ skills/
 │   └── SKILL.md           # Test creation (no production changes)
 ├── pr-review/
 │   └── SKILL.md           # Structured code review
-└── adr-writer/
-    └── SKILL.md           # Architecture Decision Record drafting
+├── adr-writer/
+│   └── SKILL.md           # Architecture Decision Record drafting
+└── stale-docs-check/
+    └── SKILL.md           # Documentation staleness review
 ```
 
 ## Skill Index
@@ -32,6 +34,7 @@ skills/
 | [test-generation](test-generation/SKILL.md) | patch-only | quality | Generate tests without modifying production source |
 | [pr-review](pr-review/SKILL.md) | read-only | review | Review code changes with severity-ranked findings |
 | [adr-writer](adr-writer/SKILL.md) | patch-only | code | Draft an ADR following the project's format |
+| [stale-docs-check](stale-docs-check/SKILL.md) | read-only | review | Cross-reference docs against repo state, report stale/review findings |
 
 ## SKILL.md Format
 

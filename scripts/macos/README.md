@@ -73,7 +73,22 @@ This directory contains macOS-specific scripts for setting up and managing the a
 
 Excludes `docs/archive/`. For semantic review (directory structure, setup steps, feature drift) layered on top of this mechanical pass, see [skills/stale-docs-check/SKILL.md](../../skills/stale-docs-check/SKILL.md) and [docs/admin/stale-docs-check.md](../../docs/admin/stale-docs-check.md).
 
+**Scheduling**: A launchd plist is provided at `com.tsd-agent-lab.stale-docs-check.plist` for daily runs at 06:15. See [stale-docs-check docs](../../docs/admin/stale-docs-check.md#schedule-via-launchd) for load/unload instructions.
+
 **Safe to run**: Yes, this script only reads repo files and writes a markdown report.
+
+### stale-docs-check-skill-run.sh
+
+**Purpose**: Unattended wrapper that runs the full stale-docs-check skill (mechanical + semantic review) via a headless `claude -p` session.
+
+**Usage**:
+```bash
+./scripts/macos/stale-docs-check-skill-run.sh
+```
+
+**Scheduling**: A launchd plist is provided at `com.tsd-agent-lab.stale-docs-check-full.plist` for daily runs at 06:20. See [Unattended semantic runs](../../docs/admin/stale-docs-check.md#unattended-semantic-runs) before enabling — this runs `claude -p --dangerously-skip-permissions` since a launchd job has no TTY to approve tool calls.
+
+**Safe to run**: Not equivalent to the other scripts in this directory — it disables permission checks for an LLM session. `Edit`/`NotebookEdit` are disallowed and spend/runtime are capped, but it is not purely read-only inspection like the rest of this directory. Read the full writeup before scheduling it.
 
 ## Directory Structure
 
@@ -84,7 +99,10 @@ scripts/
 │   ├── check-agent-lab-user.sh                     # User configuration inspector
 │   ├── health-report.sh                            # Daily health report generator
 │   ├── stale-docs-check.sh                         # Mechanical doc staleness scanner
-│   └── com.tsd-agent-lab.health-report.plist       # launchd plist for scheduling
+│   ├── stale-docs-check-skill-run.sh               # Unattended full (mechanical+semantic) wrapper
+│   ├── com.tsd-agent-lab.health-report.plist       # launchd plist for scheduling
+│   ├── com.tsd-agent-lab.stale-docs-check.plist    # launchd plist: mechanical pass
+│   └── com.tsd-agent-lab.stale-docs-check-full.plist  # launchd plist: full pass
 └── bootstrap/
     └── bootstrap-agent-lab.sh                      # First-time setup for agent-lab user
 ```

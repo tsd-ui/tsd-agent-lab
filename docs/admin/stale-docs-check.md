@@ -41,6 +41,45 @@ The skill runs the same script for its mechanical pass, then reads every doc in 
 
 Running either mode twice on the same day overwrites the previous report for that day (idempotent).
 
+## Schedule via launchd
+
+Two plists are provided in `scripts/macos/`, neither **auto-loaded**:
+
+- `com.tsd-agent-lab.stale-docs-check.plist` — mechanical pass only, daily at 06:15. Pure shell, no LLM involved.
+- `com.tsd-agent-lab.stale-docs-check-full.plist` — full mechanical + semantic pass via `scripts/macos/stale-docs-check-skill-run.sh`, daily at 06:20 (staggered 5 minutes after the mechanical job so its report write doesn't race). This wrapper runs `claude -p --dangerously-skip-permissions` since a launchd job has no TTY to approve tool calls — see the warning in that script's header and in [Unattended semantic runs](#unattended-semantic-runs) below before enabling it.
+
+To enable either:
+
+```sh
+cp scripts/macos/com.tsd-agent-lab.stale-docs-check.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check.plist
+
+cp scripts/macos/com.tsd-agent-lab.stale-docs-check-full.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check-full.plist
+```
+
+To disable:
+
+```sh
+launchctl unload ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check.plist
+rm ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check.plist
+
+launchctl unload ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check-full.plist
+rm ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check-full.plist
+```
+
+On this lab machine, `~/Library/LaunchAgents/` is owned by `root` and not writable by `agent-lab` (`drwxr-xr-x root:staff`), so the `agent-lab` user cannot self-install these plists — the `cp` above needs to be run by an operator with write access (or the directory's ownership adjusted once, out of band). The `agent-lab` user must also be logged in for either job to fire — a `launchctl list | grep tsd-agent-lab` check confirms whether they're active.
+
+### Unattended semantic runs
+
+The full-pass job disables all permission checks (`--dangerously-skip-permissions`). That means if a doc's content ever tried to manipulate the agent's behavior (see `docs/architecture/threat-model.md`, MT4: Prompt Injection in Logs), there is no human approval gate to catch a resulting tool call before it executes. Mitigations in place:
+
+- `--disallowedTools "Edit,NotebookEdit"` — the job can never modify an existing tracked file, only write the report.
+- `--max-budget-usd 2` and a 30-minute timeout cap the worst case.
+- The skill's own instructions are still read-only by design (Safety Constraints in `skills/stale-docs-check/SKILL.md`).
+
+This is a real, accepted change in trust posture for an unattended job, not a fully closed risk — if that tradeoff stops being acceptable, disable `com.tsd-agent-lab.stale-docs-check-full.plist` and keep only the mechanical job scheduled; run the semantic pass interactively instead (see [Full review](#full-review-mechanical--semantic) above).
+
 ## Output
 
 Reports are written to `docs/admin/reports/stale-docs-YYYY-MM-DD.md`. Each report includes:
@@ -104,22 +143,34 @@ The line between the two is subjective by design — the first few runs will lik
 
 To fully remove this feature:
 
-1. Delete the script and skill:
+1. Unload the plists, if scheduled:
+
+   ```sh
+   launchctl unload ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check.plist
+   rm ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check.plist
+   launchctl unload ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check-full.plist
+   rm ~/Library/LaunchAgents/com.tsd-agent-lab.stale-docs-check-full.plist
+   ```
+
+2. Delete the scripts, plist sources, and skill:
 
    ```sh
    rm scripts/macos/stale-docs-check.sh
+   rm scripts/macos/stale-docs-check-skill-run.sh
+   rm scripts/macos/com.tsd-agent-lab.stale-docs-check.plist
+   rm scripts/macos/com.tsd-agent-lab.stale-docs-check-full.plist
    rm -rf skills/stale-docs-check/
    ```
 
-2. Remove the `stale-docs-check` row from the Skill Index and Directory Layout in `skills/README.md`.
+3. Remove the `stale-docs-check` row from the Skill Index and Directory Layout in `skills/README.md`.
 
-3. Delete generated reports (only the stale-docs ones, if health reports share the directory):
+4. Delete generated reports (only the stale-docs ones, if health reports share the directory):
 
    ```sh
    rm docs/admin/reports/stale-docs-*.md
    ```
 
-4. Delete this documentation:
+5. Delete this documentation:
 
    ```sh
    rm docs/admin/stale-docs-check.md

@@ -134,12 +134,15 @@ Follow the prompts to:
 - Authenticate via web browser
 - Use scoped tokens with minimum permissions needed
 
-### 3. Authenticate Claude Code
+### 3. Verify Claude Code Authentication
 
-If you plan to use Claude Code CLI:
+Claude Code authenticates via a shared GCP service account key (Vertex AI). This is pre-configured in the `agent-lab` user's shell profile — **do not run `claude auth login` or `gcloud auth login`**, as personal credentials will overwrite the shared auth and break it for other users.
+
+Verify it's working:
 
 ```bash
-claude auth login
+echo $GOOGLE_APPLICATION_CREDENTIALS   # should point to the service account key
+claude --version                       # should connect without prompting for login
 ```
 
 ### 4. Optional: Configure Podman

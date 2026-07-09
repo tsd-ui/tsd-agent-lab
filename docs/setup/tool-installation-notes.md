@@ -253,9 +253,12 @@ Follow official Claude Code installation instructions:
 - CLI: Bundled with desktop app or standalone installer
 	- See employer instructions here: https://docs.google.com/document/d/1eNARy9CI28o09E7Foq01e5WD5MvEj3LSBnXqFcprxjo/edit?tab=t.0
 
-Authentication:
+**Authentication** is pre-configured via a shared GCP service account key (Vertex AI) in the `agent-lab` user's shell profile. **Do not run `claude auth login` or `gcloud auth login`** — personal credentials overwrite the shared auth and break it for other users.
+
+Verify:
 ```bash
-claude auth login
+echo $GOOGLE_APPLICATION_CREDENTIALS   # should point to the service account key
+claude --version                       # should connect without prompting for login
 ```
 
 ### Podman
@@ -482,8 +485,8 @@ source ~/.zshrc  # or source ~/.bash_profile
 ### Scoped Access Tokens
 
 When authenticating tools:
-- GitHub: Use Personal Access Tokens with minimum required scopes
-- Claude: Use project-specific API keys if available
+- **GitHub**: Use Personal Access Tokens with minimum required scopes
+- **Claude Code**: Pre-configured via shared GCP service account (Vertex AI) — do not run `claude auth login` or `gcloud auth login`
 - Never use production credentials in the agent-lab user
 
 ### Credential Storage

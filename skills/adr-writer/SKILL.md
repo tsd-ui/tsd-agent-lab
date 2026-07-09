@@ -1,9 +1,10 @@
 ---
+aliases: 
+tags: 
 name: adr-writer
 description: Draft an Architecture Decision Record following the project's ADR format
 fullsend_role: code
 ---
-
 # ADR Writer
 
 ## Description
@@ -75,9 +76,9 @@ Write a summary to `agent-output.md` covering: what decision was documented, the
 
 ## Expected Output
 
-- `docs/adr/NNNN-short-title.md` — the new ADR file
-- Updated `docs/adr/README.md` — index with the new entry
-- `agent-output.md` — summary of what was created
+- `docs/adr/NNNN-short-title.md`—the new ADR file
+- Updated `docs/adr/README.md`—index with the new entry
+- `agent-output.md`—summary of what was created
 
 ## Safety Constraints
 

@@ -24,6 +24,15 @@ This repository is a local agentic SDLC lab for a small software engineering tea
 - Local Mac user environment for isolation
 - Future: GCP integration when ready
 
+## Agent Conventions
+
+All agents must follow `policies/agent-conventions.md`. Key rules:
+
+- Use `claude -p` for non-interactive invocations.
+- Write files in place — never copy-and-rename (breaks Obsidian tabs).
+- Trim trailing whitespace in Markdown files; end with a single newline.
+- Use kebab-case for all generated names (tasks, runs, reports, skills).
+
 ## Safety Guidelines
 
 - Do not push branches unless explicitly requested.

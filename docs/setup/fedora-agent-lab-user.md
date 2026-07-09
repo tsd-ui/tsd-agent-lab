@@ -240,9 +240,14 @@ Enable `code` command in PATH:
 
 ### Claude Code CLI
 
-Follow the official installation instructions from your organization. Authentication:
+Follow the official installation instructions from your organization.
+
+**Authentication** is pre-configured via a shared GCP service account key (Vertex AI) in the `agent-lab` user's shell profile. **Do not run `claude auth login` or `gcloud auth login`** — personal credentials overwrite the shared auth and break it for other users.
+
 ```bash
-claude auth login
+# Verify auth is working (no login needed)
+echo $GOOGLE_APPLICATION_CREDENTIALS   # should point to the service account key
+claude --version                       # should connect without prompting for login
 ```
 
 ## Directory Structure

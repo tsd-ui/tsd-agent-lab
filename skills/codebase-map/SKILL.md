@@ -1,6 +1,6 @@
 ---
-aliases: 
-tags: 
+aliases: []
+tags: []
 name: codebase-map
 description: Explore a repository and produce a structured codebase map
 fullsend_role: triage

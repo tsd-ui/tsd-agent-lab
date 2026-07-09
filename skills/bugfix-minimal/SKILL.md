@@ -1,9 +1,10 @@
 ---
+aliases: 
+tags: 
 name: bugfix-minimal
 description: Fix a bug with the smallest possible code change
 fullsend_role: code
 ---
-
 # Bugfix Minimal
 
 ## Description

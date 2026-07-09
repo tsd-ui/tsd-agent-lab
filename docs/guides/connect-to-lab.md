@@ -6,7 +6,7 @@ How to switch to the agent-lab user, verify your environment, and access repos.
 
 - macOS with the `agent-lab` user already created (see [setup/macos-agent-lab-user.md](../setup/macos-agent-lab-user.md))
 - The `agent` shell alias set up (one-time, see below)
-- Claude Code installed and licensed
+- Claude Code installed (auth is pre-configured via service account — no login needed)
 
 ## One-Time Alias Setup
 

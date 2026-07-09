@@ -1,9 +1,10 @@
 ---
+aliases: 
+tags: 
 name: pr-review
 description: Review code changes and produce a structured findings report
 fullsend_role: review
 ---
-
 # PR Review
 
 ## Description

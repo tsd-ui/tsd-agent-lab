@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=
+task_id: pilot-read-only-codebase-map
+title: "Pilot: Generate a codebase map for a real repository (RHTAS Console UI)"
+mode: read-only
+repo_url: "https://github.com/securesign/rhtas-console-ui"
+base_ref: "main"
+# working_directory removed — map the whole repo
+agent: claude-code
+prompt_file: prompts/claude/read-only-codebase-map.md
+max_turns: 25
+
+verification_commands:
+  - "test -f agent-output.md"
+  - "grep -qi 'architecture' agent-output.md && grep -qi 'risk' agent-output.md && grep -qi 'build' agent-output.md"
+
+expected_outputs:
+  - "agent-output.md"
+
+notes: >
+  Pilot task for Phase 6. Replace <REPO_URL>, <BASE_REF>, and
+  <WORKING_DIRECTORY> with real values before running.
+  See docs/pilot/phase-1-read-only-pilot.md for the full pilot guide.
+  Read-only mode — no file modifications are permitted.

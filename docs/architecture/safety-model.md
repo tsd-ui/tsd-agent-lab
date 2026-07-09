@@ -36,11 +36,10 @@ The TSD Agent Lab implements defense-in-depth safety controls to prevent product
 
 ### 3. Credential Protection
 
-**No Shared Tokens**
-- Each team member uses personal tokens
-- No shared GitHub PATs
-- No service account credentials
-- Token scope limited to lab repositories
+**Scoped Credentials**
+- **GitHub**: Each team member uses personal tokens (no shared PATs)
+- **Claude Code**: Shared GCP service account key (Vertex AI) — scoped to the lab's GCP project, not personal credentials. Do not run `claude auth login` or `gcloud auth login` on the agent-lab user.
+- Token/key scope limited to lab resources only
 
 **Credential Isolation**
 - Agent user has separate credential store

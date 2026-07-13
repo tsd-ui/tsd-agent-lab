@@ -1,0 +1,39 @@
+{
+  "schema_version": "1",
+  "generated_at": "2025-01-15T13:00:00Z",
+  "collector": "github-actions",
+  "repos": [
+    {
+      "repo": "tsd-ui/example-app",
+      "default_branch": "main",
+      "collection_status": "ok",
+      "failures": [
+        {
+          "run_id": 78901234,
+          "run_url": "https://github.com/tsd-ui/example-app/actions/runs/78901234",
+          "workflow": "ci.yml",
+          "head_sha": "a7b8c9d0e1f2345",
+          "started_at": "2025-01-15T12:55:00Z",
+          "signature": "tsd-ui/example-app::ci.yml::integration::Run integration tests::relation users does not exist",
+          "failed_jobs": [
+            {
+              "job_name": "integration",
+              "failed_steps": [
+                {
+                  "step_name": "Setup database",
+                  "log_excerpt": "Waiting for PostgreSQL to be ready...\npsql: error: connection to server at \"localhost\" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nError: Could not connect to database after 30 seconds. Service container may have failed to start.\nexit code: 1",
+                  "log_truncated": false
+                },
+                {
+                  "step_name": "Run integration tests",
+                  "log_excerpt": "FAIL src/db/users.integration.test.ts\n  ● User Repository › should create a new user\n\n    error: relation \"users\" does not exist\n      at Object.query (src/db/connection.ts:23:11)\n      at UserRepository.create (src/db/users.ts:15:5)\n      at Object.<anonymous> (src/db/users.integration.test.ts:22:18)\n\nTests: 4 failed, 0 passed, 4 total\nTime:  3.201 s\nnpm ERR! Test failed. See above for more details.",
+                  "log_truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

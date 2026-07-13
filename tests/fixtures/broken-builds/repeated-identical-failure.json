@@ -1,0 +1,86 @@
+{
+  "schema_version": "1",
+  "generated_at": "2025-01-15T15:30:00Z",
+  "collector": "github-actions",
+  "repos": [
+    {
+      "repo": "tsd-ui/design-system",
+      "default_branch": "main",
+      "collection_status": "ok",
+      "failures": [
+        {
+          "run_id": 89012345,
+          "run_url": "https://github.com/tsd-ui/design-system/actions/runs/89012345",
+          "workflow": "lint.yml",
+          "head_sha": "b8c9d0e1f2a3456",
+          "started_at": "2025-01-13T09:00:00Z",
+          "signature": "tsd-ui/design-system::lint.yml::eslint::Run ESLint::parsing error unexpected token",
+          "recurrence": {
+            "count": 1,
+            "first_seen": "2025-01-13T09:00:00Z"
+          },
+          "failed_jobs": [
+            {
+              "job_name": "eslint",
+              "failed_steps": [
+                {
+                  "step_name": "Run ESLint",
+                  "log_excerpt": "/home/runner/work/design-system/design-system/src/components/Button/Button.tsx\n  14:23  error  Parsing error: Unexpected token, expected \",\"\n\n  12 |   interface ButtonProps {\n  13 |     variant: 'primary' | 'secondary';\n> 14 |     size?: 'sm' | 'md' | 'lg'\n     |                              ^\n  15 |     disabled boolean;\n  16 |   }\n\n1 problem (1 error, 0 warnings)\n\nerror Command failed with exit code 1.",
+                  "log_truncated": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "run_id": 89012456,
+          "run_url": "https://github.com/tsd-ui/design-system/actions/runs/89012456",
+          "workflow": "lint.yml",
+          "head_sha": "b8c9d0e1f2a3456",
+          "started_at": "2025-01-14T11:30:00Z",
+          "signature": "tsd-ui/design-system::lint.yml::eslint::Run ESLint::parsing error unexpected token",
+          "recurrence": {
+            "count": 2,
+            "first_seen": "2025-01-13T09:00:00Z"
+          },
+          "failed_jobs": [
+            {
+              "job_name": "eslint",
+              "failed_steps": [
+                {
+                  "step_name": "Run ESLint",
+                  "log_excerpt": "/home/runner/work/design-system/design-system/src/components/Button/Button.tsx\n  14:23  error  Parsing error: Unexpected token, expected \",\"\n\n  12 |   interface ButtonProps {\n  13 |     variant: 'primary' | 'secondary';\n> 14 |     size?: 'sm' | 'md' | 'lg'\n     |                              ^\n  15 |     disabled boolean;\n  16 |   }\n\n1 problem (1 error, 0 warnings)\n\nerror Command failed with exit code 1.",
+                  "log_truncated": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "run_id": 89012567,
+          "run_url": "https://github.com/tsd-ui/design-system/actions/runs/89012567",
+          "workflow": "lint.yml",
+          "head_sha": "b8c9d0e1f2a3456",
+          "started_at": "2025-01-15T15:20:00Z",
+          "signature": "tsd-ui/design-system::lint.yml::eslint::Run ESLint::parsing error unexpected token",
+          "recurrence": {
+            "count": 3,
+            "first_seen": "2025-01-13T09:00:00Z"
+          },
+          "failed_jobs": [
+            {
+              "job_name": "eslint",
+              "failed_steps": [
+                {
+                  "step_name": "Run ESLint",
+                  "log_excerpt": "/home/runner/work/design-system/design-system/src/components/Button/Button.tsx\n  14:23  error  Parsing error: Unexpected token, expected \",\"\n\n  12 |   interface ButtonProps {\n  13 |     variant: 'primary' | 'secondary';\n> 14 |     size?: 'sm' | 'md' | 'lg'\n     |                              ^\n  15 |     disabled boolean;\n  16 |   }\n\n1 problem (1 error, 0 warnings)\n\nerror Command failed with exit code 1.",
+                  "log_truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

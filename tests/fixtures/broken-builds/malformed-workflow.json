@@ -1,0 +1,34 @@
+{
+  "schema_version": "1",
+  "generated_at": "2025-01-15T08:10:00Z",
+  "collector": "github-actions",
+  "repos": [
+    {
+      "repo": "tsd-ui/component-library",
+      "default_branch": "main",
+      "collection_status": "ok",
+      "failures": [
+        {
+          "run_id": 56789012,
+          "run_url": "https://github.com/tsd-ui/component-library/actions/runs/56789012",
+          "workflow": "deploy.yml",
+          "head_sha": "e5f6a7b8c9d0123",
+          "started_at": "2025-01-15T08:05:00Z",
+          "signature": "tsd-ui/component-library::deploy.yml::validate::Parse workflow::mapping values are not allowed",
+          "failed_jobs": [
+            {
+              "job_name": "validate",
+              "failed_steps": [
+                {
+                  "step_name": "Parse workflow",
+                  "log_excerpt": "Error: .github/workflows/deploy.yml (Line: 42, Col: 14): mapping values are not allowed in this context\n\nwhile parsing a block mapping\n  in \".github/workflows/deploy.yml\", line 40, column 5\ncould not find expected ':'\n  in \".github/workflows/deploy.yml\", line 42, column 14\n\nError: The workflow is not valid. .github/workflows/deploy.yml (Line: 42, Col: 14): mapping values are not allowed in this context",
+                  "log_truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

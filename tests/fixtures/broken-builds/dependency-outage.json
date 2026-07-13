@@ -1,0 +1,34 @@
+{
+  "schema_version": "1",
+  "generated_at": "2025-01-15T11:00:00Z",
+  "collector": "github-actions",
+  "repos": [
+    {
+      "repo": "tsd-ui/design-system",
+      "default_branch": "main",
+      "collection_status": "ok",
+      "failures": [
+        {
+          "run_id": 23456789,
+          "run_url": "https://github.com/tsd-ui/design-system/actions/runs/23456789",
+          "workflow": "build.yml",
+          "head_sha": "b2c3d4e5f6a7890",
+          "started_at": "2025-01-15T10:55:00Z",
+          "signature": "tsd-ui/design-system::build.yml::install::Install dependencies::npm err! network",
+          "failed_jobs": [
+            {
+              "job_name": "install",
+              "failed_steps": [
+                {
+                  "step_name": "Install dependencies",
+                  "log_excerpt": "npm warn config production Use `--omit=dev` instead.\nnpm ERR! code ETIMEDOUT\nnpm ERR! syscall connect\nnpm ERR! errno ETIMEDOUT\nnpm ERR! network request to https://registry.npmjs.org/@tsd-ui/tokens/-/tokens-2.4.1.tgz failed, reason: connect ETIMEDOUT 104.16.1.35:443\nnpm ERR! network This is a problem related to network connectivity.\nnpm ERR! network In most cases you are behind a proxy or have bad network settings.\nnpm ERR! network\nnpm ERR! network If you are behind a proxy, please make sure that the\nnpm ERR! network 'proxy' config is set properly. See: 'npm help config'\n\nnpm ERR! A complete log of this run can be found in: /home/runner/.npm/_logs/2025-01-15T10_56_12_345Z-debug-0.log",
+                  "log_truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

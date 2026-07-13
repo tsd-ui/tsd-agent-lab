@@ -1,0 +1,38 @@
+{
+  "schema_version": "1",
+  "generated_at": "2025-01-15T10:30:00Z",
+  "collector": "github-actions",
+  "repos": [
+    {
+      "repo": "tsd-ui/example-app",
+      "default_branch": "main",
+      "collection_status": "ok",
+      "failures": [
+        {
+          "run_id": 12345678,
+          "run_url": "https://github.com/tsd-ui/example-app/actions/runs/12345678",
+          "workflow": "ci.yml",
+          "head_sha": "a1b2c3d4e5f6789",
+          "started_at": "2025-01-15T10:25:00Z",
+          "signature": "tsd-ui/example-app::ci.yml::test::Run unit tests::expected response within",
+          "recurrence": {
+            "count": 3,
+            "first_seen": "2025-01-12T08:15:00Z"
+          },
+          "failed_jobs": [
+            {
+              "job_name": "test",
+              "failed_steps": [
+                {
+                  "step_name": "Run unit tests",
+                  "log_excerpt": "FAIL src/api/client.test.ts\n  ● API Client › fetchUserProfile › should resolve within timeout threshold\n\n    Expected response within 100ms but took 250ms\n\n      at Object.<anonymous> (src/api/client.test.ts:47:5)\n      at Promise.resolve.then (node_modules/jest-circus/build/utils.js:21:5)\n\n    expect(elapsed).toBeLessThanOrEqual(100)\n                     ^\n    Received: 250\n\nTests: 1 failed, 142 passed, 143 total\nTime:  12.384 s\nnpm ERR! Test failed. See above for more details.",
+                  "log_truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

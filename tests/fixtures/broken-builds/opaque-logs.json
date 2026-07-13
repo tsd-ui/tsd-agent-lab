@@ -1,0 +1,34 @@
+{
+  "schema_version": "1",
+  "generated_at": "2025-01-15T16:45:00Z",
+  "collector": "github-actions",
+  "repos": [
+    {
+      "repo": "securesign/rhtas-console",
+      "default_branch": "main",
+      "collection_status": "ok",
+      "failures": [
+        {
+          "run_id": 67890123,
+          "run_url": "https://github.com/securesign/rhtas-console/actions/runs/67890123",
+          "workflow": "integration.yml",
+          "head_sha": "f6a7b8c9d0e1234",
+          "started_at": "2025-01-15T16:40:00Z",
+          "signature": "securesign/rhtas-console::integration.yml::e2e::Run E2E tests::process completed with exit code 1",
+          "failed_jobs": [
+            {
+              "job_name": "e2e",
+              "failed_steps": [
+                {
+                  "step_name": "Run E2E tests",
+                  "log_excerpt": "Process completed with exit code 1.",
+                  "log_truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

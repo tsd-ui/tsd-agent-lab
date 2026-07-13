@@ -1,0 +1,167 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tsd-agent-lab/schemas/broken-builds-data.schema.json",
+  "title": "Broken Builds Data Bundle",
+  "description": "Intermediate data bundle capturing CI/CD build failures across monitored repositories.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "collector", "repos"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Version of this schema format.",
+      "enum": ["1"]
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when this data bundle was generated."
+    },
+    "collector": {
+      "type": "string",
+      "enum": ["github-actions", "konflux"],
+      "description": "Which CI system collector produced this data."
+    },
+    "repos": {
+      "type": "array",
+      "description": "List of repositories that were checked for build failures.",
+      "items": {
+        "$ref": "#/definitions/repo"
+      }
+    },
+    "warning": {
+      "type": "string",
+      "description": "Optional warning message, e.g. when log excerpts were truncated to fit bundle size limit."
+    }
+  },
+  "definitions": {
+    "repo": {
+      "type": "object",
+      "required": ["repo", "default_branch", "collection_status", "failures"],
+      "additionalProperties": false,
+      "properties": {
+        "repo": {
+          "type": "string",
+          "description": "Repository identifier in org/repo format."
+        },
+        "default_branch": {
+          "type": "string",
+          "description": "Default branch name for this repository."
+        },
+        "collection_status": {
+          "type": "string",
+          "enum": ["ok", "error", "timeout"],
+          "description": "Outcome of data collection for this repository."
+        },
+        "collection_error": {
+          "type": "string",
+          "description": "Error message when collection_status is error or timeout."
+        },
+        "failures": {
+          "type": "array",
+          "description": "List of build failures detected on the default branch.",
+          "items": {
+            "$ref": "#/definitions/failure"
+          }
+        }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "required": ["run_id", "run_url", "workflow", "head_sha", "started_at", "signature", "failed_jobs"],
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "type": "integer",
+          "description": "GitHub Actions or CI system run identifier."
+        },
+        "run_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the failed CI run."
+        },
+        "workflow": {
+          "type": "string",
+          "description": "Workflow filename or identifier (e.g. ci.yml)."
+        },
+        "head_sha": {
+          "type": "string",
+          "description": "Git commit SHA that triggered the run."
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when the run started."
+        },
+        "signature": {
+          "type": "string",
+          "description": "Deduplication signature in the format repo::workflow::job::step::normalized_error."
+        },
+        "recurrence": {
+          "$ref": "#/definitions/recurrence"
+        },
+        "failed_jobs": {
+          "type": "array",
+          "description": "Jobs that failed within this run.",
+          "items": {
+            "$ref": "#/definitions/failed_job"
+          }
+        }
+      }
+    },
+    "recurrence": {
+      "type": "object",
+      "required": ["count", "first_seen"],
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of times this failure signature has been seen."
+        },
+        "first_seen": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when this failure signature was first observed."
+        }
+      }
+    },
+    "failed_job": {
+      "type": "object",
+      "required": ["job_name", "failed_steps"],
+      "additionalProperties": false,
+      "properties": {
+        "job_name": {
+          "type": "string",
+          "description": "Name of the failed job."
+        },
+        "failed_steps": {
+          "type": "array",
+          "description": "Steps that failed within this job.",
+          "items": {
+            "$ref": "#/definitions/failed_step"
+          }
+        }
+      }
+    },
+    "failed_step": {
+      "type": "object",
+      "required": ["step_name", "log_excerpt", "log_truncated"],
+      "additionalProperties": false,
+      "properties": {
+        "step_name": {
+          "type": "string",
+          "description": "Name of the failed step."
+        },
+        "log_excerpt": {
+          "type": "string",
+          "description": "Truncated excerpt from the step's log output."
+        },
+        "log_truncated": {
+          "type": "boolean",
+          "description": "Whether the log excerpt was truncated."
+        }
+      }
+    }
+  }
+}

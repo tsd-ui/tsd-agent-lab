@@ -1,0 +1,34 @@
+{
+  "schema_version": "1",
+  "generated_at": "2025-01-15T14:20:00Z",
+  "collector": "github-actions",
+  "repos": [
+    {
+      "repo": "tsd-ui/shared-utils",
+      "default_branch": "main",
+      "collection_status": "ok",
+      "failures": [
+        {
+          "run_id": 45678901,
+          "run_url": "https://github.com/tsd-ui/shared-utils/actions/runs/45678901",
+          "workflow": "release.yml",
+          "head_sha": "d4e5f6a7b8c9012",
+          "started_at": "2025-01-15T14:15:00Z",
+          "signature": "tsd-ui/shared-utils::release.yml::publish::Push to registry::resource not accessible",
+          "failed_jobs": [
+            {
+              "job_name": "publish",
+              "failed_steps": [
+                {
+                  "step_name": "Push to registry",
+                  "log_excerpt": "npm notice Publishing to https://npm.pkg.github.com/\nnpm ERR! code E403\nnpm ERR! 403 403 Forbidden - PUT https://npm.pkg.github.com/@tsd-ui/shared-utils - Resource not accessible by integration\nnpm ERR! 403 In most cases, you or one of your dependencies are requesting\nnpm ERR! 403 a package version that is forbidden by your security policy, or\nnpm ERR! 403 on a server you do not have access to.\n\nnpm ERR! A complete log of this run can be found in: /home/runner/.npm/_logs/2025-01-15T14_17_45_123Z-debug-0.log",
+                  "log_truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

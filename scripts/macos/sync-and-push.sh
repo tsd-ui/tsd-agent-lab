@@ -41,7 +41,7 @@ mkdir -p "$LOG_DIR"
 log() {
   local ts
   ts="$(date '+%Y-%m-%d %H:%M:%S')"
-  echo "[${ts}] $*" | tee -a "$LOG_FILE"
+  echo "[${ts}] $*" >> "$LOG_FILE"
 }
 
 cd "$REPO_ROOT"

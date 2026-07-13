@@ -90,6 +90,36 @@ Excludes `docs/archive/`. For semantic review (directory structure, setup steps,
 
 **Safe to run**: Not equivalent to the other scripts in this directory — it disables permission checks for an LLM session. `Edit`/`NotebookEdit` are disallowed and spend/runtime are capped, but it is not purely read-only inspection like the rest of this directory. Read the full writeup before scheduling it.
 
+### sync-and-push.sh
+
+**Purpose**: Auto-commit and push local changes to GitHub.
+
+**Usage**:
+```bash
+# Print what would happen without making changes
+./scripts/macos/sync-and-push.sh --dry-run
+
+# Commit and push
+./scripts/macos/sync-and-push.sh
+```
+
+**What it does**:
+- Fetches and rebases onto `origin/main` (aborts on conflict)
+- Stages and commits any local changes (modified + untracked)
+- Pushes to `origin/main`
+- Skips if not on `main`, stash is non-empty, or a rebase is in progress
+
+**Scheduling**: A LaunchAgent plist is provided at `com.tsd-agent-lab.sync-and-push.plist` for 10-minute intervals. Install to `~/Library/LaunchAgents/` and load:
+
+```bash
+cp scripts/macos/com.tsd-agent-lab.sync-and-push.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.tsd-agent-lab.sync-and-push.plist
+```
+
+**Log**: `logs/sync-and-push.log`
+
+**Safe to run**: This script modifies git state (commits and pushes). It uses `--no-verify` on commits to avoid hook delays in automated runs. Safe for repos where `main` is the working branch and Obsidian Sync may create files between runs.
+
 ## Directory Structure
 
 ```
@@ -100,9 +130,11 @@ scripts/
 │   ├── health-report.sh                            # Daily health report generator
 │   ├── stale-docs-check.sh                         # Mechanical doc staleness scanner
 │   ├── stale-docs-check-skill-run.sh               # Unattended full (mechanical+semantic) wrapper
+│   ├── sync-and-push.sh                            # Auto-commit and push to GitHub
 │   ├── com.tsd-agent-lab.health-report.plist       # launchd plist for scheduling
 │   ├── com.tsd-agent-lab.stale-docs-check.plist    # launchd plist: mechanical pass
-│   └── com.tsd-agent-lab.stale-docs-check-full.plist  # launchd plist: full pass
+│   ├── com.tsd-agent-lab.stale-docs-check-full.plist  # launchd plist: full pass
+│   └── com.tsd-agent-lab.sync-and-push.plist       # launchd plist: auto-sync every 10 min
 └── bootstrap/
     └── bootstrap-agent-lab.sh                      # First-time setup for agent-lab user
 ```

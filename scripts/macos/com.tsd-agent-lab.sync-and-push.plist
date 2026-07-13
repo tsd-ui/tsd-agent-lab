@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.tsd-agent-lab.sync-and-push</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ryordan/Obsidian/tsd-agent-lab/scripts/macos/sync-and-push.sh</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>600</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/ryordan/Obsidian/tsd-agent-lab/logs/sync-and-push.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ryordan/Obsidian/tsd-agent-lab/logs/sync-and-push.log</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
+        <key>HOME</key>
+        <string>/Users/ryordan</string>
+    </dict>
+</dict>
+</plist>

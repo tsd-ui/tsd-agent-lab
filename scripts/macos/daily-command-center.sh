@@ -82,10 +82,9 @@ ci_top_failures="[]"
 ci_section=""
 
 if file_available "$BROKEN_BUILDS_FILE"; then
-  bb_header=$(head -20 "$BROKEN_BUILDS_FILE")
-  ci_status_line=$(echo "$bb_header" | grep -E '^\| Status \|' -A1 | tail -1 | sed 's/^| *//;s/ *|$//' | awk -F'|' '{print $2}' | xargs)
+  ci_status_line=$(grep -m1 '| Status |' "$BROKEN_BUILDS_FILE" | awk -F'|' '{print $3}' | xargs)
   if [[ -z "$ci_status_line" ]]; then
-    ci_status_line=$(grep -m1 'Status' "$BROKEN_BUILDS_FILE" | sed 's/.*| *//;s/ *|.*//' || echo "unknown")
+    ci_status_line=$(grep -m1 -E '^[0-9]+ failure' "$BROKEN_BUILDS_FILE" || echo "unknown")
   fi
   ci_failures=$(extract_count "$ci_status_line" "failure")
   ci_repos_affected=$(extract_count "$ci_status_line" "repo")

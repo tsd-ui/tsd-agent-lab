@@ -1,0 +1,166 @@
+# Daily Command Center
+
+Consolidates the daily health, stale-docs, broken-builds, and PR review reports into a single digest. Produces both a markdown report and a structured JSON summary suitable for downstream consumers (Slack, dashboards).
+
+## What it collects
+
+- **CI / Builds** — failure count, affected repos, and top failure signatures from `broken-builds-YYYY-MM-DD.md`
+- **Documentation Health** — stale link and review finding counts from `stale-docs-YYYY-MM-DD.md`
+- **System Health** — warning count, failed launchd jobs, disk alerts from `health-YYYY-MM-DD.md`
+- **PR Activity** — reviewed PRs from `.pr-review-state.json`, open PR count via `gh` (if available)
+- **Action Items** — auto-generated list of things needing human attention
+- **Changes Since Yesterday** — diff against the previous day's JSON (new/resolved failures, status changes)
+
+## Overall status
+
+The digest assigns an overall status based on the data:
+
+| Status | Criteria |
+|--------|----------|
+| Green | No CI failures, no health warnings, no stale doc links |
+| Yellow | Any CI failures, health warnings, or stale doc links |
+| Red | 10+ CI failures, or 3+ health warnings |
+
+## Manual run
+
+```sh
+# Preview to stdout without writing files
+./scripts/macos/daily-command-center.sh --dry-run
+
+# Write reports to docs/admin/reports/
+./scripts/macos/daily-command-center.sh
+
+# Write reports and post to Slack
+./scripts/macos/daily-command-center.sh --post-slack
+```
+
+Running twice on the same day overwrites the previous report (idempotent).
+
+## Schedule via launchd
+
+A plist is provided at `scripts/macos/com.tsd-agent-lab.command-center.plist` but is **not auto-loaded**. It runs daily at 07:30, after health (06:00), stale-docs (06:15), and broken-builds (07:00) have completed.
+
+To enable:
+
+```sh
+cp scripts/macos/com.tsd-agent-lab.command-center.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.tsd-agent-lab.command-center.plist
+```
+
+To disable:
+
+```sh
+launchctl unload ~/Library/LaunchAgents/com.tsd-agent-lab.command-center.plist
+rm ~/Library/LaunchAgents/com.tsd-agent-lab.command-center.plist
+```
+
+The agent-lab user must be logged in for launchd user agents to fire (macOS limitation).
+
+## Output
+
+Reports are written to `docs/admin/reports/`:
+
+- `command-center-YYYY-MM-DD.md` — human-readable consolidated report
+- `command-center-YYYY-MM-DD.json` — structured summary for Slack and other consumers
+
+### Example markdown output
+
+```markdown
+# Daily Command Center — 2026-07-13
+
+## Status: 🔴
+
+### Summary
+
+- 20 CI failure(s) across 5 repo(s)
+- 18 stale docs finding(s)
+- System health: warnings
+- 7 PRs reviewed, 0 open across monitored repos
+
+### CI / Builds
+
+20 failure(s) across 5 repo(s)
+
+**securesign/rhtas-console**
+- linter / golangci / golangci-lint (logs unavailable)
+- openapi / ui-pr (no step-level detail)
+**securesign/rhtas-console-ui**
+- Deploy to GH Pages / gh-pages / Deploy to GitHub Pages
+
+### Documentation Health
+
+**Summary:** 5 stale findings, 13 for review (mechanical pass only)
+
+### System Health
+
+**Status:** warnings
+
+Warnings:
+- Failed job: com.tsd-agent-lab.stale-docs-check-full
+
+### PR Activity
+
+- **7** PRs reviewed (lifetime)
+- **0** PRs currently open across monitored repos
+
+### Action Items
+
+- [ ] Review 20 CI failure(s) across 5 repo(s)
+- [ ] Fix 5 stale doc link(s)
+- [ ] Address 2 system health warning(s)
+```
+
+### Example JSON output
+
+```json
+{
+  "date": "2026-07-13",
+  "status": "red",
+  "ci": { "failures": 20, "repos_affected": 5, "top_failures": ["..."] },
+  "docs": { "findings": 18, "critical": 5 },
+  "health": { "status": "warnings", "warnings": ["..."] },
+  "prs": { "reviewed": 7, "open": 0 },
+  "action_items": ["..."]
+}
+```
+
+## Slack integration
+
+The `--post-slack` flag calls `scripts/macos/post-to-slack.sh`, which formats the JSON as a Slack Block Kit message and posts it via an incoming webhook. See [slack-integration.md](slack-integration.md) for setup instructions.
+
+## Dependencies
+
+- **Required:** `bash`, reports in `docs/admin/reports/`
+- **Optional:** `jq` (for PR state parsing and JSON diff), `gh` (for live open PR count)
+- **Graceful fallback:** missing reports or tools produce "not available" sections rather than errors
+
+## Rollback
+
+1. Unload the plist (if scheduled):
+
+   ```sh
+   launchctl unload ~/Library/LaunchAgents/com.tsd-agent-lab.command-center.plist
+   rm ~/Library/LaunchAgents/com.tsd-agent-lab.command-center.plist
+   ```
+
+2. Delete the scripts:
+
+   ```sh
+   rm scripts/macos/daily-command-center.sh
+   rm scripts/macos/post-to-slack.sh
+   rm scripts/macos/com.tsd-agent-lab.command-center.plist
+   ```
+
+3. Delete generated reports:
+
+   ```sh
+   rm docs/admin/reports/command-center-*.md
+   rm docs/admin/reports/command-center-*.json
+   ```
+
+4. Delete documentation:
+
+   ```sh
+   rm docs/admin/command-center.md
+   rm docs/admin/slack-integration.md
+   ```

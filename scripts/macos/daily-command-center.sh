@@ -18,7 +18,7 @@ POST_SLACK=false
 HEALTH_FILE="${REPORT_DIR}/health-${TODAY}.md"
 STALE_DOCS_FILE="${REPORT_DIR}/stale-docs-${TODAY}.md"
 BROKEN_BUILDS_FILE="${REPORT_DIR}/broken-builds-${TODAY}.md"
-PR_STATE_FILE="/Users/ryordan/workspaces/runs/.pr-review-state.json"
+PR_STATE_FILE="${HOME}/workspaces/runs/.pr-review-state.json"
 
 MD_OUT="${REPORT_DIR}/command-center-${TODAY}.md"
 JSON_OUT="${REPORT_DIR}/command-center-${TODAY}.json"

@@ -115,6 +115,7 @@ All limits are tuneable constants at the top of the collector script:
 | Max bundle size | 2 MB | Caps total JSON output |
 | Max agent invocations | 10 | Bounds LLM usage per daily run |
 | Timeout per repo | 60s | Prevents slow repos from blocking |
+| Max run age | 90 days | Skips runs older than this (logs expire ~90 days); override with `--max-age DAYS` |
 
 To tune, edit the constants at the top of `collectors/github-actions/collect.sh`.
 

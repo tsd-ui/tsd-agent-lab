@@ -40,6 +40,10 @@ This skill consumes a structured JSON data bundle (broken-builds-data-YYYY-MM-DD
       - Suggest a concrete next step
       - Note reproduction status: `first-seen` or `recurring` with count
 6. Compose the final report
+   a. Repo section headers must be GitHub-linked: `### [org/repo](https://github.com/org/repo)`
+   b. Each repo heading must include a trend status indicator: `🆕 new` (all first-seen), `🔁 recurring` (all recurring), or `🆕🔁 mixed` (both new and recurring failures)
+   c. Order findings by confidence level: `confirmed` first, then `probable`, then `possible`, then `insufficient-evidence`. Within the same confidence level, order by recurrence count descending (most occurrences first). This ensures the most actionable items appear at the top.
+   d. Include a "Top Actions" table (between Summary and Findings) listing only findings with confidence `confirmed` or `probable`, numbered by priority. If there are no confirmed/probable findings, omit the Top Actions section entirely.
 
 ## Expected Output
 
@@ -62,9 +66,15 @@ N failure(s) across M repo(s).
 
 [or: All builds passing.]
 
+## Top Actions
+
+| # | Repo | Issue | Confidence | Next Step |
+|---|---|---|---|---|
+| 1 | [org/repo](https://github.com/org/repo) | Brief issue description | confirmed | Suggested action |
+
 ## Findings
 
-### org/repo
+### [org/repo](https://github.com/org/repo) — 🆕 new
 
 #### Failure: workflow-name / job-name / step-name
 
@@ -96,7 +106,7 @@ N failure(s) across M repo(s).
 If a repo had collection errors (collection_status != "ok"), note it:
 
 ```markdown
-### org/repo
+### [org/repo](https://github.com/org/repo)
 
 > **Collection issue:** (error|timeout) — error message
 ```

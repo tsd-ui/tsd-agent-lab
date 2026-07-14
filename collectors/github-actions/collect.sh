@@ -9,6 +9,7 @@ MAX_BUNDLE_SIZE_BYTES=2097152  # 2 MB
 # shellcheck disable=SC2034  # consumed by the skill runner, not this script
 MAX_AGENT_INVOCATIONS=10
 TIMEOUT_PER_REPO=60
+MAX_RUN_AGE_DAYS=90          # skip runs older than this many days (logs expire ~90 days)
 
 # ── Path resolution ────────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -27,6 +28,7 @@ default branch for allowlisted repos and produces a structured JSON bundle.
 Options:
   --dry-run             Print JSON to stdout instead of writing to file
   --force-rediagnose    Accepted for forwarding to the skill layer (no-op here)
+  --max-age DAYS        Override MAX_RUN_AGE_DAYS (default: 90); skip older runs
   --help                Show this help message
 
 Prerequisites:
@@ -41,6 +43,11 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --dry-run)      DRY_RUN=true; shift ;;
         --force-rediagnose) shift ;;  # accepted for forwarding; no-op in collector
+        --max-age)
+            if [[ -z "${2:-}" || "$2" == --* ]]; then
+                echo >&2 "ERROR: --max-age requires a numeric DAYS argument"; exit 1
+            fi
+            MAX_RUN_AGE_DAYS="$2"; shift 2 ;;
         --help)         usage; exit 0 ;;
         *)              echo >&2 "Unknown option: $1"; usage >&2; exit 1 ;;
     esac
@@ -181,6 +188,20 @@ collect_repo() {
         workflow=$(echo "$runs_json" | jq -r ".[$run_index].workflowName")
         head_sha=$(echo "$runs_json" | jq -r ".[$run_index].headSha")
         started_at=$(echo "$runs_json" | jq -r ".[$run_index].startedAt")
+
+        # Age filter: skip runs older than MAX_RUN_AGE_DAYS
+        if [[ -n "$started_at" && "$started_at" != "null" ]]; then
+            local run_epoch cutoff_epoch
+            run_epoch=$(date -jf "%Y-%m-%dT%H:%M:%SZ" "$started_at" +%s 2>/dev/null || \
+                        date -d "$started_at" +%s 2>/dev/null || echo "0")
+            cutoff_epoch=$(date -v-"${MAX_RUN_AGE_DAYS}"d +%s 2>/dev/null || \
+                           date -d "${MAX_RUN_AGE_DAYS} days ago" +%s 2>/dev/null || echo "0")
+            if [[ "$run_epoch" -gt 0 && "$cutoff_epoch" -gt 0 && "$run_epoch" -lt "$cutoff_epoch" ]]; then
+                log "  Skipping run $run_id ($workflow): older than ${MAX_RUN_AGE_DAYS} days (started $started_at)"
+                run_index=$((run_index + 1))
+                continue
+            fi
+        fi
 
         log "  Run $run_id ($workflow) ..."
 
@@ -346,6 +367,7 @@ while IFS= read -r repo; do
             MAX_FAILED_RUNS_PER_REPO=$MAX_FAILED_RUNS_PER_REPO \
             MAX_JOBS_PER_RUN=$MAX_JOBS_PER_RUN \
             MAX_LOG_BYTES=$MAX_LOG_BYTES \
+            MAX_RUN_AGE_DAYS=$MAX_RUN_AGE_DAYS \
             RECURRENCE_COUNT=0 \
             RECURRENCE_FIRST_SEEN='' \
             collect_repo '$repo'") || {

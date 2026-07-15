@@ -112,6 +112,9 @@ bin/*.bin
 !logs/.gitkeep
 !experiments/.gitkeep
 
+# Old reports location (moved to /reports; ignore so Obsidian sync doesn't re-add)
+docs/admin/reports/
+
 # Obsidian workspace (local-only)
 .obsidian/
 

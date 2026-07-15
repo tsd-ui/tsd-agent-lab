@@ -121,7 +121,9 @@ if [[ -n "$next_steps" ]]; then
   while IFS= read -r step; do
     cmd="${step#*: }"
     label="${step%%: *}"
-    next_steps_text+="*${label}:*\n\`${cmd}\`\n"
+    escaped_cmd=$(printf '%s' "$cmd" | sed 's/\\/\\\\/g; s/"/\\"/g')
+    escaped_label=$(printf '%s' "$label" | sed 's/\\/\\\\/g; s/"/\\"/g')
+    next_steps_text+="*${escaped_label}:*\\n\`${escaped_cmd}\`\\n"
   done <<< "$next_steps"
 else
   next_steps_text="No specific next steps."

@@ -106,7 +106,7 @@ check_recurrence() {
     RECURRENCE_COUNT=0
     RECURRENCE_FIRST_SEEN=""
 
-    local reports_dir="$REPO_ROOT/docs/admin/reports"
+    local reports_dir="$REPO_ROOT/reports"
     if [[ ! -d "$reports_dir" ]]; then
         return
     fi

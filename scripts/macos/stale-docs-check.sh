@@ -16,7 +16,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-REPORT_DIR="${REPO_ROOT}/docs/admin/reports"
+REPORT_DIR="${REPO_ROOT}/reports"
 TODAY="$(date +%Y-%m-%d)"
 REPORT_FILE="${REPORT_DIR}/stale-docs-${TODAY}.md"
 DRY_RUN=false
@@ -35,7 +35,7 @@ Options:
   --help      Show this help message
 
 Output:
-  Default: writes to docs/admin/reports/stale-docs-YYYY-MM-DD.md
+  Default: writes to reports/stale-docs-YYYY-MM-DD.md
   Dry run: prints to stdout
 USAGE
 }
@@ -176,12 +176,12 @@ check_script_invocations() {
 }
 
 list_md_files() {
-  # docs/admin/reports/ holds this tool's own generated output (and
-  # health-report.sh's) — scanning it back would re-flag prior findings as
-  # new ones, since the report text itself contains path-like tokens.
+  # reports/ holds this tool's own generated output (and health-report.sh's)
+  # — scanning it back would re-flag prior findings as new ones, since the
+  # report text itself contains path-like tokens.
   find . -name '*.md' \
     -not -path './docs/archive/*' \
-    -not -path './docs/admin/reports/*' \
+    -not -path './reports/*' \
     -not -path './.git/*' \
     -not -path './node_modules/*' \
     | sed 's|^\./||' | sort

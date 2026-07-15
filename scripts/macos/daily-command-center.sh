@@ -9,7 +9,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-REPORT_DIR="${REPO_ROOT}/docs/admin/reports"
+REPORT_DIR="${REPO_ROOT}/reports"
 TODAY="$(date +%Y-%m-%d)"
 YESTERDAY="$(date -v-1d +%Y-%m-%d 2>/dev/null || date -d 'yesterday' +%Y-%m-%d 2>/dev/null || echo "")"
 DRY_RUN=false
@@ -42,8 +42,8 @@ Options:
   --help         Show this help message
 
 Output:
-  Default: writes to docs/admin/reports/command-center-YYYY-MM-DD.md
-           and docs/admin/reports/command-center-YYYY-MM-DD.json
+  Default: writes to reports/command-center-YYYY-MM-DD.md
+           and reports/command-center-YYYY-MM-DD.json
   Dry run: prints both to stdout
 USAGE
 }

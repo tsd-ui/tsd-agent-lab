@@ -9,7 +9,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-REPORT_DIR="${REPO_ROOT}/docs/admin/reports"
+REPORT_DIR="${REPO_ROOT}/reports"
 TODAY="$(date +%Y-%m-%d)"
 REPORT_FILE="${REPORT_DIR}/health-${TODAY}.md"
 DRY_RUN=false
@@ -26,7 +26,7 @@ Options:
   --help      Show this help message
 
 Output:
-  Default: writes to docs/admin/reports/health-YYYY-MM-DD.md
+  Default: writes to reports/health-YYYY-MM-DD.md
   Dry run: prints to stdout
 USAGE
 }

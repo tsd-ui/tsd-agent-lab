@@ -1,0 +1,23 @@
+{
+  "date": "2026-07-15",
+  "status": "green",
+  "ci": {
+    "failures": 0,
+    "repos_affected": 0,
+    "top_failures": []
+  },
+  "docs": {
+    "findings": 0,
+    "critical": 0
+  },
+  "health": {
+    "status": "ok",
+    "warnings": []
+  },
+  "prs": {
+    "reviewed": 7,
+    "open": 3
+  },
+  "action_items": [],
+  "next_steps": ["Review open PRs: claude \"Follow skills/pr-review/SKILL.md\""]
+}

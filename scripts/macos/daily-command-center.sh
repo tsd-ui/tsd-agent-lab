@@ -302,13 +302,52 @@ fi
 action_section="### Action Items
 "
 if [[ ${#action_items[@]} -eq 0 ]]; then
-  action_section+=$'\n'"No action items. All clear."$'\n'
+  action_section+=$'\n'"No issues detected. System is healthy — see Next Steps for proactive actions."$'\n'
 else
   action_section+=$'\n'
   for item in "${action_items[@]}"; do
     action_section+="- [ ] ${item}"$'\n'
   done
 fi
+
+# ---------------------------------------------------------------------------
+# Next Steps — actionable commands based on current state
+# ---------------------------------------------------------------------------
+
+next_steps=()
+
+if [[ "$ci_failures" -gt 0 ]]; then
+  next_steps+=("View broken-builds report: cat reports/broken-builds-${TODAY}.md")
+  next_steps+=("Re-run CI diagnosis: ./scripts/macos/broken-builds-skill-run.sh --force-rediagnose")
+fi
+
+if [[ "$docs_findings" -gt 0 ]]; then
+  next_steps+=("View stale-docs report: cat reports/stale-docs-${TODAY}.md")
+  next_steps+=("Run full docs review: claude \"Follow skills/stale-docs-check/SKILL.md\"")
+fi
+
+if [[ ${#health_warnings[@]} -gt 0 ]]; then
+  next_steps+=("View health report: cat reports/health-${TODAY}.md")
+  next_steps+=("Check launchd status: launchctl list | grep tsd-agent-lab")
+fi
+
+if [[ "$prs_open" -gt 0 ]]; then
+  next_steps+=("Review open PRs: claude \"Follow skills/pr-review/SKILL.md\"")
+fi
+
+if [[ ${#next_steps[@]} -eq 0 ]]; then
+  next_steps+=("Check for new PRs: gh pr list --repo securesign/rhtas-console-ui --state open")
+  next_steps+=("Run a codebase map: claude \"Follow skills/codebase-map/SKILL.md\"")
+  next_steps+=("Re-run this digest: ./scripts/macos/daily-command-center.sh --dry-run")
+fi
+
+next_steps_section="### Next Steps
+"
+for step in "${next_steps[@]}"; do
+  cmd="${step#*: }"
+  label="${step%%: *}"
+  next_steps_section+=$'\n'"- **${label}**"$'\n'"  \`\`\`"$'\n'"  ${cmd}"$'\n'"  \`\`\`"$'\n'
+done
 
 # ---------------------------------------------------------------------------
 # Overall status
@@ -384,7 +423,8 @@ ${diff_section}${ci_section}
 ${docs_section}
 ${health_section}
 ${pr_section}
-${action_section}"
+${action_section}
+${next_steps_section}"
 
 clean=$(printf '%s' "$report" | sed 's/[[:space:]]*$//')
 
@@ -422,6 +462,21 @@ for item in "${action_items[@]+"${action_items[@]}"}"; do
 done
 ai_json+="]"
 
+# Build next steps JSON array
+ns_json="["
+ns_first=true
+for step in "${next_steps[@]+"${next_steps[@]}"}"; do
+  [[ -z "$step" ]] && continue
+  if [[ "$ns_first" == "true" ]]; then
+    ns_first=false
+  else
+    ns_json+=","
+  fi
+  escaped=$(echo "$step" | sed 's/"/\\"/g')
+  ns_json+="\"${escaped}\""
+done
+ns_json+="]"
+
 json_summary=$(cat <<ENDJSON
 {
   "date": "${TODAY}",
@@ -443,7 +498,8 @@ json_summary=$(cat <<ENDJSON
     "reviewed": ${prs_reviewed},
     "open": ${prs_open}
   },
-  "action_items": ${ai_json}
+  "action_items": ${ai_json},
+  "next_steps": ${ns_json}
 }
 ENDJSON
 )

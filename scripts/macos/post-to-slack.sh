@@ -111,7 +111,20 @@ if [[ -n "$action_items" ]]; then
     action_text+="• ${item}\n"
   done <<< "$action_items"
 else
-  action_text="No action items. All clear. :tada:"
+  action_text="No issues detected. System is healthy. :tada:"
+fi
+
+# Build next steps text
+next_steps=$(jq -r '.next_steps[]' "$JSON_FILE" 2>/dev/null || true)
+next_steps_text=""
+if [[ -n "$next_steps" ]]; then
+  while IFS= read -r step; do
+    cmd="${step#*: }"
+    label="${step%%: *}"
+    next_steps_text+="*${label}:*\n\`${cmd}\`\n"
+  done <<< "$next_steps"
+else
+  next_steps_text="No specific next steps."
 fi
 
 # Build top CI failures text
@@ -184,6 +197,11 @@ payload=$(cat <<ENDPAYLOAD
         "type": "mrkdwn",
         "text": "*Action Items*\n${action_text}"
       }
+    },
+    { "type": "divider" },
+    {
+      "type": "section",
+      "text": { "type": "mrkdwn", "text": "*Next Steps*\n${next_steps_text}" }
     }$(if [[ -n "$ci_text" ]]; then cat <<CIBLOCK
 ,
     {

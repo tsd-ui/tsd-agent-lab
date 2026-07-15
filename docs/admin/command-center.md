@@ -11,6 +11,25 @@ Consolidates the daily health, stale-docs, broken-builds, and PR review reports 
 - **Action Items** — auto-generated list of things needing human attention
 - **Changes Since Yesterday** — diff against the previous day's JSON (new/resolved failures, status changes)
 
+## Next Steps
+
+The command center includes context-aware suggested actions based on the current state of the system. Each suggestion includes a ready-to-run command.
+
+| Condition | Suggested Action | Command |
+|-----------|-----------------|---------|
+| CI failures > 0 | View broken-builds report | `cat reports/broken-builds-YYYY-MM-DD.md` |
+| CI failures > 0 | Re-run CI diagnosis | `./scripts/macos/broken-builds-skill-run.sh --force-rediagnose` |
+| Stale docs > 0 | View stale-docs report | `cat reports/stale-docs-YYYY-MM-DD.md` |
+| Stale docs > 0 | Run full docs review | `claude "Follow skills/stale-docs-check/SKILL.md"` |
+| Health warnings > 0 | View health report | `cat reports/health-YYYY-MM-DD.md` |
+| Health warnings > 0 | Check launchd status | `launchctl list \| grep tsd-agent-lab` |
+| Open PRs > 0 | Review open PRs | `claude "Follow skills/pr-review/SKILL.md"` |
+| All clear | Check for new PRs | `gh pr list --repo securesign/rhtas-console-ui --state open` |
+| All clear | Run a codebase map | `claude "Follow skills/codebase-map/SKILL.md"` |
+| All clear | Preview digest | `./scripts/macos/daily-command-center.sh --dry-run` |
+
+When no issues are detected, the system suggests proactive actions like checking for new PRs or running a codebase map.
+
 ## Overall status
 
 The digest assigns an overall status based on the data:

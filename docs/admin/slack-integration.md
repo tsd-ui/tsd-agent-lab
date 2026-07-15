@@ -86,6 +86,30 @@ The Slack message uses Block Kit and includes:
 - **Health warnings** (if any)
 - **Context footer** with generation timestamp
 
+## Activation Checklist
+
+Before enabling automated Slack posting:
+
+1. **All 5 launchd jobs loaded** — verify with `launchctl list | grep tsd-agent-lab`
+2. **Command center reviewed for 2+ days** — check `ls reports/command-center-*.md` for at least 2 reports
+3. **Webhook configured** — create a Slack app, obtain an Incoming Webhook URL, and save it to `~/.config/tsd-agent-lab/slack-webhook.env`
+4. **Dry-run verified** — run `./scripts/macos/post-to-slack.sh --dry-run reports/command-center-$(date +%Y-%m-%d).json | jq .` and confirm the payload looks correct
+5. **Test post** — run `./scripts/macos/post-to-slack.sh reports/command-center-$(date +%Y-%m-%d).json` to send a real message
+
+### Enabling Automated Posting
+
+Once all prerequisites are met:
+1. Update the command-center plist `ProgramArguments` to add `--post-slack`
+2. Copy updated plist to `~/Library/LaunchAgents/`
+3. Reload: `launchctl unload ~/Library/LaunchAgents/com.tsd-agent-lab.command-center.plist && launchctl load ~/Library/LaunchAgents/com.tsd-agent-lab.command-center.plist`
+
+### Rollback
+
+To disable automated posting:
+1. Remove `--post-slack` from the plist `ProgramArguments`
+2. Copy updated plist to `~/Library/LaunchAgents/`
+3. Reload the plist as above
+
 ## Troubleshooting
 
 | Problem | Fix |
@@ -95,3 +119,27 @@ The Slack message uses Block Kit and includes:
 | HTTP 403 from Slack | Webhook URL may be revoked — regenerate in app settings |
 | HTTP 404 from Slack | Channel may have been deleted or webhook disabled |
 | Message not appearing | Check the webhook is still active in the Slack app settings |
+
+## Activation Checklist
+
+Before enabling automated Slack posting:
+
+1. **All 5 launchd jobs loaded** — verify with `launchctl list | grep tsd-agent-lab`
+2. **Command center reviewed for 2+ days** — check `ls reports/command-center-*.md` for at least 2 reports
+3. **Webhook configured** — create a Slack app, obtain an Incoming Webhook URL, and save it to `~/.config/tsd-agent-lab/slack-webhook.env`
+4. **Dry-run verified** — run `./scripts/macos/post-to-slack.sh --dry-run reports/command-center-$(date +%Y-%m-%d).json | jq .` and confirm the payload looks correct
+5. **Test post** — run `./scripts/macos/post-to-slack.sh reports/command-center-$(date +%Y-%m-%d).json` to send a real message
+
+### Enabling Automated Posting
+
+Once all prerequisites are met:
+1. Update the command-center plist `ProgramArguments` to add `--post-slack`
+2. Copy updated plist to `~/Library/LaunchAgents/`
+3. Reload: `launchctl unload ~/Library/LaunchAgents/com.tsd-agent-lab.command-center.plist && launchctl load ~/Library/LaunchAgents/com.tsd-agent-lab.command-center.plist`
+
+### Rollback
+
+To disable automated posting:
+1. Remove `--post-slack` from the plist `ProgramArguments`
+2. Copy updated plist to `~/Library/LaunchAgents/`
+3. Reload the plist as above

@@ -23,7 +23,7 @@ There are two ways to run this, with different depth:
 # Print report to stdout without writing a file
 ./scripts/macos/stale-docs-check.sh --dry-run
 
-# Write report to docs/admin/reports/stale-docs-YYYY-MM-DD.md
+# Write report to reports/stale-docs-YYYY-MM-DD.md
 ./scripts/macos/stale-docs-check.sh
 ```
 
@@ -82,7 +82,7 @@ This is a real, accepted change in trust posture for an unattended job, not a fu
 
 ## Output
 
-Reports are written to `docs/admin/reports/stale-docs-YYYY-MM-DD.md`. Each report includes:
+Reports are written to `reports/stale-docs-YYYY-MM-DD.md`. Each report includes:
 
 - Date, host, user, and generation timestamp
 - Summary line: `N stale findings, M for review`
@@ -134,10 +134,10 @@ The line between the two is subjective by design — the first few runs will lik
 
 ## How to act on findings
 
-1. Read the report at `docs/admin/reports/stale-docs-YYYY-MM-DD.md`.
+1. Read the report at `reports/stale-docs-YYYY-MM-DD.md`.
 2. For each `stale` finding, fix the doc directly (update the path/link or remove the stale reference) — the tool never does this for you.
 3. For each `review` finding, use judgment: confirm it's actually fine (aspirational, illustrative) and leave it, or treat it as stale and fix it.
-4. Do not delete the report after acting on it — reports accumulate under `docs/admin/reports/` like health reports do, giving a history of doc drift over time.
+4. Do not delete the report after acting on it — reports accumulate under `reports/` like health reports do, giving a history of doc drift over time.
 
 ## Rollback
 
@@ -167,7 +167,7 @@ To fully remove this feature:
 4. Delete generated reports (only the stale-docs ones, if health reports share the directory):
 
    ```sh
-   rm docs/admin/reports/stale-docs-*.md
+   rm reports/stale-docs-*.md
    ```
 
 5. Delete this documentation:

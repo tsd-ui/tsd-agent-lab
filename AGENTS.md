@@ -50,6 +50,7 @@ All agents must follow `policies/agent-conventions.md`. Key rules:
 - Protocol experiments go under `protocols/`.
 - Skills go under `skills/`.
 - Docs go under `docs/`.
+- Generated reports go under `reports/`.
 - Example tasks go under `examples/tasks/`.
 - Phase prompts go under `docs/phases/` as `Phase-N-Prompt.md`.
 - Phase summaries go under `docs/phases/` as `Phase-N-Summary.md`.

@@ -43,7 +43,7 @@ The `SLACK_CHANNEL` line is for reference only — the webhook is bound to the c
 ./scripts/macos/daily-command-center.sh
 
 # Preview the Slack payload without posting
-./scripts/macos/post-to-slack.sh --dry-run docs/admin/reports/command-center-$(date +%Y-%m-%d).json
+./scripts/macos/post-to-slack.sh --dry-run reports/command-center-$(date +%Y-%m-%d).json
 ```
 
 This prints the Block Kit JSON payload to stdout so you can verify formatting.
@@ -51,7 +51,7 @@ This prints the Block Kit JSON payload to stdout so you can verify formatting.
 ### 6. Post for Real
 
 ```bash
-./scripts/macos/post-to-slack.sh docs/admin/reports/command-center-$(date +%Y-%m-%d).json
+./scripts/macos/post-to-slack.sh reports/command-center-$(date +%Y-%m-%d).json
 ```
 
 You should see the message appear in your Slack channel.

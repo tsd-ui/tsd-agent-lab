@@ -74,7 +74,7 @@ Key fields:
 
 ## Output
 
-Reports are written to `docs/admin/reports/broken-builds-YYYY-MM-DD.md`.
+Reports are written to `reports/broken-builds-YYYY-MM-DD.md`.
 
 Each report includes:
 - Header table (date, host, user, timestamp, status)
@@ -144,7 +144,7 @@ rm skills/broken-builds/SKILL.md
 rm scripts/macos/generate-repo-inventory.sh
 rm policies/generated/repo-inventory.txt
 
-# 3. Reports in docs/admin/reports/ can be kept or removed as desired
+# 3. Reports in reports/ can be kept or removed as desired
 ```
 
 ## Known Limitations

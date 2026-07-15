@@ -16,7 +16,7 @@ Automated daily health check for the agent-lab environment. Produces a markdown 
 # Print report to stdout without writing a file
 ./scripts/macos/health-report.sh --dry-run
 
-# Write report to docs/admin/reports/health-YYYY-MM-DD.md
+# Write report to reports/health-YYYY-MM-DD.md
 ./scripts/macos/health-report.sh
 ```
 
@@ -44,7 +44,7 @@ The agent-lab user must be logged in for launchd user agents to fire (macOS limi
 
 ## Output
 
-Reports are written to `docs/admin/reports/health-YYYY-MM-DD.md`. Each report includes:
+Reports are written to `reports/health-YYYY-MM-DD.md`. Each report includes:
 
 - Date, host, user, and generation timestamp
 - Overall status line (`healthy` or `N warning(s)`)
@@ -108,7 +108,7 @@ To fully remove this feature:
 3. Delete generated reports:
 
    ```sh
-   rm -rf docs/admin/reports/
+   rm -rf reports/
    ```
 
 4. Delete this documentation:

@@ -27,7 +27,7 @@ The digest assigns an overall status based on the data:
 # Preview to stdout without writing files
 ./scripts/macos/daily-command-center.sh --dry-run
 
-# Write reports to docs/admin/reports/
+# Write reports to reports/
 ./scripts/macos/daily-command-center.sh
 
 # Write reports and post to Slack
@@ -58,7 +58,7 @@ The agent-lab user must be logged in for launchd user agents to fire (macOS limi
 
 ## Output
 
-Reports are written to `docs/admin/reports/`:
+Reports are written to `reports/`:
 
 - `command-center-YYYY-MM-DD.md` — human-readable consolidated report
 - `command-center-YYYY-MM-DD.json` — structured summary for Slack and other consumers
@@ -130,7 +130,7 @@ The `--post-slack` flag calls `scripts/macos/post-to-slack.sh`, which formats th
 
 ## Dependencies
 
-- **Required:** `bash`, reports in `docs/admin/reports/`
+- **Required:** `bash`, reports in `reports/`
 - **Optional:** `jq` (for PR state parsing and JSON diff), `gh` (for live open PR count)
 - **Graceful fallback:** missing reports or tools produce "not available" sections rather than errors
 
@@ -154,8 +154,8 @@ The `--post-slack` flag calls `scripts/macos/post-to-slack.sh`, which formats th
 3. Delete generated reports:
 
    ```sh
-   rm docs/admin/reports/command-center-*.md
-   rm docs/admin/reports/command-center-*.json
+   rm reports/command-center-*.md
+   rm reports/command-center-*.json
    ```
 
 4. Delete documentation:

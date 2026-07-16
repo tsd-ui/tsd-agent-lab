@@ -145,8 +145,6 @@ cmd_investigate() {
   [[ -z "$incident_json" || "$incident_json" == "null" ]] \
     && die "Incident not found: ${incident_id}"
 
-  incident_update_status "$incident_id" "investigating" 2>/dev/null || true
-
   log_info "Generating task..."
   local task_file
   task_file=$(generate_investigate_task "$incident_id")
@@ -154,6 +152,7 @@ cmd_investigate() {
   run_pipeline "$task_file" "read-only"
   [[ -n "$DRY_RUN_FLAG" ]] && return 0
 
+  incident_update_status "$incident_id" "investigating" 2>/dev/null || true
   incident_append_action "$incident_id" "investigated" "Run: $(basename "$PIPELINE_RUN_DIR")"
 
   echo ""

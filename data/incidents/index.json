@@ -4,7 +4,7 @@
     "signature": "securesign/rhtas-console-ui::CI (e2e)::run-e2e-ci / e2e-integration-tests::Run Playwright tests::Cleaning up orphan processes",
     "repo": "securesign/rhtas-console-ui",
     "workflow": "CI (e2e)",
-    "status": "investigating",
+    "status": "open",
     "created_at": "2026-07-16T13:55:59Z",
     "updated_at": "2026-07-16T14:50:49Z",
     "run_ids": [

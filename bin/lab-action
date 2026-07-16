@@ -1,0 +1,340 @@
+#!/usr/bin/env bash
+#
+# lab-action — CLI entry point for incident investigation and PR review
+#
+# Usage: bin/lab-action <command> [args] [--dry-run]
+#
+#   investigate <INC-NNNN>          Read-only CI failure analysis
+#   review-pr   <owner/repo>#<pr>   Review a specific pull request
+#   draft-fix   <INC-NNNN>          Create a draft fix branch
+#   status      [INC-NNNN]          Show incident status
+#   list        [--status X]        List incidents
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LAB_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+source "${LAB_ROOT}/harness/lib/common.sh"
+source "${LAB_ROOT}/bin/lib/incidents.sh"
+source "${LAB_ROOT}/bin/lib/task-gen.sh"
+
+DRY_RUN_FLAG=""
+PIPELINE_RUN_DIR=""
+PIPELINE_CLAUDE_EXIT=0
+
+# ---------------------------------------------------------------------------
+# Usage
+# ---------------------------------------------------------------------------
+usage() {
+  cat >&2 <<EOF
+Usage: $(basename "$0") <command> [args] [--dry-run]
+
+Commands:
+  investigate <INC-NNNN>            Read-only CI failure analysis
+  review-pr   <owner/repo>#<pr>     Review a specific pull request
+  draft-fix   <INC-NNNN>            Create a draft fix branch
+  status      [INC-NNNN]            Show incident status (or summary of all)
+  list        [--status X]          List incidents
+
+Options:
+  --dry-run    Show what would happen without executing
+  -h, --help   Show this help
+
+Examples:
+  $(basename "$0") review-pr securesign/rhtas-console-ui#45
+  $(basename "$0") investigate INC-0001
+  $(basename "$0") list --status open
+EOF
+  exit 1
+}
+
+# ---------------------------------------------------------------------------
+# Parse PR reference: owner/repo#123 or GitHub URL
+# Sets: PR_OWNER, PR_REPO, PR_NUMBER
+# ---------------------------------------------------------------------------
+PR_OWNER="" PR_REPO="" PR_NUMBER=""
+
+parse_pr_ref() {
+  local ref="$1"
+
+  # owner/repo#123
+  if [[ "$ref" =~ ^([^/]+)/([^#]+)#([0-9]+)$ ]]; then
+    PR_OWNER="${BASH_REMATCH[1]}"
+    PR_REPO="${BASH_REMATCH[2]}"
+    PR_NUMBER="${BASH_REMATCH[3]}"
+    return 0
+  fi
+
+  # https://github.com/owner/repo/pull/123
+  if [[ "$ref" =~ github\.com/([^/]+)/([^/]+)/pull/([0-9]+) ]]; then
+    PR_OWNER="${BASH_REMATCH[1]}"
+    PR_REPO="${BASH_REMATCH[2]}"
+    PR_NUMBER="${BASH_REMATCH[3]}"
+    return 0
+  fi
+
+  return 1
+}
+
+# ---------------------------------------------------------------------------
+# Run harness pipeline
+#
+# Sets PIPELINE_RUN_DIR and PIPELINE_CLAUDE_EXIT as side effects.
+# ---------------------------------------------------------------------------
+run_pipeline() {
+  local task_file="$1"
+  local mode="$2"
+
+  if [[ -n "$DRY_RUN_FLAG" ]]; then
+    print_banner "Dry Run: lab-action pipeline"
+    log_info "Task file: ${task_file}"
+    log_info "Mode:      ${mode}"
+    log_info "Steps:     create-run → prepare-repo → run-claude → write-report"
+    if [[ "$mode" == "patch-only" ]]; then
+      log_info "           + verify-run → export-patch"
+    fi
+    echo ""
+    log_info "Generated task YAML:"
+    cat "$task_file"
+    echo ""
+    local pf
+    pf=$(read_yaml_field "$task_file" "prompt_file")
+    if [[ -n "$pf" && -f "$pf" ]]; then
+      log_info "Generated prompt (first 30 lines):"
+      head -30 "$pf"
+      echo "..."
+    fi
+    return 0
+  fi
+
+  log_step "Pipeline: create-run"
+  PIPELINE_RUN_DIR=$("${LAB_ROOT}/harness/create-run.sh" "$task_file")
+
+  log_step "Pipeline: prepare-repo"
+  "${LAB_ROOT}/harness/prepare-repo.sh" "$task_file" --run-dir "$PIPELINE_RUN_DIR"
+
+  log_step "Pipeline: run-claude"
+  PIPELINE_CLAUDE_EXIT=0
+  "${LAB_ROOT}/harness/run-claude.sh" "$task_file" --run-dir "$PIPELINE_RUN_DIR" \
+    || PIPELINE_CLAUDE_EXIT=$?
+
+  if [[ "$mode" == "patch-only" ]]; then
+    log_step "Pipeline: verify-run"
+    "${LAB_ROOT}/harness/verify-run.sh" "$task_file" --run-dir "$PIPELINE_RUN_DIR" || true
+
+    log_step "Pipeline: export-patch"
+    "${LAB_ROOT}/harness/export-patch.sh" "$PIPELINE_RUN_DIR" || true
+  fi
+
+  log_step "Pipeline: write-report"
+  "${LAB_ROOT}/harness/write-report.sh" "$PIPELINE_RUN_DIR" || true
+}
+
+# ---------------------------------------------------------------------------
+# Commands
+# ---------------------------------------------------------------------------
+cmd_investigate() {
+  local incident_id="${1:-}"
+  [[ -z "$incident_id" ]] && die "Usage: $(basename "$0") investigate <INC-NNNN>"
+
+  print_banner "Investigate ${incident_id}"
+
+  local incident_json
+  incident_json=$(incident_get "$incident_id")
+  [[ -z "$incident_json" || "$incident_json" == "null" ]] \
+    && die "Incident not found: ${incident_id}"
+
+  incident_update_status "$incident_id" "investigating" 2>/dev/null || true
+
+  log_info "Generating task..."
+  local task_file
+  task_file=$(generate_investigate_task "$incident_id")
+
+  run_pipeline "$task_file" "read-only"
+  [[ -n "$DRY_RUN_FLAG" ]] && return 0
+
+  incident_append_action "$incident_id" "investigated" "Run: $(basename "$PIPELINE_RUN_DIR")"
+
+  echo ""
+  log_success "Investigation complete"
+  log_info "Run directory: ${PIPELINE_RUN_DIR}"
+  log_info "Agent output:  ${PIPELINE_RUN_DIR}/agent-output.md"
+  log_info "Report:        ${PIPELINE_RUN_DIR}/summary.md"
+}
+
+cmd_review_pr() {
+  local pr_ref="${1:-}"
+  [[ -z "$pr_ref" ]] && die "Usage: $(basename "$0") review-pr <owner/repo>#<pr>"
+
+  if ! parse_pr_ref "$pr_ref"; then
+    die "Cannot parse PR reference: ${pr_ref}
+Expected: owner/repo#123 or https://github.com/owner/repo/pull/123"
+  fi
+
+  print_banner "Review PR: ${PR_OWNER}/${PR_REPO}#${PR_NUMBER}"
+
+  require_command gh
+  require_command jq
+
+  log_info "Generating task..."
+  local task_file
+  task_file=$(generate_review_pr_task "$PR_OWNER" "$PR_REPO" "$PR_NUMBER")
+
+  run_pipeline "$task_file" "review-only"
+  [[ -n "$DRY_RUN_FLAG" ]] && return 0
+
+  echo ""
+  if [[ "$PIPELINE_CLAUDE_EXIT" -eq 0 ]]; then
+    log_success "PR review complete"
+  else
+    log_warn "PR review finished with issues (exit code: ${PIPELINE_CLAUDE_EXIT})"
+  fi
+  log_info "Run directory: ${PIPELINE_RUN_DIR}"
+  log_info "Agent output:  ${PIPELINE_RUN_DIR}/agent-output.md"
+  log_info "Report:        ${PIPELINE_RUN_DIR}/summary.md"
+}
+
+cmd_draft_fix() {
+  local incident_id="${1:-}"
+  [[ -z "$incident_id" ]] && die "Usage: $(basename "$0") draft-fix <INC-NNNN>"
+
+  print_banner "Draft Fix: ${incident_id}"
+
+  local incident_json
+  incident_json=$(incident_get "$incident_id")
+  [[ -z "$incident_json" || "$incident_json" == "null" ]] \
+    && die "Incident not found: ${incident_id}"
+
+  log_info "Generating task..."
+  local task_file
+  task_file=$(generate_draft_fix_task "$incident_id")
+
+  run_pipeline "$task_file" "patch-only"
+  [[ -n "$DRY_RUN_FLAG" ]] && return 0
+
+  incident_update_status "$incident_id" "fix-drafted"
+  incident_append_action "$incident_id" "fix-drafted" "Run: $(basename "$PIPELINE_RUN_DIR")"
+
+  local repo
+  repo=$(echo "$incident_json" | jq -r '.repo')
+  local task_id
+  task_id=$(read_yaml_field "$task_file" "task_id")
+
+  echo ""
+  if [[ "$PIPELINE_CLAUDE_EXIT" -eq 0 ]]; then
+    log_success "Draft fix complete"
+  else
+    log_warn "Draft fix finished with issues (exit code: ${PIPELINE_CLAUDE_EXIT})"
+  fi
+  log_info "Run directory: ${PIPELINE_RUN_DIR}"
+  log_info "Patch file:    ${PIPELINE_RUN_DIR}/changes.patch"
+  echo ""
+  log_info "To create a draft PR, apply the patch and run:"
+  echo "  cd ${TSD_REPOS_DIR}/$(basename "$repo")"
+  echo "  git checkout -b agent-lab/${task_id}"
+  echo "  git apply ${PIPELINE_RUN_DIR}/changes.patch"
+  echo "  gh pr create --draft \\"
+  echo "    --title \"fix: ${incident_id} automated remediation\" \\"
+  echo "    --body \"Generated by lab-action draft-fix from run $(basename "$PIPELINE_RUN_DIR")\""
+}
+
+cmd_status() {
+  local incident_id="${1:-}"
+
+  if [[ -z "$incident_id" ]]; then
+    cmd_list
+    return
+  fi
+
+  require_command jq
+
+  local incident_json
+  incident_json=$(incident_get "$incident_id")
+  [[ -z "$incident_json" || "$incident_json" == "null" ]] \
+    && die "Incident not found: ${incident_id}"
+
+  echo "$incident_json" | jq -r '
+    "Incident:    \(.incident_id)",
+    "Status:      \(.status)",
+    "Repo:        \(.repo)",
+    "Workflow:    \(.workflow)",
+    "Created:     \(.created_at)",
+    "Updated:     \(.updated_at)",
+    "Recurrences: \(.recurrence_count)",
+    "Diagnosis:   \(.diagnosis // "none")",
+    "",
+    "Signature:",
+    "  \(.signature)",
+    "",
+    "Actions:"
+  '
+  echo "$incident_json" | jq -r '.actions[] | "  [\(.timestamp)] \(.type): \(.details)"'
+}
+
+cmd_list() {
+  require_command jq
+
+  local status_filter=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --status) status_filter="$2"; shift 2 ;;
+      *) shift ;;
+    esac
+  done
+
+  local incidents_json
+  if [[ -n "$status_filter" ]]; then
+    incidents_json=$(incident_list --status "$status_filter")
+  else
+    incidents_json=$(incident_list)
+  fi
+
+  local count
+  count=$(echo "$incidents_json" | jq 'length')
+
+  if [[ "$count" -eq 0 ]]; then
+    log_info "No incidents found"
+    return
+  fi
+
+  printf "%-10s  %-14s  %-35s  %s\n" "ID" "STATUS" "REPO" "WORKFLOW"
+  printf "%-10s  %-14s  %-35s  %s\n" "--------" "-----------" "-----------------------------------" "--------"
+  echo "$incidents_json" | jq -r '.[] | [.incident_id, .status, .repo, .workflow] | @tsv' \
+    | while IFS=$'\t' read -r id status repo workflow; do
+        printf "%-10s  %-14s  %-35s  %s\n" "$id" "$status" "$repo" "$workflow"
+      done
+}
+
+# ---------------------------------------------------------------------------
+# Main: extract --dry-run and --help from anywhere, then dispatch
+# ---------------------------------------------------------------------------
+args=()
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run)
+      DRY_RUN_FLAG="--dry-run"
+      export DRY_RUN=1
+      ;;
+    --help|-h)
+      usage
+      ;;
+    *)
+      args+=("$arg")
+      ;;
+  esac
+done
+set -- "${args[@]+"${args[@]}"}"
+
+COMMAND="${1:-}"
+shift || true
+
+case "$COMMAND" in
+  investigate) cmd_investigate "$@" ;;
+  review-pr)   cmd_review_pr "$@" ;;
+  draft-fix)   cmd_draft_fix "$@" ;;
+  status)      cmd_status "$@" ;;
+  list)        cmd_list "$@" ;;
+  "")          usage ;;
+  *)           die "Unknown command: ${COMMAND}. Run '$(basename "$0") --help' for usage." ;;
+esac

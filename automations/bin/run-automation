@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+#
+# run-automation — wrapper for scheduled automation jobs
+#
+# Provides: known environment, per-job locking, timeout enforcement,
+# structured status output, and standard log locations.
+#
+# Usage: automations/bin/run-automation <job-name>
+#
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+AUTOMATIONS_DIR="${REPO_ROOT}/automations"
+RUNTIME_DIR="${AUTOMATIONS_DIR}/runtime"
+LOCKS_DIR="${RUNTIME_DIR}/locks"
+STATUS_DIR="${RUNTIME_DIR}/status"
+LOGS_DIR="${REPO_ROOT}/logs"
+
+export HOME="${HOME:-/Users/agent-lab}"
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+usage() {
+  echo "Usage: run-automation <job-name>"
+  echo ""
+  echo "Runs the named job with locking, timeout, and status tracking."
+  echo "Job definitions live in automations/jobs/<job-name>.yaml."
+  exit 1
+}
+
+die() { echo "run-automation: error: $*" >&2; exit 1; }
+
+parse_yaml_field() {
+  local file="$1" field="$2"
+  grep "^${field}:" "$file" | sed "s/^${field}: *//" | sed 's/^ *//;s/ *$//' | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//"
+}
+
+parse_yaml_list() {
+  local file="$1" field="$2"
+  sed -n "/^${field}:/,/^[^ ]/{ /^  *- /{ s/^  *- *//; s/^ *\"//; s/\" *$//; s/^ *'//; s/' *$//; p; }; }" "$file"
+}
+
+parse_schedule_field() {
+  local file="$1" field="$2"
+  sed -n '/^schedule:/,/^[a-z]/p' "$file" | grep "^  ${field}:" | sed "s/^  ${field}: *//"
+}
+
+[[ $# -ge 1 ]] || usage
+JOB_NAME="$1"
+JOB_FILE="${AUTOMATIONS_DIR}/jobs/${JOB_NAME}.yaml"
+[[ -f "$JOB_FILE" ]] || die "no job definition at ${JOB_FILE}"
+
+SCRIPT_PATH=$(parse_yaml_field "$JOB_FILE" "script")
+[[ -n "$SCRIPT_PATH" ]] || die "no 'script' field in ${JOB_FILE}"
+SCRIPT_ABS="${REPO_ROOT}/${SCRIPT_PATH}"
+[[ -x "$SCRIPT_ABS" ]] || die "script not executable: ${SCRIPT_ABS}"
+
+MAX_RUNTIME=$(parse_yaml_field "$JOB_FILE" "max_runtime_seconds")
+MAX_RUNTIME="${MAX_RUNTIME:-300}"
+
+LOG_NAME=$(parse_yaml_field "$JOB_FILE" "log_name")
+LOG_NAME="${LOG_NAME:-$JOB_NAME}"
+
+LABEL=$(parse_yaml_field "$JOB_FILE" "label")
+LABEL="${LABEL:-com.tsd-agent-lab.${JOB_NAME}}"
+
+EXTRA_ARGS=()
+while IFS= read -r arg; do
+  [[ -n "$arg" ]] && EXTRA_ARGS+=("$arg")
+done < <(parse_yaml_list "$JOB_FILE" "args")
+
+mkdir -p "$LOCKS_DIR" "$STATUS_DIR" "$LOGS_DIR"
+
+LOCK_FILE="${LOCKS_DIR}/${JOB_NAME}.lock"
+STATUS_FILE="${STATUS_DIR}/${JOB_NAME}.json"
+LOG_FILE="${LOGS_DIR}/${LOG_NAME}.log"
+
+acquire_lock() {
+  if [[ -f "$LOCK_FILE" ]]; then
+    local lock_pid
+    lock_pid=$(cat "$LOCK_FILE" 2>/dev/null || true)
+    if [[ -n "$lock_pid" ]] && kill -0 "$lock_pid" 2>/dev/null; then
+      die "job '${JOB_NAME}' already running (pid ${lock_pid})"
+    fi
+    rm -f "$LOCK_FILE"
+  fi
+  echo $$ > "$LOCK_FILE"
+}
+
+release_lock() {
+  rm -f "$LOCK_FILE"
+}
+
+write_status() {
+  local status="$1" exit_code="$2" finished_at="$3"
+  local duration=$(( $(date +%s) - START_EPOCH ))
+  cat > "$STATUS_FILE" <<EOJSON
+{
+  "job": "${JOB_NAME}",
+  "label": "${LABEL}",
+  "started_at": "${STARTED_AT}",
+  "finished_at": "${finished_at}",
+  "duration_seconds": ${duration},
+  "status": "${status}",
+  "exit_code": ${exit_code}
+}
+EOJSON
+}
+
+cleanup() {
+  local exit_code=$?
+  local finished_at
+  finished_at="$(date -u +%Y-%m-%dT%H:%M:%S+00:00)"
+
+  if [[ $exit_code -eq 0 ]]; then
+    write_status "ok" 0 "$finished_at"
+  elif [[ $exit_code -eq 124 ]]; then
+    write_status "timeout" 124 "$finished_at"
+  else
+    write_status "error" "$exit_code" "$finished_at"
+  fi
+
+  release_lock
+}
+
+START_EPOCH="$(date +%s)"
+STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%S+00:00)"
+
+acquire_lock
+trap cleanup EXIT
+
+cd "$REPO_ROOT"
+
+write_status "running" -1 ""
+
+if command -v gtimeout >/dev/null 2>&1; then
+  TIMEOUT_CMD="gtimeout"
+elif command -v timeout >/dev/null 2>&1; then
+  TIMEOUT_CMD="timeout"
+else
+  TIMEOUT_CMD=""
+fi
+
+{
+  echo "=== ${JOB_NAME} started at ${STARTED_AT} ==="
+  if [[ -n "$TIMEOUT_CMD" ]]; then
+    "$TIMEOUT_CMD" "$MAX_RUNTIME" "$SCRIPT_ABS" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}"
+  else
+    "$SCRIPT_ABS" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}"
+  fi
+  echo "=== ${JOB_NAME} finished at $(date -u +%Y-%m-%dT%H:%M:%S+00:00) ==="
+} >> "$LOG_FILE" 2>&1

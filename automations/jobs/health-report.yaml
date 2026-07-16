@@ -1,0 +1,13 @@
+label: com.tsd-agent-lab.health-report
+name: health-report
+description: "Daily health report for the agent-lab environment"
+script: scripts/macos/health-report.sh
+args: []
+schedule:
+  type: calendar
+  hour: 5
+  minute: 0
+run_at_load: false
+side_effect_class: mechanical-read-only
+max_runtime_seconds: 120
+log_name: health-report

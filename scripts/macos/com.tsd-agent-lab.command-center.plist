@@ -4,11 +4,22 @@
 <dict>
     <key>Label</key>
     <string>com.tsd-agent-lab.command-center</string>
+    <key>UserName</key>
+    <string>agent-lab</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/agent-lab/tsd-agent-lab/scripts/macos/daily-command-center.sh</string>
-        <string>--post-slack</string>
+        <string>/Users/agent-lab/tsd-agent-lab/automations/bin/run-automation</string>
+        <string>command-center</string>
     </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/agent-lab/tsd-agent-lab</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOME</key>
+        <string>/Users/agent-lab</string>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
     <key>StartCalendarInterval</key>
     <dict>
         <key>Hour</key>

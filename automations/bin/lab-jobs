@@ -1,0 +1,217 @@
+#!/usr/bin/env bash
+#
+# lab-jobs — operator interface for tsd-agent-lab scheduled jobs
+#
+# Usage: lab-jobs <command> [args]
+#
+# Commands:
+#   list             List all job definitions
+#   validate         Validate job YAMLs and rendered plists
+#   render           Generate plists from job definitions
+#   install-script   Print privileged install commands (no unattended sudo)
+#   status           Show status of all jobs
+#   run <job>        Run a job via run-automation
+#   logs <job>       Tail logs for a job
+#
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+AUTOMATIONS_DIR="${REPO_ROOT}/automations"
+JOBS_DIR="${AUTOMATIONS_DIR}/jobs"
+RUNTIME_DIR="${AUTOMATIONS_DIR}/runtime"
+STATUS_DIR="${RUNTIME_DIR}/status"
+PLIST_DIR="${REPO_ROOT}/scripts/macos"
+LOGS_DIR="${REPO_ROOT}/logs"
+RENDER_SCRIPT="${AUTOMATIONS_DIR}/adapters/launchd/render.py"
+
+die() { echo "lab-jobs: error: $*" >&2; exit 1; }
+
+parse_yaml_field() {
+  local file="$1" field="$2"
+  grep "^${field}:" "$file" 2>/dev/null | sed "s/^${field}: *//" | sed 's/^ *//;s/ *$//' | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//"
+}
+
+job_names() {
+  find "$JOBS_DIR" -name '*.yaml' -maxdepth 1 2>/dev/null | sort | while read -r f; do
+    basename "$f" .yaml
+  done
+}
+
+cmd_list() {
+  echo "Jobs defined in ${JOBS_DIR}:"
+  echo ""
+  printf "%-30s %-25s %s\n" "NAME" "CLASS" "SCHEDULE"
+  printf "%-30s %-25s %s\n" "----" "-----" "--------"
+  for name in $(job_names); do
+    local file="${JOBS_DIR}/${name}.yaml"
+    local class schedule_type
+    class=$(parse_yaml_field "$file" "side_effect_class")
+    schedule_type=$(sed -n '/^schedule:/,/^[a-z]/p' "$file" | grep '  type:' | sed 's/.*type: *//')
+    local sched_detail=""
+    if [[ "$schedule_type" == "calendar" ]]; then
+      local hour minute
+      hour=$(sed -n '/^schedule:/,/^[a-z]/p' "$file" | grep '  hour:' | sed 's/.*hour: *//')
+      minute=$(sed -n '/^schedule:/,/^[a-z]/p' "$file" | grep '  minute:' | sed 's/.*minute: *//')
+      sched_detail="daily ${hour}:$(printf '%02d' "${minute}")"
+    elif [[ "$schedule_type" == "interval" ]]; then
+      local secs
+      secs=$(sed -n '/^schedule:/,/^[a-z]/p' "$file" | grep '  seconds:' | sed 's/.*seconds: *//')
+      sched_detail="every ${secs}s"
+    fi
+    printf "%-30s %-25s %s\n" "$name" "$class" "$sched_detail"
+  done
+}
+
+cmd_validate() {
+  local errors=0
+
+  for name in $(job_names); do
+    local file="${JOBS_DIR}/${name}.yaml"
+    local label script_path
+    label=$(parse_yaml_field "$file" "label")
+    script_path=$(parse_yaml_field "$file" "script")
+
+    if [[ -z "$label" ]]; then
+      echo "FAIL: ${name}: missing 'label'" >&2
+      errors=$((errors + 1))
+    fi
+    if [[ -z "$script_path" ]]; then
+      echo "FAIL: ${name}: missing 'script'" >&2
+      errors=$((errors + 1))
+    elif [[ ! -f "${REPO_ROOT}/${script_path}" ]]; then
+      echo "FAIL: ${name}: script not found: ${script_path}" >&2
+      errors=$((errors + 1))
+    fi
+  done
+
+  for plist in "${PLIST_DIR}"/com.tsd-agent-lab.*.plist; do
+    [[ -f "$plist" ]] || continue
+    if ! plutil -lint "$plist" >/dev/null 2>&1; then
+      echo "FAIL: plist lint: $(basename "$plist")" >&2
+      errors=$((errors + 1))
+    fi
+
+    if grep -q '<key>UserName</key>' "$plist"; then
+      local username
+      username=$(sed -n '/<key>UserName<\/key>/{n;s/.*<string>\(.*\)<\/string>.*/\1/p;}' "$plist")
+      if [[ "$username" != "agent-lab" ]]; then
+        echo "FAIL: $(basename "$plist"): UserName must be 'agent-lab', got '${username}'" >&2
+        errors=$((errors + 1))
+      fi
+    else
+      echo "WARN: $(basename "$plist"): missing UserName key (required for LaunchDaemons)" >&2
+    fi
+  done
+
+  if [[ $errors -eq 0 ]]; then
+    echo "All validations passed."
+  else
+    echo "${errors} validation error(s) found." >&2
+    exit 1
+  fi
+}
+
+cmd_render() {
+  if [[ ! -f "$RENDER_SCRIPT" ]]; then
+    die "render script not found: ${RENDER_SCRIPT}"
+  fi
+  python3 "$RENDER_SCRIPT" "$JOBS_DIR" "$PLIST_DIR"
+  echo "Rendered plists to ${PLIST_DIR}/"
+}
+
+cmd_install_script() {
+  echo "# Run these commands from an admin account to install LaunchDaemons."
+  echo "# Review each command before running — this script does NOT execute them."
+  echo ""
+
+  for name in $(job_names); do
+    local file="${JOBS_DIR}/${name}.yaml"
+    local label
+    label=$(parse_yaml_field "$file" "label")
+    local plist_name="${label}.plist"
+    local plist_src="${PLIST_DIR}/${plist_name}"
+    local plist_dest="/Library/LaunchDaemons/${plist_name}"
+
+    if [[ ! -f "$plist_src" ]]; then
+      echo "# SKIP: ${plist_name} — not yet rendered (run 'lab-jobs render' first)"
+      echo ""
+      continue
+    fi
+
+    echo "# --- ${name} ---"
+    echo ""
+    echo "# Validate"
+    echo "plutil -lint '${plist_src}'"
+    echo ""
+    echo "# Remove old LaunchAgent (if any)"
+    echo "launchctl bootout \"gui/\$(id -u)/${label}\" 2>/dev/null || true"
+    echo ""
+    echo "# Install daemon plist"
+    echo "sudo install -o root -g wheel -m 0644 '${plist_src}' '${plist_dest}'"
+    echo ""
+    echo "# Load daemon"
+    echo "sudo launchctl bootstrap system '${plist_dest}'"
+    echo ""
+    echo "# Trigger immediately (optional)"
+    echo "# sudo launchctl kickstart -k 'system/${label}'"
+    echo ""
+  done
+}
+
+cmd_status() {
+  printf "%-30s %-10s %-8s %s\n" "JOB" "STATUS" "EXIT" "LAST RUN"
+  printf "%-30s %-10s %-8s %s\n" "---" "------" "----" "--------"
+  for name in $(job_names); do
+    local status_file="${STATUS_DIR}/${name}.json"
+    if [[ -f "$status_file" ]]; then
+      local status exit_code finished_at
+      status=$(python3 -c "import json,sys; print(json.load(sys.stdin).get('status','?'))" < "$status_file" 2>/dev/null || echo "?")
+      exit_code=$(python3 -c "import json,sys; print(json.load(sys.stdin).get('exit_code','?'))" < "$status_file" 2>/dev/null || echo "?")
+      finished_at=$(python3 -c "import json,sys; print(json.load(sys.stdin).get('finished_at','?'))" < "$status_file" 2>/dev/null || echo "?")
+      printf "%-30s %-10s %-8s %s\n" "$name" "$status" "$exit_code" "$finished_at"
+    else
+      printf "%-30s %-10s %-8s %s\n" "$name" "no-data" "-" "-"
+    fi
+  done
+}
+
+cmd_run() {
+  local job_name="${1:-}"
+  [[ -n "$job_name" ]] || die "usage: lab-jobs run <job-name>"
+  exec "${SCRIPT_DIR}/run-automation" "$job_name"
+}
+
+cmd_logs() {
+  local job_name="${1:-}"
+  [[ -n "$job_name" ]] || die "usage: lab-jobs logs <job-name>"
+  local log_file="${LOGS_DIR}/${job_name}.log"
+  if [[ -f "$log_file" ]]; then
+    tail -100 "$log_file"
+  else
+    die "no log file at ${log_file}"
+  fi
+}
+
+case "${1:-}" in
+  list)           cmd_list ;;
+  validate)       cmd_validate ;;
+  render)         cmd_render ;;
+  install-script) cmd_install_script ;;
+  status)         cmd_status ;;
+  run)            shift; cmd_run "$@" ;;
+  logs)           shift; cmd_logs "$@" ;;
+  *)
+    echo "Usage: lab-jobs <command> [args]"
+    echo ""
+    echo "Commands:"
+    echo "  list             List all job definitions"
+    echo "  validate         Validate job YAMLs and rendered plists"
+    echo "  render           Generate plists from job definitions"
+    echo "  install-script   Print privileged install commands"
+    echo "  status           Show status of all jobs"
+    echo "  run <job>        Run a job via run-automation"
+    echo "  logs <job>       Tail logs for a job"
+    exit 1
+    ;;
+esac

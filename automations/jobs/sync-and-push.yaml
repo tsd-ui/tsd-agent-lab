@@ -1,0 +1,17 @@
+label: com.tsd-agent-lab.sync-and-push
+name: sync-and-push
+description: "Auto-commit and push changes to origin/main"
+script: scripts/macos/sync-and-push.sh
+args: []
+schedule:
+  type: interval
+  seconds: 600
+run_at_load: true
+side_effect_class: mutating
+max_runtime_seconds: 120
+log_name: sync-and-push
+mutating_protections:
+  branch_allowlist: ["main"]
+  max_changed_files: 100
+  force_push: false
+  auto_merge: false

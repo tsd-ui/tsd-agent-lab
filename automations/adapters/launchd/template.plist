@@ -3,16 +3,16 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.tsd-agent-lab.health-report</string>
+    <string>{{label}}</string>
     <key>UserName</key>
     <string>agent-lab</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/agent-lab/tsd-agent-lab/automations/bin/run-automation</string>
-        <string>health-report</string>
+        <string>{{repo_root}}/automations/bin/run-automation</string>
+        <string>{{name}}</string>
     </array>
     <key>WorkingDirectory</key>
-    <string>/Users/agent-lab/tsd-agent-lab</string>
+    <string>{{repo_root}}</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>HOME</key>
@@ -20,18 +20,12 @@
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     </dict>
-    <key>StartCalendarInterval</key>
-    <dict>
-        <key>Hour</key>
-        <integer>5</integer>
-        <key>Minute</key>
-        <integer>0</integer>
-    </dict>
+{{schedule}}
     <key>StandardOutPath</key>
-    <string>/Users/agent-lab/tsd-agent-lab/logs/health-report.log</string>
+    <string>{{repo_root}}/logs/{{log_name}}.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/agent-lab/tsd-agent-lab/logs/health-report.log</string>
+    <string>{{repo_root}}/logs/{{log_name}}.log</string>
     <key>RunAtLoad</key>
-    <false/>
+    <{{run_at_load}}/>
 </dict>
 </plist>

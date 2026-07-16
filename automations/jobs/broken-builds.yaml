@@ -1,0 +1,13 @@
+label: com.tsd-agent-lab.broken-builds
+name: broken-builds
+description: "Broken builds analysis and report"
+script: scripts/macos/broken-builds-skill-run.sh
+args: []
+schedule:
+  type: calendar
+  hour: 6
+  minute: 0
+run_at_load: false
+side_effect_class: analytical-read-only
+max_runtime_seconds: 300
+log_name: broken-builds

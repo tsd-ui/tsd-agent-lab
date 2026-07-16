@@ -4,10 +4,22 @@
 <dict>
     <key>Label</key>
     <string>com.tsd-agent-lab.sync-and-push</string>
+    <key>UserName</key>
+    <string>agent-lab</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/agent-lab/tsd-agent-lab/scripts/macos/sync-and-push.sh</string>
+        <string>/Users/agent-lab/tsd-agent-lab/automations/bin/run-automation</string>
+        <string>sync-and-push</string>
     </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/agent-lab/tsd-agent-lab</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOME</key>
+        <string>/Users/agent-lab</string>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
     <key>StartInterval</key>
     <integer>600</integer>
     <key>StandardOutPath</key>
@@ -16,12 +28,5 @@
     <string>/Users/agent-lab/tsd-agent-lab/logs/sync-and-push.log</string>
     <key>RunAtLoad</key>
     <true/>
-    <key>EnvironmentVariables</key>
-    <dict>
-        <key>PATH</key>
-        <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
-        <key>HOME</key>
-        <string>/Users/agent-lab</string>
-    </dict>
 </dict>
 </plist>

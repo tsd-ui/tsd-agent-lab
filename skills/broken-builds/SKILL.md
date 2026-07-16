@@ -47,7 +47,7 @@ This skill consumes a structured JSON data bundle (broken-builds-data-YYYY-MM-DD
 
 ## Expected Output
 
-The report must be written to `docs/admin/reports/broken-builds-YYYY-MM-DD.md` with this structure:
+The report must be written to `reports/broken-builds/current.md` with this structure:
 
 ```markdown
 # Broken Builds Report

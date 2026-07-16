@@ -9,9 +9,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-REPORT_DIR="${REPO_ROOT}/reports"
+REPORT_DIR="${REPO_ROOT}/reports/health"
 TODAY="$(date +%Y-%m-%d)"
-REPORT_FILE="${REPORT_DIR}/health-${TODAY}.md"
+REPORT_FILE="${REPORT_DIR}/current.md"
+ARCHIVE_FILE="${REPORT_DIR}/archive/health-${TODAY}.md"
+
+source "${SCRIPT_DIR}/lib-report-rotation.sh"
 DRY_RUN=false
 DISK_THRESHOLD=80
 
@@ -26,7 +29,7 @@ Options:
   --help      Show this help message
 
 Output:
-  Default: writes to reports/health-YYYY-MM-DD.md
+  Default: writes to reports/health/current.md
   Dry run: prints to stdout
 USAGE
 }
@@ -226,7 +229,8 @@ clean=$(printf '%s' "$report" | sed 's/[[:space:]]*$//')
 if [[ "$DRY_RUN" == "true" ]]; then
   printf '%s\n' "$clean"
 else
-  mkdir -p "$REPORT_DIR"
+  rotate_report "$REPORT_DIR" "health" "$TODAY" "md"
   printf '%s\n' "$clean" > "$REPORT_FILE"
+  cp "$REPORT_FILE" "$ARCHIVE_FILE"
   echo "Report written to ${REPORT_FILE}"
 fi

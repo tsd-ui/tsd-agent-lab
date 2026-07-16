@@ -23,7 +23,7 @@ There are two ways to run this, with different depth:
 # Print report to stdout without writing a file
 ./scripts/macos/stale-docs-check.sh --dry-run
 
-# Write report to reports/stale-docs-YYYY-MM-DD.md
+# Write report to reports/stale-docs/current.md
 ./scripts/macos/stale-docs-check.sh
 ```
 
@@ -45,8 +45,10 @@ Running either mode twice on the same day overwrites the previous report for tha
 
 Two plists are provided in `scripts/macos/`, neither **auto-loaded**:
 
-- `com.tsd-agent-lab.stale-docs-check.plist` — mechanical pass only, daily at 06:15. Pure shell, no LLM involved.
-- `com.tsd-agent-lab.stale-docs-check-full.plist` — full mechanical + semantic pass via `scripts/macos/stale-docs-check-skill-run.sh`, daily at 06:20 (staggered 5 minutes after the mechanical job so its report write doesn't race). This wrapper runs `claude -p --dangerously-skip-permissions` since a launchd job has no TTY to approve tool calls — see the warning in that script's header and in [Unattended semantic runs](#unattended-semantic-runs) below before enabling it.
+- `com.tsd-agent-lab.stale-docs-check.plist` — mechanical pass only, daily at 05:15. Pure shell, no LLM involved.
+- `com.tsd-agent-lab.stale-docs-check-full.plist` — full mechanical + semantic pass via `scripts/macos/stale-docs-check-skill-run.sh`, daily at 05:20 (staggered 5 minutes after the mechanical job so its report write doesn't race). This wrapper runs `claude -p --dangerously-skip-permissions` since a launchd job has no TTY to approve tool calls — see the warning in that script's header and in [Unattended semantic runs](#unattended-semantic-runs) below before enabling it.
+
+See [schedule.md](schedule.md) for the full pipeline schedule and timezone context.
 
 To enable either:
 
@@ -82,7 +84,7 @@ This is a real, accepted change in trust posture for an unattended job, not a fu
 
 ## Output
 
-Reports are written to `reports/stale-docs-YYYY-MM-DD.md`. Each report includes:
+Reports are written to `reports/stale-docs/current.md`. Each report includes:
 
 - Date, host, user, and generation timestamp
 - Summary line: `N stale findings, M for review`
@@ -134,7 +136,7 @@ The line between the two is subjective by design — the first few runs will lik
 
 ## How to act on findings
 
-1. Read the report at `reports/stale-docs-YYYY-MM-DD.md`.
+1. Read the report at `reports/stale-docs/current.md`.
 2. For each `stale` finding, fix the doc directly (update the path/link or remove the stale reference) — the tool never does this for you.
 3. For each `review` finding, use judgment: confirm it's actually fine (aspirational, illustrative) and leave it, or treat it as stale and fix it.
 4. Do not delete the report after acting on it — reports accumulate under `reports/` like health reports do, giving a history of doc drift over time.
@@ -167,7 +169,7 @@ To fully remove this feature:
 4. Delete generated reports (only the stale-docs ones, if health reports share the directory):
 
    ```sh
-   rm reports/stale-docs-*.md
+   rm -rf reports/stale-docs/
    ```
 
 5. Delete this documentation:

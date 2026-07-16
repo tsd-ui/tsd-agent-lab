@@ -38,7 +38,7 @@ This directory contains macOS-specific scripts for setting up and managing the a
 # Print to stdout (no file written)
 ./scripts/macos/health-report.sh --dry-run
 
-# Write to docs/admin/reports/health-YYYY-MM-DD.md
+# Write to reports/health/current.md
 ./scripts/macos/health-report.sh
 ```
 
@@ -49,7 +49,7 @@ This directory contains macOS-specific scripts for setting up and managing the a
 - Disk usage on local volumes (warns above 80%)
 - Notable background processes (claude, node, python, fullsend)
 
-**Scheduling**: A launchd plist is provided at `com.tsd-agent-lab.health-report.plist` for daily runs at 06:00. See [health-report docs](../../docs/admin/health-report.md) for load/unload instructions.
+**Scheduling**: A launchd plist is provided at `com.tsd-agent-lab.health-report.plist` for daily runs at 05:00. See [health-report docs](../../docs/admin/health-report.md) for load/unload instructions.
 
 **Safe to run**: Yes, this script only reads system state and writes a markdown report.
 
@@ -62,7 +62,7 @@ This directory contains macOS-specific scripts for setting up and managing the a
 # Print report to stdout (no file written)
 ./scripts/macos/stale-docs-check.sh --dry-run
 
-# Write report to docs/admin/reports/stale-docs-YYYY-MM-DD.md
+# Write report to reports/stale-docs/current.md
 ./scripts/macos/stale-docs-check.sh
 ```
 
@@ -73,7 +73,7 @@ This directory contains macOS-specific scripts for setting up and managing the a
 
 Excludes `docs/archive/`. For semantic review (directory structure, setup steps, feature drift) layered on top of this mechanical pass, see [skills/stale-docs-check/SKILL.md](../../skills/stale-docs-check/SKILL.md) and [docs/admin/stale-docs-check.md](../../docs/admin/stale-docs-check.md).
 
-**Scheduling**: A launchd plist is provided at `com.tsd-agent-lab.stale-docs-check.plist` for daily runs at 06:15. See [stale-docs-check docs](../../docs/admin/stale-docs-check.md#schedule-via-launchd) for load/unload instructions.
+**Scheduling**: A launchd plist is provided at `com.tsd-agent-lab.stale-docs-check.plist` for daily runs at 05:15. See [stale-docs-check docs](../../docs/admin/stale-docs-check.md#schedule-via-launchd) for load/unload instructions.
 
 **Safe to run**: Yes, this script only reads repo files and writes a markdown report.
 
@@ -86,7 +86,7 @@ Excludes `docs/archive/`. For semantic review (directory structure, setup steps,
 ./scripts/macos/stale-docs-check-skill-run.sh
 ```
 
-**Scheduling**: A launchd plist is provided at `com.tsd-agent-lab.stale-docs-check-full.plist` for daily runs at 06:20. See [Unattended semantic runs](../../docs/admin/stale-docs-check.md#unattended-semantic-runs) before enabling — this runs `claude -p --dangerously-skip-permissions` since a launchd job has no TTY to approve tool calls.
+**Scheduling**: A launchd plist is provided at `com.tsd-agent-lab.stale-docs-check-full.plist` for daily runs at 05:20. See [Unattended semantic runs](../../docs/admin/stale-docs-check.md#unattended-semantic-runs) before enabling — this runs `claude -p --dangerously-skip-permissions` since a launchd job has no TTY to approve tool calls.
 
 **Safe to run**: Not equivalent to the other scripts in this directory — it disables permission checks for an LLM session. `Edit`/`NotebookEdit` are disallowed and spend/runtime are capped, but it is not purely read-only inspection like the rest of this directory. Read the full writeup before scheduling it.
 

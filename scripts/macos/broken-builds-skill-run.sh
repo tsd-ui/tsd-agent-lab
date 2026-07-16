@@ -21,8 +21,11 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 MAX_BUDGET_USD="2"
 TIMEOUT_SECONDS=300
 TODAY="$(date +%Y-%m-%d)"
-REPORT_DIR="${REPO_ROOT}/reports"
-REPORT_FILE="${REPORT_DIR}/broken-builds-${TODAY}.md"
+REPORT_DIR="${REPO_ROOT}/reports/broken-builds"
+REPORT_FILE="${REPORT_DIR}/current.md"
+ARCHIVE_FILE="${REPORT_DIR}/archive/broken-builds-${TODAY}.md"
+
+source "${SCRIPT_DIR}/lib-report-rotation.sh"
 DRY_RUN=false
 COLLECTOR_EXTRA_ARGS=()
 
@@ -171,7 +174,8 @@ CLEAN_OUTPUT="$(printf '%s' "$SKILL_OUTPUT" | sed 's/[[:space:]]*$//')"
 if [[ "$DRY_RUN" == "true" ]]; then
   printf '%s\n' "$CLEAN_OUTPUT"
 else
-  mkdir -p "$REPORT_DIR"
+  rotate_report "$REPORT_DIR" "broken-builds" "$TODAY" "md"
   printf '%s\n' "$CLEAN_OUTPUT" > "$REPORT_FILE"
+  cp "$REPORT_FILE" "$ARCHIVE_FILE"
   echo "Report written to ${REPORT_FILE}"
 fi

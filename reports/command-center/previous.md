@@ -39,7 +39,4 @@ No issues detected. System is healthy — see Next Steps for proactive actions.
 
 ### Next Steps
 
-- **Review open PRs**
-  ```
-  claude "Follow skills/pr-review/SKILL.md"
-  ```
+- **Review open PRs:** TBD

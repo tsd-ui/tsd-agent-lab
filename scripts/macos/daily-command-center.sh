@@ -11,18 +11,22 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 REPORT_DIR="${REPO_ROOT}/reports"
 TODAY="$(date +%Y-%m-%d)"
-YESTERDAY="$(date -v-1d +%Y-%m-%d 2>/dev/null || date -d 'yesterday' +%Y-%m-%d 2>/dev/null || echo "")"
 DRY_RUN=false
 POST_SLACK=false
 
-HEALTH_FILE="${REPORT_DIR}/health-${TODAY}.md"
-STALE_DOCS_FILE="${REPORT_DIR}/stale-docs-${TODAY}.md"
-BROKEN_BUILDS_FILE="${REPORT_DIR}/broken-builds-${TODAY}.md"
+HEALTH_FILE="${REPORT_DIR}/health/current.md"
+STALE_DOCS_FILE="${REPORT_DIR}/stale-docs/current.md"
+BROKEN_BUILDS_FILE="${REPORT_DIR}/broken-builds/current.md"
 PR_STATE_FILE="${HOME}/workspaces/runs/.pr-review-state.json"
 
-MD_OUT="${REPORT_DIR}/command-center-${TODAY}.md"
-JSON_OUT="${REPORT_DIR}/command-center-${TODAY}.json"
-YESTERDAY_JSON="${REPORT_DIR}/command-center-${YESTERDAY}.json"
+CC_DIR="${REPORT_DIR}/command-center"
+MD_OUT="${CC_DIR}/current.md"
+JSON_OUT="${CC_DIR}/current.json"
+YESTERDAY_JSON="${CC_DIR}/previous.json"
+ARCHIVE_MD="${CC_DIR}/archive/command-center-${TODAY}.md"
+ARCHIVE_JSON="${CC_DIR}/archive/command-center-${TODAY}.json"
+
+source "${SCRIPT_DIR}/lib-report-rotation.sh"
 
 # launchd jobs run with a minimal PATH
 if [[ -d "/opt/homebrew/bin" ]]; then
@@ -42,8 +46,8 @@ Options:
   --help         Show this help message
 
 Output:
-  Default: writes to reports/command-center-YYYY-MM-DD.md
-           and reports/command-center-YYYY-MM-DD.json
+  Default: writes to reports/command-center/current.md
+           and reports/command-center/current.json
   Dry run: prints both to stdout
 USAGE
 }
@@ -82,9 +86,9 @@ ci_top_failures="[]"
 ci_section=""
 
 if file_available "$BROKEN_BUILDS_FILE"; then
-  ci_status_line=$(grep -m1 '| Status |' "$BROKEN_BUILDS_FILE" | awk -F'|' '{print $3}' | xargs)
+  ci_status_line=$(grep -m1 '| Status |' "$BROKEN_BUILDS_FILE" | awk -F'|' '{print $3}' | xargs) || ci_status_line=""
   if [[ -z "$ci_status_line" ]]; then
-    ci_status_line=$(grep -m1 -E '^[0-9]+ failure' "$BROKEN_BUILDS_FILE" || echo "unknown")
+    ci_status_line=$(grep -m1 -oE '[0-9]+ failure[^.]*' "$BROKEN_BUILDS_FILE" || echo "unknown")
   fi
   ci_failures=$(extract_count "$ci_status_line" "failure")
   ci_repos_affected=$(extract_count "$ci_status_line" "repo")
@@ -317,27 +321,27 @@ fi
 next_steps=()
 
 if [[ "$ci_failures" -gt 0 ]]; then
-  next_steps+=("View broken-builds report: cat reports/broken-builds-${TODAY}.md")
+  next_steps+=("View broken-builds report: cat reports/broken-builds/current.md")
   next_steps+=("Re-run CI diagnosis: ./scripts/macos/broken-builds-skill-run.sh --force-rediagnose")
 fi
 
 if [[ "$docs_findings" -gt 0 ]]; then
-  next_steps+=("View stale-docs report: cat reports/stale-docs-${TODAY}.md")
-  next_steps+=("Run full docs review: claude \"Follow skills/stale-docs-check/SKILL.md\"")
+  next_steps+=("View stale-docs report: cat reports/stale-docs/current.md")
+  next_steps+=("Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"")
 fi
 
 if [[ ${#health_warnings[@]} -gt 0 ]]; then
-  next_steps+=("View health report: cat reports/health-${TODAY}.md")
+  next_steps+=("View health report: cat reports/health/current.md")
   next_steps+=("Check launchd status: launchctl list | grep tsd-agent-lab")
 fi
 
 if [[ "$prs_open" -gt 0 ]]; then
-  next_steps+=("Review open PRs: claude \"Follow skills/pr-review/SKILL.md\"")
+  next_steps+=("Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\"")
 fi
 
 if [[ ${#next_steps[@]} -eq 0 ]]; then
   next_steps+=("Check for new PRs: gh pr list --repo securesign/rhtas-console-ui --state open")
-  next_steps+=("Run a codebase map: claude \"Follow skills/codebase-map/SKILL.md\"")
+  next_steps+=("Run a codebase map: claude -p \"Follow skills/codebase-map/SKILL.md\"")
   next_steps+=("Re-run this digest: ./scripts/macos/daily-command-center.sh --dry-run")
 fi
 
@@ -346,7 +350,7 @@ next_steps_section="### Next Steps
 for step in "${next_steps[@]}"; do
   cmd="${step#*: }"
   label="${step%%: *}"
-  next_steps_section+=$'\n'"- **${label}**"$'\n'"  \`\`\`"$'\n'"  ${cmd}"$'\n'"  \`\`\`"$'\n'
+  next_steps_section+=$'\n'"- **${label}:** \`${cmd}\`"
 done
 
 # ---------------------------------------------------------------------------
@@ -371,7 +375,7 @@ fi
 # ---------------------------------------------------------------------------
 
 diff_section=""
-if [[ -n "$YESTERDAY" ]] && file_available "$YESTERDAY_JSON" && command -v jq >/dev/null 2>&1; then
+if file_available "$YESTERDAY_JSON" && command -v jq >/dev/null 2>&1; then
   y_ci=$(jq -r '.ci.failures // 0' "$YESTERDAY_JSON" 2>/dev/null || echo "0")
   y_docs=$(jq -r '.docs.findings // 0' "$YESTERDAY_JSON" 2>/dev/null || echo "0")
   y_status=$(jq -r '.status // "unknown"' "$YESTERDAY_JSON" 2>/dev/null || echo "unknown")
@@ -515,9 +519,12 @@ if [[ "$DRY_RUN" == "true" ]]; then
   echo "=== JSON SUMMARY ==="
   printf '%s\n' "$json_summary"
 else
-  mkdir -p "$REPORT_DIR"
+  rotate_report "$CC_DIR" "command-center" "$TODAY" "md"
+  rotate_report "$CC_DIR" "command-center" "$TODAY" "json"
   printf '%s\n' "$clean" > "$MD_OUT"
   printf '%s\n' "$json_summary" > "$JSON_OUT"
+  cp "$MD_OUT" "$ARCHIVE_MD"
+  cp "$JSON_OUT" "$ARCHIVE_JSON"
   echo "Markdown report written to ${MD_OUT}"
   echo "JSON summary written to ${JSON_OUT}"
 fi

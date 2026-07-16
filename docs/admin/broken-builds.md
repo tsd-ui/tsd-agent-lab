@@ -37,7 +37,8 @@ The skill runner checks if the inventory is missing or stale (older than the all
 
 ## Scheduling
 
-A launchd plist is provided at `scripts/macos/com.tsd-agent-lab.broken-builds.plist` but is **not auto-loaded**. It runs daily at 07:00, staggered after the health report (06:00) and stale-docs check (06:15/06:20). Like the other agent-lab automations, this is a per-user LaunchAgent — it must be installed and loaded while logged in as `agent-lab` (via `su agent-lab` or Fast User Switching); the agent-lab user must be logged in for it to fire (macOS limitation).
+A launchd plist is provided at `scripts/macos/com.tsd-agent-lab.broken-builds.plist` but is **not auto-loaded**. It runs daily at 06:00, staggered after the health report (05:00) and stale-docs check (05:15/05:20). Like the other agent-lab automations, this is a per-user LaunchAgent — it must be installed and loaded while logged in as `agent-lab` (via `su agent-lab` or Fast User Switching); the agent-lab user must be logged in for it to fire (macOS limitation).
+See [schedule.md](schedule.md) for the full pipeline schedule and timezone context.
 
 To enable:
 
@@ -59,7 +60,7 @@ To check status:
 launchctl list | grep broken-builds
 ```
 
-The plist runs at 07:00, offset from the health report (06:00) and stale docs check (06:15).
+The plist runs at 06:00, offset from the health report (05:00) and stale docs check (05:15).
 
 ## Intermediate JSON Contract
 
@@ -74,7 +75,7 @@ Key fields:
 
 ## Output
 
-Reports are written to `reports/broken-builds-YYYY-MM-DD.md`.
+Reports are written to `reports/broken-builds/current.md`.
 
 Each report includes:
 - Header table (date, host, user, timestamp, status)

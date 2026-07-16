@@ -16,7 +16,7 @@ Automated daily health check for the agent-lab environment. Produces a markdown 
 # Print report to stdout without writing a file
 ./scripts/macos/health-report.sh --dry-run
 
-# Write report to reports/health-YYYY-MM-DD.md
+# Write report to reports/health/current.md
 ./scripts/macos/health-report.sh
 ```
 
@@ -24,7 +24,8 @@ Running twice on the same day overwrites the previous report (idempotent).
 
 ## Schedule via launchd
 
-A plist is provided at `scripts/macos/com.tsd-agent-lab.health-report.plist` but is **not auto-loaded**. It runs daily at 06:00.
+A plist is provided at `scripts/macos/com.tsd-agent-lab.health-report.plist` but is **not auto-loaded**. It runs daily at 05:00.
+See [schedule.md](schedule.md) for the full pipeline schedule and timezone context.
 
 To enable:
 
@@ -44,7 +45,7 @@ The agent-lab user must be logged in for launchd user agents to fire (macOS limi
 
 ## Output
 
-Reports are written to `reports/health-YYYY-MM-DD.md`. Each report includes:
+Reports are written to `reports/health/current.md`. Each report includes:
 
 - Date, host, user, and generation timestamp
 - Overall status line (`healthy` or `N warning(s)`)

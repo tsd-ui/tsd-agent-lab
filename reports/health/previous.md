@@ -3,7 +3,7 @@
 - **Date:** 2026-07-15
 - **Host:** ryordan-mac
 - **User:** agent-lab
-- **Generated:** 2026-07-15 14:23:32
+- **Generated:** 2026-07-15 17:03:28
 - **Status:** healthy
 
 ## Launchd Agents
@@ -37,11 +37,11 @@ Threshold: 80%
 
 | PID | Elapsed | Command |
 |-----|---------|---------|
-| 13554 | 02:29:11 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
-| 13557 | 02:29:09 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
-| 13559 | 02:29:09 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
-| 13836 | 02:29:08 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
-| 13941 | 02:29:07 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
-| 22820 | 49:53 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
-| 14545 | 02:22:20 | claude |
-| 17778 | 01:45:34 | claude |
+| 13554 | 05:09:07 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
+| 13557 | 05:09:05 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
+| 13559 | 05:09:05 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
+| 13836 | 05:09:04 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
+| 13941 | 05:09:03 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
+| 22820 | 03:29:49 | /Users/agent-lab/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node |
+| 14545 | 05:02:16 | claude |
+| 31305 | 43:15 | claude |

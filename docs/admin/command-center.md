@@ -4,9 +4,9 @@ Consolidates the daily health, stale-docs, broken-builds, and PR review reports 
 
 ## What it collects
 
-- **CI / Builds** — failure count, affected repos, and top failure signatures from `broken-builds-YYYY-MM-DD.md`
-- **Documentation Health** — stale link and review finding counts from `stale-docs-YYYY-MM-DD.md`
-- **System Health** — warning count, failed launchd jobs, disk alerts from `health-YYYY-MM-DD.md`
+- **CI / Builds** — failure count, affected repos, and top failure signatures from `reports/broken-builds/current.md`
+- **Documentation Health** — stale link and review finding counts from `reports/stale-docs/current.md`
+- **System Health** — warning count, failed launchd jobs, disk alerts from `reports/health/current.md`
 - **PR Activity** — reviewed PRs from `.pr-review-state.json`, open PR count via `gh` (if available)
 - **Action Items** — auto-generated list of things needing human attention
 - **Changes Since Yesterday** — diff against the previous day's JSON (new/resolved failures, status changes)
@@ -17,15 +17,15 @@ The command center includes context-aware suggested actions based on the current
 
 | Condition | Suggested Action | Command |
 |-----------|-----------------|---------|
-| CI failures > 0 | View broken-builds report | `cat reports/broken-builds-YYYY-MM-DD.md` |
+| CI failures > 0 | View broken-builds report | `cat reports/broken-builds/current.md` |
 | CI failures > 0 | Re-run CI diagnosis | `./scripts/macos/broken-builds-skill-run.sh --force-rediagnose` |
-| Stale docs > 0 | View stale-docs report | `cat reports/stale-docs-YYYY-MM-DD.md` |
-| Stale docs > 0 | Run full docs review | `claude "Follow skills/stale-docs-check/SKILL.md"` |
-| Health warnings > 0 | View health report | `cat reports/health-YYYY-MM-DD.md` |
+| Stale docs > 0 | View stale-docs report | `cat reports/stale-docs/current.md` |
+| Stale docs > 0 | Run full docs review | `claude -p "Follow skills/stale-docs-check/SKILL.md"` |
+| Health warnings > 0 | View health report | `cat reports/health/current.md` |
 | Health warnings > 0 | Check launchd status | `launchctl list \| grep tsd-agent-lab` |
-| Open PRs > 0 | Review open PRs | `claude "Follow skills/pr-review/SKILL.md"` |
+| Open PRs > 0 | Review open PRs | `claude -p "Follow skills/pr-review/SKILL.md"` |
 | All clear | Check for new PRs | `gh pr list --repo securesign/rhtas-console-ui --state open` |
-| All clear | Run a codebase map | `claude "Follow skills/codebase-map/SKILL.md"` |
+| All clear | Run a codebase map | `claude -p "Follow skills/codebase-map/SKILL.md"` |
 | All clear | Preview digest | `./scripts/macos/daily-command-center.sh --dry-run` |
 
 When no issues are detected, the system suggests proactive actions like checking for new PRs or running a codebase map.
@@ -57,7 +57,8 @@ Running twice on the same day overwrites the previous report (idempotent).
 
 ## Schedule via launchd
 
-A plist is provided at `scripts/macos/com.tsd-agent-lab.command-center.plist` but is **not auto-loaded**. It runs daily at 07:30, after health (06:00), stale-docs (06:15), and broken-builds (07:00) have completed.
+A plist is provided at `scripts/macos/com.tsd-agent-lab.command-center.plist` but is **not auto-loaded**. It runs daily at 06:30, after health (05:00), stale-docs (05:15), and broken-builds (06:00) have completed.
+See [schedule.md](schedule.md) for the full pipeline schedule and timezone context.
 
 To enable:
 
@@ -77,10 +78,10 @@ The agent-lab user must be logged in for launchd user agents to fire (macOS limi
 
 ## Output
 
-Reports are written to `reports/`:
+Reports are written to `reports/command-center/`:
 
-- `command-center-YYYY-MM-DD.md` — human-readable consolidated report
-- `command-center-YYYY-MM-DD.json` — structured summary for Slack and other consumers
+- `current.md` — human-readable consolidated report
+- `current.json` — structured summary for Slack and other consumers
 
 ### Example markdown output
 
@@ -173,8 +174,7 @@ The `--post-slack` flag calls `scripts/macos/post-to-slack.sh`, which formats th
 3. Delete generated reports:
 
    ```sh
-   rm reports/command-center-*.md
-   rm reports/command-center-*.json
+   rm -rf reports/command-center/
    ```
 
 4. Delete documentation:

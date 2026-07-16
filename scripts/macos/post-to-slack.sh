@@ -61,6 +61,10 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 1
 fi
 
+json_escape() {
+  printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
 # ---------------------------------------------------------------------------
 # Load webhook URL (not needed for dry-run, but warn if missing)
 # ---------------------------------------------------------------------------
@@ -81,6 +85,8 @@ fi
 # Parse JSON
 # ---------------------------------------------------------------------------
 
+REPORT_REPO="tsd-ui/tsd-agent-lab"
+
 date_val=$(jq -r '.date' "$JSON_FILE")
 status=$(jq -r '.status' "$JSON_FILE")
 ci_failures=$(jq -r '.ci.failures' "$JSON_FILE")
@@ -88,8 +94,9 @@ ci_repos=$(jq -r '.ci.repos_affected' "$JSON_FILE")
 docs_findings=$(jq -r '.docs.findings' "$JSON_FILE")
 docs_critical=$(jq -r '.docs.critical' "$JSON_FILE")
 health_status=$(jq -r '.health.status' "$JSON_FILE")
-prs_reviewed=$(jq -r '.prs.reviewed' "$JSON_FILE")
 prs_open=$(jq -r '.prs.open' "$JSON_FILE")
+
+report_url="https://github.com/${REPORT_REPO}/blob/main/reports/command-center/current.md"
 
 case "$status" in
   green) status_emoji=":large_green_circle:" ;;
@@ -98,65 +105,60 @@ case "$status" in
   *) status_emoji=":white_circle:" ;;
 esac
 
-case "$health_status" in
-  ok) health_emoji=":white_check_mark:" ;;
-  *) health_emoji=":warning:" ;;
-esac
-
-# Build action items text
-action_items=$(jq -r '.action_items[]' "$JSON_FILE" 2>/dev/null || true)
-action_text=""
-if [[ -n "$action_items" ]]; then
-  while IFS= read -r item; do
-    action_text+="• ${item}\n"
-  done <<< "$action_items"
-else
-  action_text="No issues detected. System is healthy. :tada:"
-fi
-
-# Build next steps text
-next_steps=$(jq -r '.next_steps[]' "$JSON_FILE" 2>/dev/null || true)
-next_steps_text=""
-if [[ -n "$next_steps" ]]; then
-  while IFS= read -r step; do
-    cmd="${step#*: }"
-    label="${step%%: *}"
-    escaped_cmd=$(printf '%s' "$cmd" | sed 's/\\/\\\\/g; s/"/\\"/g')
-    escaped_label=$(printf '%s' "$label" | sed 's/\\/\\\\/g; s/"/\\"/g')
-    next_steps_text+="*${escaped_label}:*\\n\`${escaped_cmd}\`\\n"
-  done <<< "$next_steps"
-else
-  next_steps_text="No specific next steps."
-fi
-
-# Build top CI failures text
-ci_text=""
+# Build alerts — only surface non-zero / non-ok items
+alerts=""
 if [[ "$ci_failures" -gt 0 ]]; then
+  alerts+=":rotating_light: *${ci_failures} CI failure(s)* across ${ci_repos} repo(s)\n"
   top_failures=$(jq -r '.ci.top_failures[]' "$JSON_FILE" 2>/dev/null || true)
   if [[ -n "$top_failures" ]]; then
     while IFS= read -r f; do
-      ci_text+="• ${f}\n"
+      alerts+="    • ${f}\n"
     done <<< "$top_failures"
   fi
 fi
+if [[ "$health_status" != "ok" ]]; then
+  alerts+=":warning: *System health:* ${health_status}\n"
+  health_warnings=$(jq -r '.health.warnings[]' "$JSON_FILE" 2>/dev/null || true)
+  if [[ -n "$health_warnings" ]]; then
+    while IFS= read -r w; do
+      alerts+="    • ${w}\n"
+    done <<< "$health_warnings"
+  fi
+fi
+if [[ "$docs_critical" -gt 0 ]]; then
+  alerts+=":page_facing_up: *${docs_critical} stale doc link(s)*\n"
+fi
+action_items=$(jq -r '.action_items[]' "$JSON_FILE" 2>/dev/null || true)
+if [[ -n "$action_items" ]]; then
+  while IFS= read -r item; do
+    alerts+=":clipboard: ${item}\n"
+  done <<< "$action_items"
+fi
 
-# Health warnings text
-health_warnings=$(jq -r '.health.warnings[]' "$JSON_FILE" 2>/dev/null || true)
-health_warn_text=""
-if [[ -n "$health_warnings" ]]; then
-  while IFS= read -r w; do
-    health_warn_text+="• ${w}\n"
-  done <<< "$health_warnings"
+# Summary line
+summary="${prs_open} open PR(s)"
+if [[ "$docs_findings" -gt 0 ]]; then
+  summary+=", ${docs_findings} docs finding(s)"
 fi
 
 # ---------------------------------------------------------------------------
 # Build Slack Block Kit payload
 # ---------------------------------------------------------------------------
 
-# Escape for JSON string embedding
-json_escape() {
-  printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g' | tr '\n' ' '
-}
+alerts=$(json_escape "$alerts")
+summary=$(json_escape "$summary")
+
+alerts_block=""
+if [[ -n "$alerts" ]]; then
+  alerts_block=$(cat <<ALERTBLOCK
+    {
+      "type": "section",
+      "text": { "type": "mrkdwn", "text": "${alerts}" }
+    },
+    { "type": "divider" },
+ALERTBLOCK
+)
+fi
 
 payload=$(cat <<ENDPAYLOAD
 {
@@ -165,78 +167,24 @@ payload=$(cat <<ENDPAYLOAD
       "type": "header",
       "text": {
         "type": "plain_text",
-        "text": "${status_emoji} Daily Command Center — ${date_val}",
+        "text": "$(json_escape "${status_emoji} Command Center — ${date_val}")",
         "emoji": true
       }
     },
-    {
-      "type": "section",
-      "fields": [
-        {
-          "type": "mrkdwn",
-          "text": "*CI Failures*\n${ci_failures} across ${ci_repos} repo(s)"
-        },
-        {
-          "type": "mrkdwn",
-          "text": "*Stale Docs*\n${docs_findings} finding(s), ${docs_critical} stale link(s)"
-        },
-        {
-          "type": "mrkdwn",
-          "text": "*System Health*\n${health_emoji} ${health_status}"
-        },
-        {
-          "type": "mrkdwn",
-          "text": "*PR Activity*\n${prs_reviewed} reviewed, ${prs_open} open"
-        }
-      ]
-    },
-    {
-      "type": "divider"
-    },
+    ${alerts_block}
     {
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "*Action Items*\n${action_text}"
+        "text": "${summary}  |  <${report_url}|View full report>"
       }
     },
-    { "type": "divider" },
-    {
-      "type": "section",
-      "text": { "type": "mrkdwn", "text": "*Next Steps*\n${next_steps_text}" }
-    }$(if [[ -n "$ci_text" ]]; then cat <<CIBLOCK
-,
-    {
-      "type": "divider"
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "*Top CI Failures*\n${ci_text}"
-      }
-    }
-CIBLOCK
-fi)$(if [[ -n "$health_warn_text" ]]; then cat <<HWBLOCK
-,
-    {
-      "type": "divider"
-    },
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "*Health Warnings*\n${health_warn_text}"
-      }
-    }
-HWBLOCK
-fi),
     {
       "type": "context",
       "elements": [
         {
           "type": "mrkdwn",
-          "text": "Generated by tsd-agent-lab command center | $(date '+%Y-%m-%d %H:%M:%S')"
+          "text": "tsd-agent-lab command center"
         }
       ]
     }

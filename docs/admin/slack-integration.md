@@ -43,7 +43,7 @@ The `SLACK_CHANNEL` line is for reference only — the webhook is bound to the c
 ./scripts/macos/daily-command-center.sh
 
 # Preview the Slack payload without posting
-./scripts/macos/post-to-slack.sh --dry-run reports/command-center-$(date +%Y-%m-%d).json
+./scripts/macos/post-to-slack.sh --dry-run reports/command-center/current.json
 ```
 
 This prints the Block Kit JSON payload to stdout so you can verify formatting.
@@ -51,7 +51,7 @@ This prints the Block Kit JSON payload to stdout so you can verify formatting.
 ### 6. Post for Real
 
 ```bash
-./scripts/macos/post-to-slack.sh reports/command-center-$(date +%Y-%m-%d).json
+./scripts/macos/post-to-slack.sh reports/command-center/current.json
 ```
 
 You should see the message appear in your Slack channel.
@@ -91,10 +91,10 @@ The Slack message uses Block Kit and includes:
 Before enabling automated Slack posting:
 
 1. **All 5 launchd jobs loaded** — verify with `launchctl list | grep tsd-agent-lab`
-2. **Command center reviewed for 2+ days** — check `ls reports/command-center-*.md` for at least 2 reports
+2. **Command center reviewed for 2+ days** — check that `reports/command-center/previous.md` exists
 3. **Webhook configured** — create a Slack app, obtain an Incoming Webhook URL, and save it to `~/.config/tsd-agent-lab/slack-webhook.env`
-4. **Dry-run verified** — run `./scripts/macos/post-to-slack.sh --dry-run reports/command-center-$(date +%Y-%m-%d).json | jq .` and confirm the payload looks correct
-5. **Test post** — run `./scripts/macos/post-to-slack.sh reports/command-center-$(date +%Y-%m-%d).json` to send a real message
+4. **Dry-run verified** — run `./scripts/macos/post-to-slack.sh --dry-run reports/command-center/current.json | jq .` and confirm the payload looks correct
+5. **Test post** — run `./scripts/macos/post-to-slack.sh reports/command-center/current.json` to send a real message
 
 ### Enabling Automated Posting
 
@@ -125,10 +125,10 @@ To disable automated posting:
 Before enabling automated Slack posting:
 
 1. **All 5 launchd jobs loaded** — verify with `launchctl list | grep tsd-agent-lab`
-2. **Command center reviewed for 2+ days** — check `ls reports/command-center-*.md` for at least 2 reports
+2. **Command center reviewed for 2+ days** — check that `reports/command-center/previous.md` exists
 3. **Webhook configured** — create a Slack app, obtain an Incoming Webhook URL, and save it to `~/.config/tsd-agent-lab/slack-webhook.env`
-4. **Dry-run verified** — run `./scripts/macos/post-to-slack.sh --dry-run reports/command-center-$(date +%Y-%m-%d).json | jq .` and confirm the payload looks correct
-5. **Test post** — run `./scripts/macos/post-to-slack.sh reports/command-center-$(date +%Y-%m-%d).json` to send a real message
+4. **Dry-run verified** — run `./scripts/macos/post-to-slack.sh --dry-run reports/command-center/current.json | jq .` and confirm the payload looks correct
+5. **Test post** — run `./scripts/macos/post-to-slack.sh reports/command-center/current.json` to send a real message
 
 ### Enabling Automated Posting
 

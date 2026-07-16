@@ -16,9 +16,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-REPORT_DIR="${REPO_ROOT}/reports"
+REPORT_DIR="${REPO_ROOT}/reports/stale-docs"
 TODAY="$(date +%Y-%m-%d)"
-REPORT_FILE="${REPORT_DIR}/stale-docs-${TODAY}.md"
+REPORT_FILE="${REPORT_DIR}/current.md"
+ARCHIVE_FILE="${REPORT_DIR}/archive/stale-docs-${TODAY}.md"
+
+source "${SCRIPT_DIR}/lib-report-rotation.sh"
 DRY_RUN=false
 
 usage() {
@@ -35,7 +38,7 @@ Options:
   --help      Show this help message
 
 Output:
-  Default: writes to reports/stale-docs-YYYY-MM-DD.md
+  Default: writes to reports/stale-docs/current.md
   Dry run: prints to stdout
 USAGE
 }
@@ -230,7 +233,8 @@ clean=$(printf '%s' "$report" | sed 's/[[:space:]]*$//')
 if [[ "$DRY_RUN" == "true" ]]; then
   printf '%s\n' "$clean"
 else
-  mkdir -p "$REPORT_DIR"
+  rotate_report "$REPORT_DIR" "stale-docs" "$TODAY" "md"
   printf '%s\n' "$clean" > "$REPORT_FILE"
+  cp "$REPORT_FILE" "$ARCHIVE_FILE"
   echo "Report written to ${REPORT_FILE}"
 fi

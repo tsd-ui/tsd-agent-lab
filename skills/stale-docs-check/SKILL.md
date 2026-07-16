@@ -22,7 +22,7 @@ Review all Markdown documentation in the repo, cross-reference its claims agains
 
 - You already know which specific doc is wrong and just need to fix it (edit it directly instead)
 - You need a full codebase assessment (use codebase-map instead)
-- The repo has no `docs/admin/reports/` output location configured
+- The repo has no `reports/` output location configured
 
 ## Workflow
 
@@ -58,7 +58,7 @@ Add any new findings surfaced only by semantic reading (Step 2). Every finding â
 
 ### Step 4: Compose the report
 
-Write a single markdown report to `docs/admin/reports/stale-docs-YYYY-MM-DD.md` (today's date, matching the mechanical script's naming convention). Structure:
+Write a single markdown report to `reports/stale-docs/current.md` (today's date, matching the mechanical script's naming convention). Structure:
 
 - Header: date, host, user, generation timestamp
 - Summary line, exactly in the form: `N stale findings, M for review`
@@ -73,7 +73,7 @@ The report is the only artifact this skill produces. Do not edit any `.md` file 
 
 ## Expected Output
 
-A single file `docs/admin/reports/stale-docs-YYYY-MM-DD.md` containing:
+A single file `reports/stale-docs/current.md` containing:
 - Header metadata and summary line (`N stale findings, M for review`)
 - Findings grouped by file, each with line, category, description, and suggested fix/question
 - A note on mechanical vs. semantic provenance per finding group
@@ -93,9 +93,9 @@ A single file `docs/admin/reports/stale-docs-YYYY-MM-DD.md` containing:
 
 ## Verification
 
-- `docs/admin/reports/stale-docs-YYYY-MM-DD.md` exists and is non-empty
+- `reports/stale-docs/current.md` exists and is non-empty
 - The summary line matches the format `N stale findings, M for review`
-- No file outside `docs/admin/reports/` was modified (check `git status`)
+- No file outside `reports/` was modified (check `git status`)
 - `docs/archive/` produced no findings and was not read for this purpose
 - Every finding has a file, category (`stale` or `review`), and a description
 - The report contains no paths under `/Users/ryordan/`

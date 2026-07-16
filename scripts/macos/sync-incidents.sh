@@ -110,3 +110,4 @@ while IFS= read -r line; do
 done <<< "$OPEN_INCIDENTS"
 
 log_success "Sync complete: ${NEW_COUNT} new, ${UPDATED_COUNT} updated, ${RESOLVED_COUNT} resolved"
+

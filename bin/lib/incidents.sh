@@ -71,7 +71,7 @@ incident_create() {
   jq --argjson incident "$new_incident" '. += [$incident]' "$INDEX_FILE" > "$tmp"
   mv "$tmp" "$INDEX_FILE"
 
-  log_success "Created incident ${incident_id}"
+  log_success "Created incident ${incident_id}" >&2
   echo "$incident_id"
 }
 
@@ -140,3 +140,4 @@ incident_append_action() {
 
   log_success "Added action to incident ${incident_id}"
 }
+

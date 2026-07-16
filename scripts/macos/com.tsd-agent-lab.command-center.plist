@@ -10,6 +10,7 @@
     <array>
         <string>/Users/agent-lab/tsd-agent-lab/automations/bin/run-automation</string>
         <string>command-center</string>
+        <string>--post-slack</string>
     </array>
     <key>WorkingDirectory</key>
     <string>/Users/agent-lab/tsd-agent-lab</string>

@@ -179,3 +179,14 @@ else
   cp "$REPORT_FILE" "$ARCHIVE_FILE"
   echo "Report written to ${REPORT_FILE}"
 fi
+
+# ── step (f): sync incidents from collector data ──────────────────
+SYNC_SCRIPT="${REPO_ROOT}/scripts/macos/sync-incidents.sh"
+if [[ -x "$SYNC_SCRIPT" ]]; then
+  echo "Syncing incidents..."
+  if [[ "$DRY_RUN" == "true" ]]; then
+    "$SYNC_SCRIPT" --dry-run || echo "Warning: incident sync failed (non-fatal)" >&2
+  else
+    "$SYNC_SCRIPT" || echo "Warning: incident sync failed (non-fatal)" >&2
+  fi
+fi

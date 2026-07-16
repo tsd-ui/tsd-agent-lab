@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tsd-agent-lab/schemas/incident.schema.json",
+  "title": "TSD Agent Lab Incident Record",
+  "description": "Tracks a CI/CD failure incident from detection through resolution.",
+  "type": "object",
+  "required": ["incident_id", "signature", "repo", "workflow", "status", "created_at", "updated_at", "run_ids", "actions", "recurrence_count"],
+  "additionalProperties": false,
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "pattern": "^INC-\\d{4}$",
+      "description": "Unique incident identifier in the format INC-NNNN."
+    },
+    "signature": {
+      "type": "string",
+      "description": "Unique failure signature from broken-builds data."
+    },
+    "repo": {
+      "type": "string",
+      "description": "Repository identifier in org/repo format."
+    },
+    "workflow": {
+      "type": "string",
+      "description": "Workflow name or identifier."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["open", "investigating", "fix-drafted", "resolved", "wont-fix"],
+      "description": "Current incident status."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when the incident was created."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when the incident was last updated."
+    },
+    "run_ids": {
+      "type": "array",
+      "description": "GitHub Actions run IDs associated with this incident.",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "actions": {
+      "type": "array",
+      "description": "Action history for this incident.",
+      "items": {
+        "$ref": "#/definitions/action"
+      }
+    },
+    "diagnosis": {
+      "type": ["string", "null"],
+      "description": "Root-cause analysis text."
+    },
+    "recurrence_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of times this incident has recurred."
+    }
+  },
+  "definitions": {
+    "action": {
+      "type": "object",
+      "required": ["type", "timestamp", "details"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Action type (e.g. created, status-change, reopened, diagnosed)."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when the action occurred."
+        },
+        "details": {
+          "type": "string",
+          "description": "Human-readable action details."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,128 @@
+[
+  {
+    "incident_id": "INC-0001",
+    "signature": "securesign/rhtas-console-ui::CI (e2e)::run-e2e-ci / e2e-integration-tests::Run Playwright tests::Cleaning up orphan processes",
+    "repo": "securesign/rhtas-console-ui",
+    "workflow": "CI (e2e)",
+    "status": "open",
+    "created_at": "2026-07-16T13:55:59Z",
+    "updated_at": "2026-07-16T13:56:09Z",
+    "run_ids": [
+      28577442879
+    ],
+    "actions": [
+      {
+        "type": "created",
+        "timestamp": "2026-07-16T13:55:59Z",
+        "details": "Incident created from build failure"
+      }
+    ],
+    "diagnosis": null,
+    "recurrence_count": 1
+  },
+  {
+    "incident_id": "INC-0002",
+    "signature": "securesign/rhtas-console-ui::CI (e2e)::run-e2e-coverage / check-images::Check server_db_image image exists::Cleaning up orphan processes",
+    "repo": "securesign/rhtas-console-ui",
+    "workflow": "CI (e2e)",
+    "status": "open",
+    "created_at": "2026-07-16T13:56:00Z",
+    "updated_at": "2026-07-16T13:56:09Z",
+    "run_ids": [
+      28511728347
+    ],
+    "actions": [
+      {
+        "type": "created",
+        "timestamp": "2026-07-16T13:56:00Z",
+        "details": "Incident created from build failure"
+      }
+    ],
+    "diagnosis": null,
+    "recurrence_count": 1
+  },
+  {
+    "incident_id": "INC-0003",
+    "signature": "securesign/rhtas-console-ui::Deploy to GH Pages::gh-pages::Deploy to GitHub Pages::Cleaning up orphan processes",
+    "repo": "securesign/rhtas-console-ui",
+    "workflow": "Deploy to GH Pages",
+    "status": "open",
+    "created_at": "2026-07-16T13:56:00Z",
+    "updated_at": "2026-07-16T13:56:09Z",
+    "run_ids": [
+      28604785882
+    ],
+    "actions": [
+      {
+        "type": "created",
+        "timestamp": "2026-07-16T13:56:00Z",
+        "details": "Incident created from build failure"
+      }
+    ],
+    "diagnosis": null,
+    "recurrence_count": 1
+  },
+  {
+    "incident_id": "INC-0004",
+    "signature": "tsd-ui/conforma-policy-test::fullsend::dispatch / Triage / Triage::Mint triage token::Cleaning up orphan processes",
+    "repo": "tsd-ui/conforma-policy-test",
+    "workflow": "fullsend",
+    "status": "open",
+    "created_at": "2026-07-16T13:56:00Z",
+    "updated_at": "2026-07-16T13:56:09Z",
+    "run_ids": [
+      28162819107
+    ],
+    "actions": [
+      {
+        "type": "created",
+        "timestamp": "2026-07-16T13:56:00Z",
+        "details": "Incident created from build failure"
+      }
+    ],
+    "diagnosis": null,
+    "recurrence_count": 1
+  },
+  {
+    "incident_id": "INC-0005",
+    "signature": "tsd-ui/tsd-ui::Release::release::Publish to npm::Cleaning up orphan processes",
+    "repo": "tsd-ui/tsd-ui",
+    "workflow": "Release",
+    "status": "open",
+    "created_at": "2026-07-16T13:56:00Z",
+    "updated_at": "2026-07-16T13:56:09Z",
+    "run_ids": [
+      26500983210
+    ],
+    "actions": [
+      {
+        "type": "created",
+        "timestamp": "2026-07-16T13:56:00Z",
+        "details": "Incident created from build failure"
+      }
+    ],
+    "diagnosis": null,
+    "recurrence_count": 1
+  },
+  {
+    "incident_id": "INC-0006",
+    "signature": "tsd-ui/tsd-ui::Release::release::Update package versions::Cleaning up orphan processes",
+    "repo": "tsd-ui/tsd-ui",
+    "workflow": "Release",
+    "status": "open",
+    "created_at": "2026-07-16T13:56:00Z",
+    "updated_at": "2026-07-16T13:56:09Z",
+    "run_ids": [
+      26445057499
+    ],
+    "actions": [
+      {
+        "type": "created",
+        "timestamp": "2026-07-16T13:56:00Z",
+        "details": "Incident created from build failure"
+      }
+    ],
+    "diagnosis": null,
+    "recurrence_count": 1
+  }
+]

@@ -13,6 +13,7 @@ show CEST (UTC+2) for colleagues in Czechia.
 | 06:00 | 07:00 | Broken Builds                | `com.tsd-agent-lab.broken-builds`          | ~15-20 min  |
 | 06:30 | 07:30 | Command Center               | `com.tsd-agent-lab.command-center`         | ~10-15 min  |
 | Every 10 min | --    | Sync & Push            | `com.tsd-agent-lab.sync-and-push`          | ~30s        |
+| Sunday 04:00 | 05:00 | Log Rotation             | `com.tsd-agent-lab.rotate-logs`            | ~1 min      |
 
 Pipeline completes by approximately 06:45 BST / 07:45 CEST, with a 15-minute
 buffer before any downstream consumers need the data.
@@ -30,6 +31,9 @@ runs. The schedule above enforces this through staggered start times.
 
 The Sync & Push job runs independently on a 10-minute interval, committing and
 pushing all changes to git.
+
+The Command Center job runs with `--post-slack` enabled, posting a daily digest
+to the `#tsd-agent-lab` Slack channel after generating the report.
 
 ## Checking status
 

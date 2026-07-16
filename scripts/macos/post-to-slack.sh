@@ -62,7 +62,7 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 json_escape() {
-  printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+  printf '%s' "$1" | jq -Rs . | sed 's/^"//;s/"$//'
 }
 
 # ---------------------------------------------------------------------------
@@ -108,30 +108,30 @@ esac
 # Build alerts — only surface non-zero / non-ok items
 alerts=""
 if [[ "$ci_failures" -gt 0 ]]; then
-  alerts+=":rotating_light: *${ci_failures} CI failure(s)* across ${ci_repos} repo(s)\n"
+  alerts+=":rotating_light: *${ci_failures} CI failure(s)* across ${ci_repos} repo(s)"$'\n'
   top_failures=$(jq -r '.ci.top_failures[]' "$JSON_FILE" 2>/dev/null || true)
   if [[ -n "$top_failures" ]]; then
     while IFS= read -r f; do
-      alerts+="    • ${f}\n"
+      alerts+="    • ${f}"$'\n'
     done <<< "$top_failures"
   fi
 fi
 if [[ "$health_status" != "ok" ]]; then
-  alerts+=":warning: *System health:* ${health_status}\n"
+  alerts+=":warning: *System health:* ${health_status}"$'\n'
   health_warnings=$(jq -r '.health.warnings[]' "$JSON_FILE" 2>/dev/null || true)
   if [[ -n "$health_warnings" ]]; then
     while IFS= read -r w; do
-      alerts+="    • ${w}\n"
+      alerts+="    • ${w}"$'\n'
     done <<< "$health_warnings"
   fi
 fi
 if [[ "$docs_critical" -gt 0 ]]; then
-  alerts+=":page_facing_up: *${docs_critical} stale doc link(s)*\n"
+  alerts+=":page_facing_up: *${docs_critical} stale doc link(s)*"$'\n'
 fi
 action_items=$(jq -r '.action_items[]' "$JSON_FILE" 2>/dev/null || true)
 if [[ -n "$action_items" ]]; then
   while IFS= read -r item; do
-    alerts+=":clipboard: ${item}\n"
+    alerts+=":clipboard: ${item}"$'\n'
   done <<< "$action_items"
 fi
 

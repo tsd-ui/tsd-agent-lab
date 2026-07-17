@@ -139,6 +139,11 @@ if [[ -z "$DATA_CONTENT" ]]; then
   exit 1
 fi
 
+# Strip diff_excerpt fields to fit within the model's context window.
+# Diffs are the bulk of the bundle but only contribute a capped +10
+# contextual bonus. The full bundle with diffs is preserved on disk.
+DATA_CONTENT="$(echo "$DATA_CONTENT" | jq '.repos |= [.[] | .prs |= [.[] | .diff_excerpt = null]]')"
+
 # ── step (d): invoke the skill ─────────────────────────────────────
 
 echo "Running pr-risk-triage skill..."

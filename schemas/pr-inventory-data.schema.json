@@ -1,0 +1,251 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tsd-agent-lab/schemas/pr-inventory-data.schema.json",
+  "title": "PR Inventory Data Bundle",
+  "description": "Intermediate data bundle capturing open PR metadata across monitored repositories for risk triage.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "collector", "repos"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Version of this schema format.",
+      "enum": ["1"]
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when this data bundle was generated."
+    },
+    "collector": {
+      "type": "string",
+      "enum": ["pr-inventory"],
+      "description": "Collector that produced this data."
+    },
+    "config": {
+      "type": "object",
+      "description": "Collection configuration used for this run.",
+      "additionalProperties": false,
+      "properties": {
+        "include_drafts": {
+          "type": "boolean",
+          "description": "Whether draft PRs were included."
+        },
+        "max_prs_per_repo": {
+          "type": "integer",
+          "description": "Maximum PRs collected per repository."
+        },
+        "diff_threshold_lines": {
+          "type": "integer",
+          "description": "Line count threshold above which diffs are omitted."
+        }
+      }
+    },
+    "repos": {
+      "type": "array",
+      "description": "List of repositories checked for open PRs.",
+      "items": {
+        "$ref": "#/definitions/repo"
+      }
+    },
+    "warning": {
+      "type": "string",
+      "description": "Optional warning message, e.g. when diff excerpts were truncated to fit bundle size limit."
+    }
+  },
+  "definitions": {
+    "repo": {
+      "type": "object",
+      "required": ["repo", "collection_status", "prs"],
+      "additionalProperties": false,
+      "properties": {
+        "repo": {
+          "type": "string",
+          "description": "Repository identifier in org/repo format."
+        },
+        "collection_status": {
+          "type": "string",
+          "enum": ["ok", "error", "timeout"],
+          "description": "Outcome of data collection for this repository."
+        },
+        "collection_error": {
+          "type": "string",
+          "description": "Error message when collection_status is error or timeout."
+        },
+        "prs": {
+          "type": "array",
+          "description": "List of open PRs in this repository.",
+          "items": {
+            "$ref": "#/definitions/pr"
+          }
+        }
+      }
+    },
+    "pr": {
+      "type": "object",
+      "required": ["number", "title", "url", "author", "created_at", "updated_at", "is_draft", "labels", "base_branch", "head_branch", "diff_stats", "changed_files", "checks", "review_state", "review_threads", "commit_count", "force_push_count", "staleness"],
+      "additionalProperties": false,
+      "properties": {
+        "number": {
+          "type": "integer",
+          "description": "PR number."
+        },
+        "title": {
+          "type": "string",
+          "description": "PR title."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the PR."
+        },
+        "author": {
+          "type": "string",
+          "description": "PR author login."
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when the PR was created."
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp when the PR was last updated."
+        },
+        "is_draft": {
+          "type": "boolean",
+          "description": "Whether this is a draft PR."
+        },
+        "labels": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Labels applied to the PR."
+        },
+        "base_branch": {
+          "type": "string",
+          "description": "Target branch name."
+        },
+        "head_branch": {
+          "type": "string",
+          "description": "Source branch name."
+        },
+        "diff_stats": {
+          "type": "object",
+          "required": ["additions", "deletions", "changed_files"],
+          "additionalProperties": false,
+          "properties": {
+            "additions": {
+              "type": "integer",
+              "description": "Lines added."
+            },
+            "deletions": {
+              "type": "integer",
+              "description": "Lines deleted."
+            },
+            "changed_files": {
+              "type": "integer",
+              "description": "Number of files changed."
+            }
+          }
+        },
+        "changed_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of changed file paths."
+        },
+        "diff_excerpt": {
+          "type": ["string", "null"],
+          "description": "Truncated diff output, or null if diff was too large or unavailable."
+        },
+        "checks": {
+          "type": "object",
+          "required": ["status"],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["success", "failure", "pending", "unknown"],
+              "description": "Aggregate CI/check status."
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": { "type": "string" },
+                  "status": { "type": "string" },
+                  "conclusion": { "type": ["string", "null"] }
+                }
+              },
+              "description": "Individual check run details."
+            }
+          }
+        },
+        "review_state": {
+          "type": "object",
+          "required": ["decision"],
+          "additionalProperties": false,
+          "properties": {
+            "decision": {
+              "type": ["string", "null"],
+              "description": "Review decision: APPROVED, CHANGES_REQUESTED, REVIEW_REQUIRED, or null."
+            },
+            "reviews": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "author": { "type": "string" },
+                  "state": { "type": "string" },
+                  "submitted_at": { "type": "string", "format": "date-time" }
+                }
+              },
+              "description": "Individual review submissions."
+            }
+          }
+        },
+        "review_threads": {
+          "type": "object",
+          "required": ["total", "unresolved"],
+          "additionalProperties": false,
+          "properties": {
+            "total": {
+              "type": "integer",
+              "description": "Total review comment threads."
+            },
+            "unresolved": {
+              "type": "integer",
+              "description": "Unresolved review comment threads."
+            }
+          }
+        },
+        "commit_count": {
+          "type": "integer",
+          "description": "Number of commits in the PR."
+        },
+        "force_push_count": {
+          "type": "integer",
+          "description": "Number of force-push events detected."
+        },
+        "staleness": {
+          "type": "object",
+          "required": ["days_open", "days_since_update"],
+          "additionalProperties": false,
+          "properties": {
+            "days_open": {
+              "type": "integer",
+              "description": "Days since the PR was opened."
+            },
+            "days_since_update": {
+              "type": "integer",
+              "description": "Days since the PR was last updated."
+            }
+          }
+        }
+      }
+    }
+  }
+}

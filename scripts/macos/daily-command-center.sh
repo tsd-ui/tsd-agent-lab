@@ -17,6 +17,7 @@ POST_SLACK=false
 HEALTH_FILE="${REPORT_DIR}/health/current.md"
 STALE_DOCS_FILE="${REPORT_DIR}/stale-docs/current.md"
 BROKEN_BUILDS_FILE="${REPORT_DIR}/broken-builds/current.md"
+PR_TRIAGE_FILE="${REPORT_DIR}/pr-triage/current.md"
 PR_STATE_FILE="${HOME}/workspaces/runs/.pr-review-state.json"
 
 CC_DIR="${REPORT_DIR}/command-center"
@@ -286,6 +287,60 @@ No PR review state file found.
 fi
 
 # ---------------------------------------------------------------------------
+# Section: PR Risk Triage
+# ---------------------------------------------------------------------------
+
+triage_total=0
+triage_critical=0
+triage_high=0
+triage_medium=0
+triage_low=0
+triage_section=""
+triage_attention_rows=""
+
+if file_available "$PR_TRIAGE_FILE"; then
+  triage_summary=$(grep -m1 -E '^[0-9]+ open PR' "$PR_TRIAGE_FILE" || true)
+  if [[ -n "$triage_summary" ]]; then
+    triage_total=$(echo "$triage_summary" | grep -oE '^[0-9]+' || echo "0")
+    triage_critical=$(echo "$triage_summary" | grep -oE '[0-9]+ critical' | grep -oE '^[0-9]+' || echo "0")
+    triage_high=$(echo "$triage_summary" | grep -oE '[0-9]+ high' | grep -oE '^[0-9]+' || echo "0")
+    triage_medium=$(echo "$triage_summary" | grep -oE '[0-9]+ medium' | grep -oE '^[0-9]+' || echo "0")
+    triage_low=$(echo "$triage_summary" | grep -oE '[0-9]+ low' | grep -oE '^[0-9]+' || echo "0")
+  fi
+
+  # Extract "Needs Attention Now" table rows (skip header and separator lines)
+  in_attention=false
+  while IFS= read -r line; do
+    if [[ "$line" == "## Needs Attention Now" ]]; then
+      in_attention=true
+      continue
+    fi
+    if [[ "$in_attention" == "true" ]] && [[ "$line" =~ ^## ]]; then
+      break
+    fi
+    if [[ "$in_attention" == "true" ]] && [[ "$line" =~ ^\| ]] && ! [[ "$line" =~ ^\|\ # ]] && ! [[ "$line" =~ ^\|--- ]]; then
+      triage_attention_rows+="${line}"$'\n'
+    fi
+  done < "$PR_TRIAGE_FILE"
+
+  triage_section="### PR Risk Triage
+
+${triage_total} PR(s) triaged: ${triage_critical} critical, ${triage_high} high, ${triage_medium} medium, ${triage_low} low.
+"
+  if [[ -n "$triage_attention_rows" ]]; then
+    triage_section+=$'\n'"**Needs Attention:**"$'\n'
+    triage_section+="| # | PR | Score | Priority | Key Risks | Action |"$'\n'
+    triage_section+="|---|---|---|---|---|---|"$'\n'
+    triage_section+="${triage_attention_rows}"
+  fi
+else
+  triage_section="### PR Risk Triage
+
+No PR triage report available for ${TODAY}.
+"
+fi
+
+# ---------------------------------------------------------------------------
 # Action Items
 # ---------------------------------------------------------------------------
 
@@ -301,6 +356,10 @@ fi
 
 if [[ ${#health_warnings[@]} -gt 0 ]]; then
   action_items+=("Address ${#health_warnings[@]} system health warning(s)")
+fi
+
+if [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then
+  action_items+=("Triage ${triage_critical} critical and ${triage_high} high-risk PR(s)")
 fi
 
 action_section="### Action Items
@@ -339,6 +398,11 @@ if [[ "$prs_open" -gt 0 ]]; then
   next_steps+=("Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\"")
 fi
 
+if [[ "$triage_total" -gt 0 ]]; then
+  next_steps+=("View PR triage report: cat reports/pr-triage/current.md")
+  next_steps+=("Re-run PR triage: ./scripts/macos/pr-risk-triage-skill-run.sh --dry-run")
+fi
+
 if [[ ${#next_steps[@]} -eq 0 ]]; then
   next_steps+=("Check for new PRs: gh pr list --repo securesign/rhtas-console-ui --state open")
   next_steps+=("Run a codebase map: claude -p \"Follow skills/codebase-map/SKILL.md\"")
@@ -360,12 +424,12 @@ done
 overall_status="green"
 status_emoji="🟢"
 
-if [[ "$ci_failures" -gt 0 ]] || [[ ${#health_warnings[@]} -gt 0 ]] || [[ "$docs_critical" -gt 0 ]]; then
+if [[ "$ci_failures" -gt 0 ]] || [[ ${#health_warnings[@]} -gt 0 ]] || [[ "$docs_critical" -gt 0 ]] || [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then
   overall_status="yellow"
   status_emoji="🟡"
 fi
 
-if [[ "$ci_failures" -ge 10 ]] || [[ "$health_status" == "warnings" && ${#health_warnings[@]} -ge 3 ]]; then
+if [[ "$ci_failures" -ge 10 ]] || [[ "$health_status" == "warnings" && ${#health_warnings[@]} -ge 3 ]] || [[ "$triage_critical" -ge 3 ]]; then
   overall_status="red"
   status_emoji="🔴"
 fi
@@ -422,11 +486,13 @@ report="# Daily Command Center — ${TODAY}
 - ${docs_findings} stale docs finding(s)
 - System health: ${health_status}
 - ${prs_reviewed} PRs reviewed, ${prs_open} open across monitored repos
+- ${triage_total} PR(s) triaged: ${triage_critical} critical, ${triage_high} high
 
 ${diff_section}${ci_section}
 ${docs_section}
 ${health_section}
 ${pr_section}
+${triage_section}
 ${action_section}
 ${next_steps_section}"
 
@@ -501,6 +567,13 @@ json_summary=$(cat <<ENDJSON
   "prs": {
     "reviewed": ${prs_reviewed},
     "open": ${prs_open}
+  },
+  "pr_triage": {
+    "total_triaged": ${triage_total},
+    "critical": ${triage_critical},
+    "high": ${triage_high},
+    "medium": ${triage_medium},
+    "low": ${triage_low}
   },
   "action_items": ${ai_json},
   "next_steps": ${ns_json}

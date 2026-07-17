@@ -21,8 +21,12 @@ skills/
 │   └── SKILL.md           # Structured code review
 ├── adr-writer/
 │   └── SKILL.md           # Architecture Decision Record drafting
-└── stale-docs-check/
-    └── SKILL.md           # Documentation staleness review
+├── stale-docs-check/
+│   └── SKILL.md           # Documentation staleness review
+├── broken-builds/
+│   └── SKILL.md           # CI failure diagnosis and reporting
+└── pr-risk-triage/
+    └── SKILL.md           # Fleet-wide PR risk scoring and triage
 ```
 
 ## Skill Index
@@ -35,6 +39,8 @@ skills/
 | [pr-review](pr-review/SKILL.md) | read-only | review | Review code changes with severity-ranked findings |
 | [adr-writer](adr-writer/SKILL.md) | patch-only | code | Draft an ADR following the project's format |
 | [stale-docs-check](stale-docs-check/SKILL.md) | read-only | review | Cross-reference docs against repo state, report stale/review findings |
+| [broken-builds](broken-builds/SKILL.md) | read-only | triage | Diagnose CI build failures from a structured JSON data bundle |
+| [pr-risk-triage](pr-risk-triage/SKILL.md) | read-only | triage | Score open PRs for merge risk and produce a prioritized triage report |
 
 ## SKILL.md Format
 

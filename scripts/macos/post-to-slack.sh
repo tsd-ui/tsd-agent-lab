@@ -95,6 +95,9 @@ docs_findings=$(jq -r '.docs.findings' "$JSON_FILE")
 docs_critical=$(jq -r '.docs.critical' "$JSON_FILE")
 health_status=$(jq -r '.health.status' "$JSON_FILE")
 prs_open=$(jq -r '.prs.open' "$JSON_FILE")
+triage_critical=$(jq -r '.pr_triage.critical // 0' "$JSON_FILE")
+triage_high=$(jq -r '.pr_triage.high // 0' "$JSON_FILE")
+triage_total=$(jq -r '.pr_triage.total_triaged // 0' "$JSON_FILE")
 
 report_url="https://github.com/${REPORT_REPO}/blob/main/reports/command-center/current.md"
 
@@ -124,6 +127,9 @@ if [[ "$health_status" != "ok" ]]; then
       alerts+="    • ${w}"$'\n'
     done <<< "$health_warnings"
   fi
+fi
+if [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then
+  alerts+=":mag: *${triage_critical} critical, ${triage_high} high-risk PR(s)* out of ${triage_total} triaged"$'\n'
 fi
 if [[ "$docs_critical" -gt 0 ]]; then
   alerts+=":page_facing_up: *${docs_critical} stale doc link(s)*"$'\n'

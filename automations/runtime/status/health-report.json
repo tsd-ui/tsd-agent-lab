@@ -1,9 +1,9 @@
 {
   "job": "health-report",
   "label": "com.tsd-agent-lab.health-report",
-  "started_at": "2026-07-16T13:44:59+00:00",
-  "finished_at": "2026-07-16T13:45:00+00:00",
-  "duration_seconds": 1,
+  "started_at": "2026-07-17T04:00:03+00:00",
+  "finished_at": "2026-07-17T04:00:03+00:00",
+  "duration_seconds": 0,
   "status": "ok",
   "exit_code": 0
 }

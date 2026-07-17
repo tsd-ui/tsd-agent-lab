@@ -145,3 +145,19 @@ The `prompts/claude/` directory contains harness-specific prompt files created i
 | pr-review | `prompts/claude/review-only.md` |
 
 Both systems coexist. Prompts are lightweight and harness-integrated. Skills are portable, more detailed, and include metadata for cross-tool compatibility. Use whichever fits your workflow.
+
+## Pipelines
+
+Some skills are the scoring/analysis step of a larger automated pipeline. This section documents those end-to-end flows.
+
+### PR Risk Triage Pipeline
+
+The PR risk triage pipeline runs daily to score all open PRs across monitored repos and produce a prioritized triage report. It has five stages:
+
+1. **`scripts/macos/generate-repo-inventory.sh`** -- Generates `policies/generated/repo-inventory.txt`, the list of repos to monitor.
+2. **`collectors/pr-inventory/collect.sh`** -- The "pr-inventory collector". Reads the repo list, queries GitHub via the `gh` CLI for open PR metadata, and writes `pr-inventory-data-YYYY-MM-DD.json`.
+3. **`skills/pr-risk-triage/SKILL.md`** -- The skill that scores the JSON bundle and produces the triage report.
+4. **`scripts/macos/pr-risk-triage-skill-run.sh`** -- The orchestrator script that chains steps 1--3: refreshes the repo inventory if stale, runs the collector, locates the JSON bundle, then invokes Claude with the skill and data.
+5. **`automations/jobs/pr-risk-triage.yaml`** -- Schedules the orchestrator to run daily at 5:45 AM.
+
+The triage output categorizes PRs into recommendations (deep-review, scan-review, monitor). The actual review follow-through is performed by a human or by the separate [pr-review](pr-review/SKILL.md) skill.

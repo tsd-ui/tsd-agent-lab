@@ -1,10 +1,10 @@
 ---
-aliases: 
-tags: 
+aliases: []
+tags: []
 ---
 # Daily Report Pipeline Schedule
 
-The Mac running the agent-lab pipeline is set to BST (UTC+1). Times below also show CEST (UTC+2) for c[]()olleagues in Europe.
+The Mac running the agent-lab pipeline is set to BST (UTC+1). Times below also show CEST (UTC+2) for colleagues in Europe.
 
 ## Pipeline
 
@@ -62,4 +62,4 @@ launchctl load ~/Library/LaunchAgents/com.tsd-agent-lab.*.plist
 
 ## Important: GUI login requirement
 
-The agent-lab user account must be GUI-logged-in (via Fast User Switching) for LaunchAgents to fire. Background-only sessions and SSH sessions are not sufficient — macOS only runs LaunchAgents for users with an active GUI session.
+The agent-lab user account must be GUI-logged-in (via Fast User Switching) for LaunchAgents to fire. Background-only sessions and SSH sessions are not sufficient—macOS only runs LaunchAgents for users with an active GUI session.

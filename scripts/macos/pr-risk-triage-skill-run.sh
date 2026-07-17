@@ -11,7 +11,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 MAX_BUDGET_USD="2"
-TIMEOUT_SECONDS=300
+TIMEOUT_SECONDS=600
 TODAY="$(date +%Y-%m-%d)"
 REPORT_DIR="${REPO_ROOT}/reports/pr-triage"
 REPORT_FILE="${REPORT_DIR}/current.md"
@@ -152,6 +152,7 @@ ${DATA_CONTENT}"
 
 SKILL_OUTPUT="$(printf '%s' "$COMBINED_PROMPT" \
   | "${timeout_cmd[@]+"${timeout_cmd[@]}"}" claude -p \
+      --model sonnet \
       --output-format text \
       --dangerously-skip-permissions \
       --disallowedTools "Edit,NotebookEdit" \

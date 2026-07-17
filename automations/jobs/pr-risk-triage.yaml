@@ -9,5 +9,5 @@ schedule:
   minute: 45
 run_at_load: false
 side_effect_class: analytical-read-only
-max_runtime_seconds: 300
+max_runtime_seconds: 600
 log_name: pr-risk-triage

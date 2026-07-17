@@ -166,6 +166,7 @@ ${DATA_CONTENT}"
 
 SKILL_OUTPUT="$(printf '%s' "$COMBINED_PROMPT" \
   | "${timeout_cmd[@]+"${timeout_cmd[@]}"}" claude -p \
+      --model sonnet \
       --output-format text \
       --dangerously-skip-permissions \
       --disallowedTools "Edit,NotebookEdit" \

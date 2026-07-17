@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated_at": "2026-07-17T15:09:31Z",
+  "generated_at": "2026-07-17T15:16:56Z",
   "collector": "pr-inventory",
   "config": {
     "include_drafts": false,

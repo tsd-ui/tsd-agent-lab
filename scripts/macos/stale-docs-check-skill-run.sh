@@ -49,6 +49,7 @@ fi
 
 cat "${REPO_ROOT}/prompts/common/safety-preamble.md" "${REPO_ROOT}/skills/stale-docs-check/SKILL.md" \
   | "${timeout_cmd[@]+"${timeout_cmd[@]}"}" claude -p \
+      --model sonnet \
       --output-format text \
       --dangerously-skip-permissions \
       --disallowedTools "Edit,NotebookEdit" \

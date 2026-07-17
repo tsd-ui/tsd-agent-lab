@@ -30,15 +30,11 @@ The Command Center job is the final aggregation step. It reads from:
 - `reports/broken-builds/current.md`
 - `reports/pr-triage/current.md`
 
-Health Report, Stale Docs, Broken Builds, and PR Risk Triage must finish before
-Command Center runs. The schedule above enforces this through staggered start
-times.
+Health Report, Stale Docs, Broken Builds, and PR Risk Triage must finish before Command Center runs. The schedule above enforces this through staggered start times.
 
-The Sync & Push job runs independently on a 10-minute interval, committing and
-pushing all changes to git.
+The Sync & Push job runs independently on a 10-minute interval, committing and pushing all changes to git.
 
-The Command Center job runs with `--post-slack` enabled, posting a daily digest
-to the `#tsd-agent-lab` Slack channel after generating the report.
+The Command Center job runs with `--post-slack` enabled, posting a daily digest to the `#tsd-agent-lab` Slack channel after generating the report.
 
 ## Checking status
 
@@ -46,8 +42,7 @@ to the `#tsd-agent-lab` Slack channel after generating the report.
 launchctl list | grep tsd-agent-lab
 ```
 
-A `0` exit status in the output means the last run succeeded. A non-zero value
-indicates the last run failed.
+A `0` exit status in the output means the last run succeeded. A non-zero value indicates the last run failed.
 
 ## Reloading after schedule changes
 
@@ -67,6 +62,4 @@ launchctl load ~/Library/LaunchAgents/com.tsd-agent-lab.*.plist
 
 ## Important: GUI login requirement
 
-The agent-lab user account must be GUI-logged-in (via Fast User Switching) for
-LaunchAgents to fire. Background-only sessions and SSH sessions are not
-sufficient -- macOS only runs LaunchAgents for users with an active GUI session.
+The agent-lab user account must be GUI-logged-in (via Fast User Switching) for LaunchAgents to fire. Background-only sessions and SSH sessions are not sufficient — macOS only runs LaunchAgents for users with an active GUI session.

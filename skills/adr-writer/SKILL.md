@@ -33,15 +33,15 @@ Read the task specification to understand: what decision was made, why, what alt
 
 ### Step 2: Read the ADR format
 
-Read `docs/adr/README.md` to understand the required ADR structure, naming conventions, and guidelines.
+Read `docs/architecture/adr/README.md` to understand the required ADR structure, naming conventions, and guidelines.
 
 ### Step 3: Read existing ADRs for style
 
-Read 1-2 existing ADRs in `docs/adr/` to match the project's tone, level of detail, and formatting conventions.
+Read 1-2 existing ADRs in `docs/architecture/adr/` to match the project's tone, level of detail, and formatting conventions.
 
 ### Step 4: Determine the next number
 
-List files in `docs/adr/` to find the highest existing ADR number. The new ADR uses the next sequential number.
+List files in `docs/architecture/adr/` to find the highest existing ADR number. The new ADR uses the next sequential number.
 
 ### Step 5: Draft the ADR
 
@@ -64,11 +64,11 @@ Aim for 1-2 pages. Link to details rather than embedding them. Focus on "why" ov
 
 ### Step 8: Write the ADR file
 
-Write the ADR to `docs/adr/NNNN-short-title.md` using the determined number and a descriptive kebab-case title.
+Write the ADR to `docs/architecture/adr/NNNN-short-title.md` using the determined number and a descriptive kebab-case title.
 
 ### Step 9: Update the ADR index
 
-Add the new ADR to the index in `docs/adr/README.md` under the appropriate section (Active, Superseded, or Deprecated).
+Add the new ADR to the index in `docs/architecture/adr/README.md` under the appropriate section (Active, Superseded, or Deprecated).
 
 ### Step 10: Summarize
 
@@ -76,8 +76,8 @@ Write a summary to `agent-output.md` covering: what decision was documented, the
 
 ## Expected Output
 
-- `docs/adr/NNNN-short-title.md`—the new ADR file
-- Updated `docs/adr/README.md`—index with the new entry
+- `docs/architecture/adr/NNNN-short-title.md`—the new ADR file
+- Updated `docs/architecture/adr/README.md`—index with the new entry
 - `agent-output.md`—summary of what was created
 
 ## Safety Constraints
@@ -94,9 +94,9 @@ Write a summary to `agent-output.md` covering: what decision was documented, the
 
 - ADR file exists at the correct path with the correct number
 - All required sections are present (Status, Context, Decision, Consequences, Alternatives, Notes, References)
-- ADR follows the format in `docs/adr/README.md`
+- ADR follows the format in `docs/architecture/adr/README.md`
 - Style is consistent with existing ADRs
-- `docs/adr/README.md` index includes the new entry
+- `docs/architecture/adr/README.md` index includes the new entry
 - ADR is 1-2 pages, specific, and concise
 - `agent-output.md` summarizes the work
 

@@ -14,7 +14,6 @@ TODAY="$(date +%Y-%m-%d)"
 DRY_RUN=false
 POST_SLACK=false
 
-HEALTH_FILE="${REPORT_DIR}/health/current.md"
 STALE_DOCS_FILE="${REPORT_DIR}/stale-docs/current.md"
 BROKEN_BUILDS_FILE="${REPORT_DIR}/broken-builds/current.md"
 PR_TRIAGE_FILE="${REPORT_DIR}/pr-triage/current.md"
@@ -38,7 +37,7 @@ usage() {
   cat <<'USAGE'
 Usage: daily-command-center.sh [OPTIONS]
 
-Consolidate daily health, stale-docs, broken-builds, and PR review
+Consolidate daily stale-docs, broken-builds, and PR review
 reports into a single command center digest.
 
 Options:
@@ -173,65 +172,6 @@ No stale-docs report available for ${TODAY}.
 fi
 
 # ---------------------------------------------------------------------------
-# Section: System Health
-# ---------------------------------------------------------------------------
-
-health_status="unknown"
-health_warnings=()
-health_section=""
-
-if file_available "$HEALTH_FILE"; then
-  health_status_line=$(grep -m1 '^\- \*\*Status:\*\*' "$HEALTH_FILE" || true)
-  if echo "$health_status_line" | grep -q "healthy"; then
-    health_status="ok"
-  else
-    health_status="warnings"
-    warn_text=$(echo "$health_status_line" | sed 's/.*\*\*Status:\*\* //')
-    health_warnings+=("$warn_text")
-  fi
-
-  # Extract failed jobs
-  failed_section=false
-  while IFS= read -r line; do
-    if [[ "$line" == "## Failed Jobs" ]]; then
-      failed_section=true
-      continue
-    fi
-    if [[ "$failed_section" == "true" ]] && [[ "$line" =~ ^## ]]; then
-      break
-    fi
-    if [[ "$failed_section" == "true" ]] && [[ "$line" =~ ^\| ]] && ! [[ "$line" =~ ^\|\ Exit ]] && ! [[ "$line" =~ ^\|--  ]]; then
-      health_warnings+=("Failed job: $(echo "$line" | awk -F'|' '{print $3}' | xargs)")
-    fi
-  done < "$HEALTH_FILE"
-
-  # Extract disk capacity warnings
-  while IFS= read -r line; do
-    if echo "$line" | grep -q "WARNING"; then
-      mount=$(echo "$line" | awk -F'|' '{print $7}' | xargs)
-      cap=$(echo "$line" | awk -F'|' '{print $6}' | xargs | sed 's/ *\*\*WARNING\*\*//')
-      health_warnings+=("Disk ${mount} at ${cap}")
-    fi
-  done < <(grep "WARNING" "$HEALTH_FILE" || true)
-
-  health_section="### System Health
-
-**Status:** ${health_status}
-"
-  if [[ ${#health_warnings[@]} -gt 0 ]]; then
-    health_section+=$'\n'"Warnings:"$'\n'
-    for w in "${health_warnings[@]}"; do
-      health_section+="- ${w}"$'\n'
-    done
-  fi
-else
-  health_section="### System Health
-
-No health report available for ${TODAY}.
-"
-fi
-
-# ---------------------------------------------------------------------------
 # Section: PR Activity
 # ---------------------------------------------------------------------------
 
@@ -354,10 +294,6 @@ if [[ "$docs_critical" -gt 0 ]]; then
   action_items+=("Fix ${docs_critical} stale doc link(s)")
 fi
 
-if [[ ${#health_warnings[@]} -gt 0 ]]; then
-  action_items+=("Address ${#health_warnings[@]} system health warning(s)")
-fi
-
 if [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then
   action_items+=("Triage ${triage_critical} critical and ${triage_high} high-risk PR(s)")
 fi
@@ -365,7 +301,7 @@ fi
 action_section="### Action Items
 "
 if [[ ${#action_items[@]} -eq 0 ]]; then
-  action_section+=$'\n'"No issues detected. System is healthy — see Next Steps for proactive actions."$'\n'
+  action_section+=$'\n'"No issues detected — see Next Steps for proactive actions."$'\n'
 else
   action_section+=$'\n'
   for item in "${action_items[@]}"; do
@@ -387,11 +323,6 @@ fi
 if [[ "$docs_findings" -gt 0 ]]; then
   next_steps+=("View stale-docs report: cat reports/stale-docs/current.md")
   next_steps+=("Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"")
-fi
-
-if [[ ${#health_warnings[@]} -gt 0 ]]; then
-  next_steps+=("View health report: cat reports/health/current.md")
-  next_steps+=("Check launchd status: launchctl list | grep tsd-agent-lab")
 fi
 
 if [[ "$prs_open" -gt 0 ]]; then
@@ -424,12 +355,12 @@ done
 overall_status="green"
 status_emoji="🟢"
 
-if [[ "$ci_failures" -gt 0 ]] || [[ ${#health_warnings[@]} -gt 0 ]] || [[ "$docs_critical" -gt 0 ]] || [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then
+if [[ "$ci_failures" -gt 0 ]] || [[ "$docs_critical" -gt 0 ]] || [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then
   overall_status="yellow"
   status_emoji="🟡"
 fi
 
-if [[ "$ci_failures" -ge 10 ]] || [[ "$health_status" == "warnings" && ${#health_warnings[@]} -ge 3 ]] || [[ "$triage_critical" -ge 3 ]]; then
+if [[ "$ci_failures" -ge 10 ]] || [[ "$triage_critical" -ge 3 ]]; then
   overall_status="red"
   status_emoji="🔴"
 fi
@@ -484,13 +415,11 @@ report="# Daily Command Center — ${TODAY}
 
 - ${ci_failures} CI failure(s) across ${ci_repos_affected} repo(s)
 - ${docs_findings} stale docs finding(s)
-- System health: ${health_status}
 - ${prs_reviewed} PRs reviewed, ${prs_open} open across monitored repos
 - ${triage_total} PR(s) triaged: ${triage_critical} critical, ${triage_high} high
 
 ${diff_section}${ci_section}
 ${docs_section}
-${health_section}
 ${pr_section}
 ${triage_section}
 ${action_section}
@@ -501,21 +430,6 @@ clean=$(printf '%s' "$report" | sed 's/[[:space:]]*$//')
 # ---------------------------------------------------------------------------
 # Compose JSON summary
 # ---------------------------------------------------------------------------
-
-# Build health warnings JSON array
-hw_json="["
-hw_first=true
-for w in "${health_warnings[@]+"${health_warnings[@]}"}"; do
-  [[ -z "$w" ]] && continue
-  if [[ "$hw_first" == "true" ]]; then
-    hw_first=false
-  else
-    hw_json+=","
-  fi
-  escaped=$(echo "$w" | sed 's/"/\\"/g')
-  hw_json+="\"${escaped}\""
-done
-hw_json+="]"
 
 # Build action items JSON array
 ai_json="["
@@ -559,10 +473,6 @@ json_summary=$(cat <<ENDJSON
   "docs": {
     "findings": ${docs_findings},
     "critical": ${docs_critical}
-  },
-  "health": {
-    "status": "${health_status}",
-    "warnings": ${hw_json}
   },
   "prs": {
     "reviewed": ${prs_reviewed},

@@ -93,7 +93,6 @@ ci_failures=$(jq -r '.ci.failures' "$JSON_FILE")
 ci_repos=$(jq -r '.ci.repos_affected' "$JSON_FILE")
 docs_findings=$(jq -r '.docs.findings' "$JSON_FILE")
 docs_critical=$(jq -r '.docs.critical' "$JSON_FILE")
-health_status=$(jq -r '.health.status' "$JSON_FILE")
 prs_open=$(jq -r '.prs.open' "$JSON_FILE")
 triage_critical=$(jq -r '.pr_triage.critical // 0' "$JSON_FILE")
 triage_high=$(jq -r '.pr_triage.high // 0' "$JSON_FILE")
@@ -117,15 +116,6 @@ if [[ "$ci_failures" -gt 0 ]]; then
     while IFS= read -r f; do
       alerts+="    • ${f}"$'\n'
     done <<< "$top_failures"
-  fi
-fi
-if [[ "$health_status" != "ok" ]]; then
-  alerts+=":warning: *System health:* ${health_status}"$'\n'
-  health_warnings=$(jq -r '.health.warnings[]' "$JSON_FILE" 2>/dev/null || true)
-  if [[ -n "$health_warnings" ]]; then
-    while IFS= read -r w; do
-      alerts+="    • ${w}"$'\n'
-    done <<< "$health_warnings"
   fi
 fi
 if [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then

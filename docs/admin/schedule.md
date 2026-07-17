@@ -1,7 +1,10 @@
+---
+aliases: 
+tags: 
+---
 # Daily Report Pipeline Schedule
 
-The Mac running the agent-lab pipeline is set to BST (UTC+1). Times below also
-show CEST (UTC+2) for colleagues in Czechia.
+The Mac running the agent-lab pipeline is set to BST (UTC+1). Times below also show CEST (UTC+2) for c[]()olleagues in Europe.
 
 ## Pipeline
 
@@ -16,8 +19,7 @@ show CEST (UTC+2) for colleagues in Czechia.
 | Every 10 min | --    | Sync & Push            | `com.tsd-agent-lab.sync-and-push`          | ~30s        |
 | Sunday 04:00 | 05:00 | Log Rotation             | `com.tsd-agent-lab.rotate-logs`            | ~1 min      |
 
-Pipeline completes by approximately 06:45 BST / 07:45 CEST, with a 15-minute
-buffer before any downstream consumers need the data.
+Pipeline completes by approximately 06:45 BST / 07:45 CEST, with a 15-minute buffer before any downstream consumers need the data.
 
 ## Job dependencies
 

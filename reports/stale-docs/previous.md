@@ -1,12 +1,12 @@
 # Stale Docs Check
 
-- **Date:** 2026-07-13
+- **Date:** 2026-07-16
 - **Host:** ryordan-mac
 - **User:** agent-lab
-- **Generated:** 2026-07-13 06:15:09
+- **Generated:** 2026-07-16 11:47:18
 - **Scope:** mechanical checks only (path/link existence) — no semantic review
 
-**Summary:** 5 stale findings, 13 for review (mechanical pass only)
+**Summary:** 5 stale findings, 23 for review (mechanical pass only)
 
 ## Mechanical Findings
 
@@ -33,20 +33,31 @@
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 72 | stale | Markdown link target `url` does not exist | Update or remove the link |
+| 82 | stale | Markdown link target `url` does not exist | Update or remove the link |
 
-### `docs/admin/broken-builds.md`
+### `docs/admin/command-center.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 30 | review | Referenced path `policies/generated/repo-inventory.txt` was not found | Confirm whether this path was renamed, removed, or is illustrative |
-| 134 | review | Referenced path `policies/generated/repo-inventory.txt` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 8 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 22 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+
+### `docs/admin/schedule.md`
+
+| Line | Category | Finding | Suggested fix / question |
+|------|----------|---------|---------------------------|
+| 25 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 45 | review | Referenced path `scripts/macos/com.tsd` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 53 | review | Referenced path `scripts/macos/com.tsd` was not found | Confirm whether this path was renamed, removed, or is illustrative |
 
 ### `docs/admin/stale-docs-check.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
+| 26 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 85 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
 | 117 | review | Referenced path `scripts/bootstrap/verify.sh` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 137 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
 
 ### `docs/pilot/fullsend-local-evaluation.md`
 
@@ -73,6 +84,12 @@
 |------|----------|---------|---------------------------|
 | 41 | review | Referenced path `docs/prompts.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
 
+### `scripts/macos/README.md`
+
+| Line | Category | Finding | Suggested fix / question |
+|------|----------|---------|---------------------------|
+| 65 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+
 ### `skills/adr-writer/SKILL.md`
 
 | Line | Category | Finding | Suggested fix / question |
@@ -82,6 +99,14 @@
 | 80 | review | Referenced path `docs/adr/README.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
 | 97 | review | Referenced path `docs/adr/README.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
 | 99 | review | Referenced path `docs/adr/README.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+
+### `skills/stale-docs-check/SKILL.md`
+
+| Line | Category | Finding | Suggested fix / question |
+|------|----------|---------|---------------------------|
+| 61 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 76 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 96 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
 
 
 ## Semantic Findings

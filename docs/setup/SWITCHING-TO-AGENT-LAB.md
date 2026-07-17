@@ -149,4 +149,4 @@ exit    # Exit agent-lab shell
 
 - Full setup guide: [macos-agent-lab-user.md](./macos-agent-lab-user.md)
 - SSH troubleshooting: [SSH_TROUBLESHOOTING.md](./SSH_TROUBLESHOOTING.md)
-- Phase 1 quickstart: [Phase-1-Quickstart.md](../phases/Phase-1-Quickstart.md)
+- Phase 1 quickstart: [Phase-1-Quickstart.md](../archive/phases/Phase-1-Quickstart.md)

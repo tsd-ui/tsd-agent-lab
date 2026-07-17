@@ -134,7 +134,7 @@ thresholds:
   completeness: {min_mean: 3.0}
 ```
 
-See [skills/codebase-map/eval.yaml](../skills/codebase-map/eval.yaml) for the current config.
+See [skills/codebase-map/eval.yaml](../../skills/codebase-map/eval.yaml) for the current config.
 
 ## Test Cases
 

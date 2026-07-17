@@ -11,7 +11,7 @@ This guide walks through running the lab's first real pilot task: generating a c
 Pick a repository that:
 
 - **Low risk**—not production-critical; a failed or noisy run has no consequences
-- **Private or internal**—avoids public-repo trigger concerns (see [lab-strategy.md](../lab-strategy.md))
+- **Private or internal**—avoids public-repo trigger concerns (see [lab-strategy.md](../admin/lab-strategy.md))
 - **Well-structured**—has a README, clear directory layout, and standard build tooling so the agent has something meaningful to map
 - **Moderate size**—large enough to exercise the skill (50+ files) but not so large that the agent times out
 - **Familiar to the team**—you can judge the output's accuracy because you already know the codebase
@@ -135,7 +135,7 @@ For structured scoring, use the [evaluation rubric](evaluation-rubric.md) and [p
 - **No Fullsend enrolment**—do not run `fullsend admin install` against the pilot repo
 - **No pushing**—the harness never pushes, but double-check that no manual pushes occur
 - **No PRs**—do not create pull requests from pilot output
-- **No public repos with triggers**—if using a public repo, run locally only with `--no-post-script` and minimum token permissions (see [lab-strategy.md](../lab-strategy.md))
+- **No public repos with triggers**—if using a public repo, run locally only with `--no-post-script` and minimum token permissions (see [lab-strategy.md](../admin/lab-strategy.md))
 
 ## Checklist for Sharing Results
 

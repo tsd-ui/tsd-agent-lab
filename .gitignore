@@ -112,6 +112,9 @@ bin/*.bin
 !logs/.gitkeep
 !experiments/.gitkeep
 
+# Broken-builds data bundles (transient collector output)
+broken-builds-data-*.json
+
 # Old reports location (moved to /reports; ignore so Obsidian sync doesn't re-add)
 docs/admin/reports/
 

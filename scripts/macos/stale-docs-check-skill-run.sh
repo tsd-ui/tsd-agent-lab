@@ -26,6 +26,11 @@ TIMEOUT_SECONDS=1800
 # shell environment.
 export PATH="${HOME}/.local/bin:${HOME}/.nvm/versions/node/v24.16.0/bin:/opt/homebrew/bin:/usr/local/bin:${PATH}"
 
+export CLAUDE_CODE_USE_VERTEX="1"
+export ANTHROPIC_VERTEX_PROJECT_ID="it-gcp-tsd-ui"
+export GOOGLE_APPLICATION_CREDENTIALS="/Users/agent-lab/.config/agent-lab-vertex-key.json"
+export CLOUD_ML_REGION="global"
+
 cd "$REPO_ROOT"
 
 if ! command -v claude >/dev/null 2>&1; then

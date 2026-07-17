@@ -42,6 +42,11 @@ else
   export PATH="/opt/homebrew/bin:/usr/local/bin:${HOME}/.local/bin:${PATH}"
 fi
 
+export CLAUDE_CODE_USE_VERTEX="1"
+export ANTHROPIC_VERTEX_PROJECT_ID="it-gcp-tsd-ui"
+export GOOGLE_APPLICATION_CREDENTIALS="/Users/agent-lab/.config/agent-lab-vertex-key.json"
+export CLOUD_ML_REGION="global"
+
 cd "$REPO_ROOT"
 
 # ── argument parsing ────────────────────────────────────────────────

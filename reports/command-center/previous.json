@@ -1,14 +1,14 @@
 {
-  "date": "2026-07-15",
-  "status": "green",
+  "date": "2026-07-16",
+  "status": "red",
   "ci": {
-    "failures": 0,
-    "repos_affected": 0,
+    "failures": 10,
+    "repos_affected": 3,
     "top_failures": []
   },
   "docs": {
-    "findings": 0,
-    "critical": 0
+    "findings": 28,
+    "critical": 5
   },
   "health": {
     "status": "ok",
@@ -16,8 +16,8 @@
   },
   "prs": {
     "reviewed": 7,
-    "open": 3
+    "open": 4
   },
-  "action_items": [],
-  "next_steps": ["Review open PRs: TBD"]
+  "action_items": ["Review 10 CI failure(s) across 3 repo(s)","Fix 5 stale doc link(s)"],
+  "next_steps": ["View broken-builds report: cat reports/broken-builds/current.md","Re-run CI diagnosis: ./scripts/macos/broken-builds-skill-run.sh --force-rediagnose","View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\""]
 }

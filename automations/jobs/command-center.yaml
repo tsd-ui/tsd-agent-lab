@@ -2,7 +2,8 @@ label: com.tsd-agent-lab.command-center
 name: command-center
 description: "Daily command center digest with Slack posting"
 script: scripts/macos/daily-command-center.sh
-args: ["--post-slack"]
+args:
+  - --post-slack
 schedule:
   type: calendar
   hour: 6

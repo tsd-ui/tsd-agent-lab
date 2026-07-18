@@ -1,4 +1,4 @@
-# Daily Command Center — 2026-07-16
+# Daily Command Center — 2026-07-17
 
 ## Status: 🔴
 
@@ -6,8 +6,8 @@
 
 - 10 CI failure(s) across 3 repo(s)
 - 28 stale docs finding(s)
-- System health: ok
-- 7 PRs reviewed, 4 open across monitored repos
+- System health: warnings
+- 7 PRs reviewed, 3 open across monitored repos
 
 ### Changes Since Yesterday
 - 10 new CI failure(s)
@@ -41,12 +41,17 @@ Affected files:
 
 ### System Health
 
-**Status:** ok
+**Status:** warnings
+
+Warnings:
+- 2 warning(s)
+- Failed job: com.tsd-agent-lab.broken-builds
+- Failed job: com.tsd-agent-lab.stale-docs-check
 
 ### PR Activity
 
 - **7** PRs reviewed (lifetime)
-- **4** PRs currently open across monitored repos
+- **3** PRs currently open across monitored repos
 
 Recent reviews:
 - securesign/rhtas-console-ui/235 (reviewed 2026-07-06)
@@ -59,6 +64,7 @@ Recent reviews:
 
 - [ ] Review 10 CI failure(s) across 3 repo(s)
 - [ ] Fix 5 stale doc link(s)
+- [ ] Address 3 system health warning(s)
 
 ### Next Steps
 
@@ -66,4 +72,6 @@ Recent reviews:
 - **Re-run CI diagnosis:** `./scripts/macos/broken-builds-skill-run.sh --force-rediagnose`
 - **View stale-docs report:** `cat reports/stale-docs/current.md`
 - **Run full docs review:** `claude -p "Follow skills/stale-docs-check/SKILL.md"`
+- **View health report:** `cat reports/health/current.md`
+- **Check launchd status:** `launchctl list | grep tsd-agent-lab`
 - **Review open PRs:** `claude -p "Follow skills/pr-review/SKILL.md"`

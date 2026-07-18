@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-16",
+  "date": "2026-07-17",
   "status": "red",
   "ci": {
     "failures": 10,
@@ -11,13 +11,13 @@
     "critical": 5
   },
   "health": {
-    "status": "ok",
-    "warnings": []
+    "status": "warnings",
+    "warnings": ["2 warning(s)","Failed job: com.tsd-agent-lab.broken-builds","Failed job: com.tsd-agent-lab.stale-docs-check"]
   },
   "prs": {
     "reviewed": 7,
-    "open": 4
+    "open": 3
   },
-  "action_items": ["Review 10 CI failure(s) across 3 repo(s)","Fix 5 stale doc link(s)"],
-  "next_steps": ["View broken-builds report: cat reports/broken-builds/current.md","Re-run CI diagnosis: ./scripts/macos/broken-builds-skill-run.sh --force-rediagnose","View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\""]
+  "action_items": ["Review 10 CI failure(s) across 3 repo(s)","Fix 5 stale doc link(s)","Address 3 system health warning(s)"],
+  "next_steps": ["View broken-builds report: cat reports/broken-builds/current.md","Re-run CI diagnosis: ./scripts/macos/broken-builds-skill-run.sh --force-rediagnose","View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","View health report: cat reports/health/current.md","Check launchd status: launchctl list | grep tsd-agent-lab","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\""]
 }

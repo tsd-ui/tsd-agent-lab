@@ -1,9 +1,9 @@
 {
   "job": "sync-and-push",
   "label": "com.tsd-agent-lab.sync-and-push",
-  "started_at": "2026-07-18T05:50:35+00:00",
-  "finished_at": "2026-07-18T05:50:39+00:00",
-  "duration_seconds": 4,
-  "status": "ok",
-  "exit_code": 0
+  "started_at": "2026-07-18T06:00:37+00:00",
+  "finished_at": "",
+  "duration_seconds": 0,
+  "status": "running",
+  "exit_code": -1
 }

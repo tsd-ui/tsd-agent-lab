@@ -1,9 +1,9 @@
 # Stale Docs Check
 
-- **Date:** 2026-07-16
+- **Date:** 2026-07-17
 - **Host:** ryordan-mac
 - **User:** agent-lab
-- **Generated:** 2026-07-16 11:47:18
+- **Generated:** 2026-07-17 05:15:03
 - **Scope:** mechanical checks only (path/link existence) — no semantic review
 
 **Summary:** 5 stale findings, 23 for review (mechanical pass only)
@@ -46,18 +46,18 @@
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 25 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
-| 45 | review | Referenced path `scripts/macos/com.tsd` was not found | Confirm whether this path was renamed, removed, or is illustrative |
-| 53 | review | Referenced path `scripts/macos/com.tsd` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 26 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 49 | review | Referenced path `scripts/macos/com.tsd` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 57 | review | Referenced path `scripts/macos/com.tsd` was not found | Confirm whether this path was renamed, removed, or is illustrative |
 
 ### `docs/admin/stale-docs-check.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
 | 26 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
-| 85 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
-| 117 | review | Referenced path `scripts/bootstrap/verify.sh` was not found | Confirm whether this path was renamed, removed, or is illustrative |
-| 137 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 87 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 119 | review | Referenced path `scripts/bootstrap/verify.sh` was not found | Confirm whether this path was renamed, removed, or is illustrative |
+| 139 | review | Referenced path `docs/current.md` was not found | Confirm whether this path was renamed, removed, or is illustrative |
 
 ### `docs/pilot/fullsend-local-evaluation.md`
 

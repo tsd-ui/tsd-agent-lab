@@ -1,52 +1,50 @@
-# Daily Command Center — 2026-07-17
+# Daily Command Center — 2026-07-18
 
 ## Status: 🔴
 
 ### Summary
 
-- 10 CI failure(s) across 3 repo(s)
-- 28 stale docs finding(s)
-- System health: warnings
+- 11 CI failure(s) across 3 repo(s)
+- 6 stale docs finding(s)
 - 7 PRs reviewed, 3 open across monitored repos
+- 30 PR(s) triaged: 1 critical, 1 high
 
 ### Changes Since Yesterday
-- 10 new CI failure(s)
-- 28 new stale doc finding(s)
-- Status changed: green -> red
+- 1 new CI failure(s)
+- 22 stale doc finding(s) resolved
 
 ### CI / Builds
 
-10 failures across 3 repos (down from 20 across 5 in the prior report — securesign/rhtas-console and tsd-ui/tsd-ui-team-docs are now clear)
+11 failure(s) across 3 repo(s)
 
+**[securesign/rhtas-console-ui](https://github.com/securesign/rhtas-console-ui) — 🆕 new**
+- Deploy to GH Pages / gh-pages / Deploy to GitHub Pages
+- Deploy to GH Pages / gh-pages / Deploy to GitHub Pages
+- CI (e2e) / run-e2e-ci / e2e-integration-tests / Run Playwright tests
+- CI (e2e) / run-e2e-coverage / coverage / Tests with coverage
+- CI (e2e) / run-e2e-coverage / check-images / Check server_db_image image exists
+- CI (e2e) / run-e2e-ci / e2e-integration-tests / Run Playwright tests
+**[tsd-ui/conforma-policy-test](https://github.com/tsd-ui/conforma-policy-test) — 🆕 new**
+- fullsend / dispatch / Triage / Triage / Mint triage token
+- fullsend / dispatch / Triage / Triage / Mint triage token
+- fullsend / dispatch / Triage / Triage / Mint triage token
+- fullsend / dispatch / Triage / Triage / Mint triage token
+**[tsd-ui/tsd-ui](https://github.com/tsd-ui/tsd-ui) — 🆕 new**
+- Release / release / Publish to npm
+- Release / release / Update package versions
 
 ### Documentation Health
 
-**Summary:** 5 stale findings, 23 for review (mechanical pass only)
+**Summary:** 3 stale findings, 3 for review
 
 Affected files:
-- `docs/pilot/phase-1-read-only-pilot.md`
-- `docs/reference/evaluation.md`
-- `docs/setup/SWITCHING-TO-AGENT-LAB.md`
 - `skills/broken-builds/SKILL.md`
+- `skills/pr-risk-triage/SKILL.md`
 - `docs/admin/command-center.md`
 - `docs/admin/schedule.md`
 - `docs/admin/stale-docs-check.md`
-- `docs/pilot/fullsend-local-evaluation.md`
-- `docs/pilot/phase-1-read-only-pilot.md`
-- `docs/reference/harness.md`
-- `docs/reference/run-claude.md`
 - `scripts/macos/README.md`
-- `skills/adr-writer/SKILL.md`
 - `skills/stale-docs-check/SKILL.md`
-
-### System Health
-
-**Status:** warnings
-
-Warnings:
-- 2 warning(s)
-- Failed job: com.tsd-agent-lab.broken-builds
-- Failed job: com.tsd-agent-lab.stale-docs-check
 
 ### PR Activity
 
@@ -60,11 +58,21 @@ Recent reviews:
 - securesign/rhtas-console-ui/318 (reviewed 2026-07-06)
 - securesign/rhtas-console-ui/324 (reviewed 2026-07-06)
 
+### PR Risk Triage
+
+30 PR(s) triaged: 1 critical, 1 high, 11 medium, 17 low.
+
+**Needs Attention:**
+| # | PR | Score | Priority | Key Risks | Action |
+|---|---|---|---|---|---|
+| 1 | [securesign/rhtas-console#85](https://github.com/securesign/rhtas-console/pull/85) | 73 | critical | ci-failing, release-change, stale-45d, excessive-force-pushes | deep-review |
+| 2 | [securesign/rhtas-console-ui#325](https://github.com/securesign/rhtas-console-ui/pull/325) | 50 | high | ci-failing, release-change, stale-15d | deep-review |
+
 ### Action Items
 
-- [ ] Review 10 CI failure(s) across 3 repo(s)
-- [ ] Fix 5 stale doc link(s)
-- [ ] Address 3 system health warning(s)
+- [ ] Review 11 CI failure(s) across 3 repo(s)
+- [ ] Fix 3 stale doc link(s)
+- [ ] Triage 1 critical and 1 high-risk PR(s)
 
 ### Next Steps
 
@@ -72,6 +80,6 @@ Recent reviews:
 - **Re-run CI diagnosis:** `./scripts/macos/broken-builds-skill-run.sh --force-rediagnose`
 - **View stale-docs report:** `cat reports/stale-docs/current.md`
 - **Run full docs review:** `claude -p "Follow skills/stale-docs-check/SKILL.md"`
-- **View health report:** `cat reports/health/current.md`
-- **Check launchd status:** `launchctl list | grep tsd-agent-lab`
 - **Review open PRs:** `claude -p "Follow skills/pr-review/SKILL.md"`
+- **View PR triage report:** `cat reports/pr-triage/current.md`
+- **Re-run PR triage:** `./scripts/macos/pr-risk-triage-skill-run.sh --dry-run`

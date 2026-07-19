@@ -1,23 +1,26 @@
 {
-  "date": "2026-07-17",
+  "date": "2026-07-18",
   "status": "red",
   "ci": {
-    "failures": 10,
+    "failures": 11,
     "repos_affected": 3,
-    "top_failures": []
+    "top_failures": ["[securesign/rhtas-console-ui](https://github.com/securesign/rhtas-console-ui) — 🆕 new","[tsd-ui/conforma-policy-test](https://github.com/tsd-ui/conforma-policy-test) — 🆕 new","[tsd-ui/tsd-ui](https://github.com/tsd-ui/tsd-ui) — 🆕 new"]
   },
   "docs": {
-    "findings": 28,
-    "critical": 5
-  },
-  "health": {
-    "status": "warnings",
-    "warnings": ["2 warning(s)","Failed job: com.tsd-agent-lab.broken-builds","Failed job: com.tsd-agent-lab.stale-docs-check"]
+    "findings": 6,
+    "critical": 3
   },
   "prs": {
     "reviewed": 7,
     "open": 3
   },
-  "action_items": ["Review 10 CI failure(s) across 3 repo(s)","Fix 5 stale doc link(s)","Address 3 system health warning(s)"],
-  "next_steps": ["View broken-builds report: cat reports/broken-builds/current.md","Re-run CI diagnosis: ./scripts/macos/broken-builds-skill-run.sh --force-rediagnose","View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","View health report: cat reports/health/current.md","Check launchd status: launchctl list | grep tsd-agent-lab","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\""]
+  "pr_triage": {
+    "total_triaged": 30,
+    "critical": 1,
+    "high": 1,
+    "medium": 11,
+    "low": 17
+  },
+  "action_items": ["Review 11 CI failure(s) across 3 repo(s)","Fix 3 stale doc link(s)","Triage 1 critical and 1 high-risk PR(s)"],
+  "next_steps": ["View broken-builds report: cat reports/broken-builds/current.md","Re-run CI diagnosis: ./scripts/macos/broken-builds-skill-run.sh --force-rediagnose","View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\"","View PR triage report: cat reports/pr-triage/current.md","Re-run PR triage: ./scripts/macos/pr-risk-triage-skill-run.sh --dry-run"]
 }

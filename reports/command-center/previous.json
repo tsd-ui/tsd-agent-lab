@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-18",
+  "date": "2026-07-19",
   "status": "red",
   "ci": {
     "failures": 11,
@@ -7,7 +7,7 @@
     "top_failures": ["[securesign/rhtas-console-ui](https://github.com/securesign/rhtas-console-ui) — 🆕 new","[tsd-ui/conforma-policy-test](https://github.com/tsd-ui/conforma-policy-test) — 🆕 new","[tsd-ui/tsd-ui](https://github.com/tsd-ui/tsd-ui) — 🆕 new"]
   },
   "docs": {
-    "findings": 6,
+    "findings": 21,
     "critical": 3
   },
   "prs": {

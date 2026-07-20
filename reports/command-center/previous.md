@@ -1,17 +1,17 @@
-# Daily Command Center — 2026-07-18
+# Daily Command Center — 2026-07-19
 
 ## Status: 🔴
 
 ### Summary
 
 - 11 CI failure(s) across 3 repo(s)
-- 6 stale docs finding(s)
+- 21 stale docs finding(s)
 - 7 PRs reviewed, 3 open across monitored repos
 - 30 PR(s) triaged: 1 critical, 1 high
 
 ### Changes Since Yesterday
 - 1 new CI failure(s)
-- 22 stale doc finding(s) resolved
+- 7 stale doc finding(s) resolved
 
 ### CI / Builds
 
@@ -35,7 +35,7 @@
 
 ### Documentation Health
 
-**Summary:** 3 stale findings, 3 for review
+**Summary:** 3 stale findings, 18 for review (mechanical pass only)
 
 Affected files:
 - `skills/broken-builds/SKILL.md`
@@ -43,6 +43,10 @@ Affected files:
 - `docs/admin/command-center.md`
 - `docs/admin/schedule.md`
 - `docs/admin/stale-docs-check.md`
+- `docs/pilot/fullsend-local-evaluation.md`
+- `docs/pilot/phase-1-read-only-pilot.md`
+- `docs/reference/harness.md`
+- `docs/reference/run-claude.md`
 - `scripts/macos/README.md`
 - `skills/stale-docs-check/SKILL.md`
 

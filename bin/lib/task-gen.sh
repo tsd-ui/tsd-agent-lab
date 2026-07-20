@@ -87,7 +87,7 @@ YAML_EOF
 # and a prompt containing the diff. Prints the task file path on stdout.
 # ---------------------------------------------------------------------------
 generate_review_pr_task() {
-  local owner="$1" repo="$2" pr_number="$3"
+  local owner="$1" repo="$2" pr_number="$3" expected_sha="${4:-}"
 
   require_command gh
   require_command jq
@@ -96,16 +96,23 @@ generate_review_pr_task() {
   log_info "Fetching PR #${pr_number} from ${owner}/${repo}..." >&2
   local pr_json
   pr_json=$(gh pr view "$pr_number" --repo "${owner}/${repo}" \
-    --json title,author,body,baseRefName,headRefName,url 2>/dev/null) \
+    --json title,author,body,baseRefName,headRefName,headRefOid,url 2>/dev/null) \
     || die "Failed to fetch PR. Check: gh auth status && gh pr view ${pr_number} --repo ${owner}/${repo}"
 
-  local pr_title pr_author pr_body base_ref head_ref pr_url
+  local pr_title pr_author pr_body base_ref head_ref head_sha pr_url
   pr_title=$(echo "$pr_json" | jq -r '.title')
   pr_author=$(echo "$pr_json" | jq -r '.author.login')
   pr_body=$(echo "$pr_json" | jq -r '.body // ""')
   base_ref=$(echo "$pr_json" | jq -r '.baseRefName')
   head_ref=$(echo "$pr_json" | jq -r '.headRefName')
+  head_sha=$(echo "$pr_json" | jq -r '.headRefOid')
   pr_url=$(echo "$pr_json" | jq -r '.url')
+
+  # If expected SHA was provided, verify it matches current head
+  if [[ -n "$expected_sha" && "$expected_sha" != "$head_sha" ]]; then
+    log_error "HEAD SHA mismatch: expected ${expected_sha}, got ${head_sha}" >&2
+    exit 2
+  fi
 
   local task_id="review-pr-${repo}-${pr_number}"
   local repo_url="https://github.com/${owner}/${repo}.git"
@@ -179,12 +186,20 @@ REVIEW_EOF
   task_file=$(mktemp /tmp/lab-action-task.XXXXXX)
   safe_title=$(printf '%s' "$pr_title" | tr '"' "'" | cut -c1-80)
 
+  local sha_line=""
+  if [[ -n "$expected_sha" ]]; then
+    sha_line="expected_head_sha: ${expected_sha}"
+  elif [[ -n "$head_sha" ]]; then
+    sha_line="expected_head_sha: ${head_sha}"
+  fi
+
   cat > "$task_file" <<YAML_EOF
 task_id: ${task_id}
 title: "Review PR #${pr_number}: ${safe_title}"
 mode: review-only
 repo_url: "${repo_url}"
 base_ref: ${base_ref}
+${sha_line}
 agent: claude-code
 prompt_file: "${prompt_file}"
 max_runtime_minutes: 10

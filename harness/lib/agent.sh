@@ -130,6 +130,8 @@ resolve_worktree() {
 # ---------------------------------------------------------------------------
 
 # Run claude -p with the composed prompt in the worktree
+#
+# Args: composed_prompt worktree_path run_dir [max_runtime] [max_turns] [mode]
 run_claude() {
   local composed_prompt="$1"
   local worktree_path="$2"
@@ -138,7 +140,15 @@ run_claude() {
   local output="${run_dir}/agent-output.md"
 
   local max_turns="${5:-}"
+  local mode="${6:-}"
   local cmd="claude -p --output-format text"
+
+  # Mode-based tool restrictions
+  if [[ "$mode" == "review-only" ]]; then
+    cmd="${cmd} --dangerously-skip-permissions"
+    cmd="${cmd} --disallowedTools \"Edit,Write,NotebookEdit,Bash(git push*),Bash(git checkout*),Bash(gh pr *),Bash(gh issue *),Bash(curl *),Bash(wget *)\""
+    cmd="${cmd} --max-budget-usd 2"
+  fi
 
   if [[ -n "$max_turns" && "$max_turns" -gt 0 ]] 2>/dev/null; then
     cmd="${cmd} --max-turns ${max_turns}"
@@ -157,10 +167,13 @@ run_claude() {
 
   log_info "Running Claude in: ${worktree_path}"
   log_info "Output: ${output}"
+  if [[ "$mode" == "review-only" ]]; then
+    log_info "Mode: review-only (tool restrictions active)"
+  fi
 
   local exit_code=0
   local stderr_log="${run_dir}/agent-stderr.log"
-  (cd "$worktree_path" && $cmd < "$composed_prompt" > "$output" 2>"$stderr_log") || exit_code=$?
+  (cd "$worktree_path" && eval $cmd < "$composed_prompt" > "$output" 2>"$stderr_log") || exit_code=$?
 
   return "$exit_code"
 }

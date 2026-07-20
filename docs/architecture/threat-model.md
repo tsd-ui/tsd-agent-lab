@@ -203,36 +203,72 @@ Sophisticated attacks may bypass human review; defense in depth required.
 ### CT4: Comment-Triggered Workflow Abuse
 
 **Attack Vector**: Attacker posts GitHub issue/PR comment to trigger agent action:
-- `/deploy` or similar command in comment
-- Malicious prompt injection in issue body
+- `/agent review` or similar command in comment
+- Malicious prompt injection in PR body or diff
 - Social engineering team members to comment
+- Compromised collaborator account posting trigger comments
 
-**Impact**: MEDIUM  
+**Impact**: MEDIUM
 - Unauthorized workflow execution
 - Resource consumption
 - Privilege escalation attempts
 - PR spam or manipulation
 
 **Mitigations**:
-1. **Primary**: No comment-triggered automation (design decision)
-   - All workflows initiated locally by operator
-   - No GitHub webhooks configured
-   - No issue/PR comment parsing
-   
-2. **Secondary**: Authentication for workflows
-   - Operator must be logged in to local machine
-   - SSH key required for git operations
-   - No headless automation
-   
-3. **Tertiary**: Rate limiting
-   - Manual execution provides natural rate limit
-   - No API-triggered workflows
+1. **Primary**: Polling-based discovery (no inbound webhooks, no exposed endpoints,
+   no GitHub App — agent pulls on schedule, never receives pushes)
+   - No webhook endpoints to attack or spoof
+   - No GitHub App installation with event subscriptions
+   - Agent polls on a cron schedule, discovering comments after the fact
+   - No real-time trigger surface for attackers to exploit
+
+2. **Secondary**: Static commenter allowlist (`policies/bot-commenter-allowlist.yaml`)
+   plus `author_association` check (COLLABORATOR, MEMBER, OWNER)
+   - Only comments from explicitly allowlisted users are processed
+   - `author_association` must be COLLABORATOR, MEMBER, or OWNER
+   - External contributors and anonymous users ignored entirely
+   - Allowlist is version-controlled and requires PR review to change
+
+3. **Tertiary**: Review-only mode — agent runs with `--disallowedTools` blocking
+   Edit, Write, push, PR/issue mutations, and outbound network; `--max-budget-usd 2`
+   cost cap; detached HEAD worktree (no branch to push)
+   - Agent cannot modify files, push commits, or mutate PR state
+   - Output limited to review comments on the PR
+   - Cost bounded to $2 per review invocation
+   - Detached HEAD worktree prevents accidental pushes
+
+4. **Quaternary**: Rate limiting — per-user and global rate limits prevent cost
+   exhaustion; rate-limited users get visible feedback
+   - Per-user rate limits prevent a single account from exhausting budget
+   - Global rate limits cap total review invocations per time window
+   - Rate-limited requests produce visible feedback (comment or skip)
+   - Prevents runaway cost from compromised or misbehaving accounts
+
+5. **Quinary**: Containment — prompt injection via PR content is mitigated by
+   structured prompt composition (safety preamble + task prompt), tool restrictions
+   preventing code execution of injected commands, and review-only output that is
+   human-reviewed before action
+   - Safety preamble establishes agent constraints before PR content is seen
+   - Tool restrictions prevent execution of any injected commands
+   - Review output is posted as PR comments, visible to humans before action
+   - No autonomous code changes or merges result from reviews
 
 **Detection**:
-- N/A (threat eliminated by design)
+- Polling logs record every discovered comment and processing decision
+- Rate limit hits logged with user and timestamp
+- Allowlist rejections logged for audit
+- Review cost tracked per invocation and per user
+- Anomalous comment volume detectable via rate limit metrics
 
-**Residual Risk**: NONE  
-Comment triggers explicitly excluded from design.
+**Residual Risk**: LOW
+Polling-based review triggers accept controlled risk. A compromised collaborator
+account could trigger reviews, but the review-only tool restriction, cost cap, and
+rate limiting bound the blast radius to wasted compute ($2/review) and potentially
+misleading review comments. No code mutation, no push, no external network access.
+
+> **Note**: `/agent fix` and other write-mode triggers remain out of scope and would
+> require a separate threat-model amendment before implementation. This CT4 amendment
+> covers only polling-based, review-only triggers (`/agent review`).
 
 ### CT5: Autonomous Protected Branch Modification
 

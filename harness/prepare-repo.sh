@@ -81,6 +81,7 @@ fi
 repo_url=$(read_yaml_field_required "$TASK_FILE" "repo_url")
 base_ref=$(read_yaml_field "$TASK_FILE" "base_ref")
 base_ref="${base_ref:-main}"
+expected_head_sha=$(read_yaml_field "$TASK_FILE" "expected_head_sha")
 
 repo_name=$(basename "$repo_url" .git)
 clone_dir="${TSD_REPOS_DIR}/${repo_name}"
@@ -125,6 +126,10 @@ echo ""
 log_step "Step 3: Fetch base ref"
 git_fetch_ref "$clone_dir" "$base_ref"
 echo ""
+
+if [[ -n "$expected_head_sha" ]]; then
+  log_info "Expected PR head SHA: ${expected_head_sha:0:7} (verified at task generation)"
+fi
 
 log_step "Step 4: Create worktree"
 git_create_worktree "$clone_dir" "$worktree_path" "$base_ref"

@@ -171,7 +171,7 @@ _show_elapsed() {
 }
 
 exit_code=0
-run_claude "$composed" "$worktree_path" "$RUN_DIR" "$max_runtime" "$max_turns" &
+run_claude "$composed" "$worktree_path" "$RUN_DIR" "$max_runtime" "$max_turns" "$mode" &
 agent_pid=$!
 _show_elapsed "$agent_pid" &
 timer_pid=$!

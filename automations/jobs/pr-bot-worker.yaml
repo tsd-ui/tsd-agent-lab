@@ -1,0 +1,12 @@
+label: com.tsd-agent-lab.pr-bot-worker
+name: pr-bot-worker
+description: "Process queued PR review requests and post results"
+script: scripts/macos/pr-bot-worker.sh
+args: []
+schedule:
+  type: interval
+  seconds: 300
+run_at_load: false
+side_effect_class: analytical-read-only
+max_runtime_seconds: 900
+log_name: pr-bot-worker

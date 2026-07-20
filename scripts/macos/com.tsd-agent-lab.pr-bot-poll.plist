@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.tsd-agent-lab.command-center</string>
+    <string>com.tsd-agent-lab.pr-bot-poll</string>
     <key>UserName</key>
     <string>agent-lab</string>
     <key>ProgramArguments</key>
     <array>
         <string>/Users/agent-lab/tsd-agent-lab/automations/bin/run-automation</string>
-        <string>command-center</string>
+        <string>pr-bot-poll</string>
     </array>
     <key>WorkingDirectory</key>
     <string>/Users/agent-lab/tsd-agent-lab</string>
@@ -20,17 +20,12 @@
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     </dict>
-    <key>StartCalendarInterval</key>
-    <dict>
-        <key>Hour</key>
-        <integer>6</integer>
-        <key>Minute</key>
-        <integer>30</integer>
-    </dict>
+    <key>StartInterval</key>
+    <integer>300</integer>
     <key>StandardOutPath</key>
-    <string>/Users/agent-lab/tsd-agent-lab/logs/command-center.log</string>
+    <string>/Users/agent-lab/tsd-agent-lab/logs/pr-bot-poll.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/agent-lab/tsd-agent-lab/logs/command-center.log</string>
+    <string>/Users/agent-lab/tsd-agent-lab/logs/pr-bot-poll.log</string>
     <key>RunAtLoad</key>
     <false/>
 </dict>

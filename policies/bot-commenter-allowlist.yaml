@@ -1,0 +1,34 @@
+# bot-commenter-allowlist.yaml
+#
+# GitHub identities authorized to trigger agent actions via PR comments.
+# Used by pr-bot-poll.sh to validate /agent commands.
+#
+# In addition to this static list, commenters must also have a GitHub
+# author_association of COLLABORATOR, MEMBER, or OWNER on the repository.
+# Both checks must pass — the allowlist alone is not sufficient.
+
+allowed_commenters:
+  - username: ryordan
+    added: "2026-07-20"
+    reason: "Project maintainer"
+
+# Roles that are always allowed (in addition to the static list above).
+# These map to GitHub's author_association field on comments.
+allowed_associations:
+  - OWNER
+  - MEMBER
+  - COLLABORATOR
+
+# Commands that can be triggered via PR comments.
+# Each command maps to a lab-action subcommand and execution mode.
+allowed_commands:
+  - trigger: "/agent review"
+    action: review-pr
+    mode: review-only
+    max_budget_usd: 2
+
+# Commands explicitly NOT supported via comment triggers.
+# Listed here for clarity — these require direct operator invocation.
+excluded_commands:
+  - "/agent fix"
+  - "/agent triage"

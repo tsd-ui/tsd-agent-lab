@@ -117,9 +117,14 @@
 
 7. **NOT webhook/comment automation**
    - No GitHub webhook integrations
-   - No "magic comment" triggers
+   - No webhook-driven or direct-processing "magic comment" triggers
    - No automatic issue processing
    - Explicit invocation only
+
+   **Exception**: Polling-based PR review triggers (`/agent review`) are permitted under
+   the amended CT4 threat model. These use scheduled polling (not webhooks), static
+   commenter allowlists, and review-only tool restrictions. See threat-model.md CT4 for
+   the full risk assessment. Write-mode triggers (`/agent fix`) remain excluded.
 
 8. **NOT a shared credential system**
    - Each user manages own tokens

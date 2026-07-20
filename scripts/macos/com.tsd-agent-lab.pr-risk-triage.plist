@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.tsd-agent-lab.command-center</string>
+    <string>com.tsd-agent-lab.pr-risk-triage</string>
     <key>UserName</key>
     <string>agent-lab</string>
     <key>ProgramArguments</key>
     <array>
         <string>/Users/agent-lab/tsd-agent-lab/automations/bin/run-automation</string>
-        <string>command-center</string>
+        <string>pr-risk-triage</string>
     </array>
     <key>WorkingDirectory</key>
     <string>/Users/agent-lab/tsd-agent-lab</string>
@@ -23,14 +23,14 @@
     <key>StartCalendarInterval</key>
     <dict>
         <key>Hour</key>
-        <integer>6</integer>
+        <integer>5</integer>
         <key>Minute</key>
-        <integer>30</integer>
+        <integer>45</integer>
     </dict>
     <key>StandardOutPath</key>
-    <string>/Users/agent-lab/tsd-agent-lab/logs/command-center.log</string>
+    <string>/Users/agent-lab/tsd-agent-lab/logs/pr-risk-triage.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/agent-lab/tsd-agent-lab/logs/command-center.log</string>
+    <string>/Users/agent-lab/tsd-agent-lab/logs/pr-risk-triage.log</string>
     <key>RunAtLoad</key>
     <false/>
 </dict>

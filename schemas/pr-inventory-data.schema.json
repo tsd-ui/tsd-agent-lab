@@ -180,8 +180,8 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                  "name": { "type": "string" },
-                  "status": { "type": "string" },
+                  "name": { "type": ["string", "null"] },
+                  "status": { "type": ["string", "null"] },
                   "conclusion": { "type": ["string", "null"] }
                 }
               },

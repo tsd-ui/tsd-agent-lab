@@ -3,12 +3,12 @@
 # Defines which GitHub repositories agents are permitted to access.
 # The harness checks for repo URL or repo name matches in this file.
 #
-# Version: 1.1
-# Last Updated: 2026-07-02
+# Version: 1.2
+# Last Updated: 2026-07-20
 
 metadata:
-  version: "1.1"
-  updated: "2026-07-02"
+  version: "1.2"
+  updated: "2026-07-20"
   owner: "Engineering Team"
   description: "Repository access allowlist for tsd-agent-lab workflows"
 
@@ -21,6 +21,7 @@ organizations:
   - name: "TSD UI"
     github_org: "tsd-ui"
     url_pattern: "https://github.com/tsd-ui/*"
+    relationship: "maintained"    # org-level default: team maintains these repos
     repos:
       - "*"  # All repos under tsd-ui allowed
     access: "read-write"
@@ -28,11 +29,13 @@ organizations:
 
   - name: "Securesign"
     github_org: "securesign"
+    relationship: "dependency"    # org-level default: upstream repos the team depends on
     repos:
-      - "rhtas-console-ui"
-      - "rhtas-console"
+      - name: "rhtas-console-ui"
+        relationship: "maintained"    # override: user is core maintainer
+      - "rhtas-console"               # inherits org default: dependency
     access: "read-write"
-    notes: "RHTAS Console UI (frontend) and backend - these repos often work together"
+    notes: "RHTAS Console UI (frontend) is maintained by the team; rhtas-console (backend) is an upstream dependency"
 
 # Explicit repository entries (for simple grep matching)
 repositories:

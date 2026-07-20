@@ -18,7 +18,13 @@ usage() {
 Usage: generate-repo-inventory.sh [OPTIONS]
 
 Read policies/repo-allowlist.yaml and produce policies/generated/repo-inventory.txt
-containing one org/repo per line, sorted, with no comments or blank lines.
+containing one tab-separated "org/repo\trelationship" record per line, sorted,
+with no comments or blank lines. The relationship column is either "maintained"
+(team maintains the repo) or "dependency" (upstream repo the team depends on).
+
+Relationship resolution: each organization may declare a default relationship
+(default "maintained"). Individual repo entries may be objects with a "name" and
+"relationship" to override the org default, or bare strings that inherit it.
 
 For organizations with all repos allowed (repos: ["*"]), the script calls
 gh api to enumerate every repository in that org.

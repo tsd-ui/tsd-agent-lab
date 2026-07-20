@@ -91,8 +91,6 @@ date_val=$(jq -r '.date' "$JSON_FILE")
 status=$(jq -r '.status' "$JSON_FILE")
 ci_failures=$(jq -r '.ci.failures' "$JSON_FILE")
 ci_repos=$(jq -r '.ci.repos_affected' "$JSON_FILE")
-docs_findings=$(jq -r '.docs.findings' "$JSON_FILE")
-docs_critical=$(jq -r '.docs.critical' "$JSON_FILE")
 prs_open=$(jq -r '.prs.open' "$JSON_FILE")
 triage_critical=$(jq -r '.pr_triage.critical // 0' "$JSON_FILE")
 triage_high=$(jq -r '.pr_triage.high // 0' "$JSON_FILE")
@@ -121,9 +119,6 @@ fi
 if [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then
   alerts+=":mag: *${triage_critical} critical, ${triage_high} high-risk PR(s)* out of ${triage_total} triaged"$'\n'
 fi
-if [[ "$docs_critical" -gt 0 ]]; then
-  alerts+=":page_facing_up: *${docs_critical} stale doc link(s)*"$'\n'
-fi
 action_items=$(jq -r '.action_items[]' "$JSON_FILE" 2>/dev/null || true)
 if [[ -n "$action_items" ]]; then
   while IFS= read -r item; do
@@ -133,9 +128,6 @@ fi
 
 # Summary line
 summary="${prs_open} open PR(s)"
-if [[ "$docs_findings" -gt 0 ]]; then
-  summary+=", ${docs_findings} docs finding(s)"
-fi
 
 # ---------------------------------------------------------------------------
 # Build Slack Block Kit payload

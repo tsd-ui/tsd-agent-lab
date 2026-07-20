@@ -112,6 +112,7 @@ if [[ "$ci_failures" -gt 0 ]]; then
   top_failures=$(jq -r '.ci.top_failures[]' "$JSON_FILE" 2>/dev/null || true)
   if [[ -n "$top_failures" ]]; then
     while IFS= read -r f; do
+      f=$(echo "$f" | sed -E 's/\[([^]]+)\]\(([^)]+)\)/<\2|\1>/g')
       alerts+="    • ${f}"$'\n'
     done <<< "$top_failures"
   fi

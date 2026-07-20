@@ -111,6 +111,7 @@ aggregate_check_status() {
 # ── Collect PRs for a single repo ──────────────────────────────────────────
 collect_repo() {
     local repo="$1"
+    local relationship="${2:-maintained}"
     log "Processing $repo ..."
 
     local gh_fields="number,title,url,author,createdAt,updatedAt,isDraft,labels,baseRefName,headRefName,additions,deletions,changedFiles,statusCheckRollup,reviewDecision,reviews,commits,files"
@@ -118,8 +119,8 @@ collect_repo() {
     local prs_json
     prs_json=$(gh pr list --repo "$repo" --state open --limit "$MAX_PRS_PER_REPO" \
         --json "$gh_fields" 2>/dev/null) || {
-        echo "{}" | jq --arg repo "$repo" --arg err "Failed to list PRs" \
-            '{repo: $repo, collection_status: "error", collection_error: $err, prs: []}'
+        echo "{}" | jq --arg repo "$repo" --arg rel "$relationship" --arg err "Failed to list PRs" \
+            '{repo: $repo, relationship: $rel, collection_status: "error", collection_error: $err, prs: []}'
         return
     }
 
@@ -127,8 +128,8 @@ collect_repo() {
     pr_count=$(echo "$prs_json" | jq 'length')
 
     if [[ "$pr_count" -eq 0 ]]; then
-        echo "{}" | jq --arg repo "$repo" \
-            '{repo: $repo, collection_status: "ok", prs: []}'
+        echo "{}" | jq --arg repo "$repo" --arg rel "$relationship" \
+            '{repo: $repo, relationship: $rel, collection_status: "ok", prs: []}'
         return
     fi
 
@@ -299,8 +300,9 @@ collect_repo() {
 
     echo "{}" | jq \
         --arg repo "$repo" \
+        --arg rel "$relationship" \
         --argjson prs "$prs_result" \
-        '{repo: $repo, collection_status: "ok", prs: $prs}'
+        '{repo: $repo, relationship: $rel, collection_status: "ok", prs: $prs}'
 }
 
 # ── Main ────────────────────────────────────────────────────────────────────
@@ -308,12 +310,15 @@ collect_repo() {
 generated_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 repos_array="[]"
 
-while IFS= read -r repo; do
+while IFS=$'\t' read -r repo relationship; do
     [[ -z "$repo" || "$repo" == \#* ]] && continue
     repo=$(echo "$repo" | xargs)
     [[ -z "$repo" ]] && continue
+    # Default relationship when absent (backward compat with old inventory files)
+    relationship=$(echo "${relationship:-}" | xargs)
+    [[ -z "$relationship" ]] && relationship="maintained"
 
-    log "── Collecting: $repo ──"
+    log "── Collecting: $repo ($relationship) ──"
 
     repo_json=""
     if [[ -n "$TIMEOUT_CMD" ]]; then

@@ -50,18 +50,30 @@ if [[ ! -f "$ALLOWLIST" ]]; then
   exit 1
 fi
 
-# Parse the YAML and emit org/repo lines.
-# For orgs with repos: ["*"], emit a marker so we can call gh api.
-# For orgs with explicit repo lists, emit org/repo directly.
+# Parse the YAML and emit "org/repo\trelationship" lines.
+# For orgs with repos: ["*"], emit a marker "ALL:org\trelationship" so we can
+# call gh api later, carrying the resolved org-default relationship.
+# For orgs with explicit repo lists, emit org/repo directly. Repo entries may be
+# bare strings (inherit the org default) or objects with name + relationship.
 parsed=$(ruby -ryaml -e '
 data = YAML.load_file(ARGV[0])
 (data["organizations"] || []).each do |org|
   github_org = org["github_org"]
+  org_rel = org["relationship"] || "maintained"
   repos = org["repos"] || []
   if repos.include?("*")
-    puts "ALL:#{github_org}"
+    puts "ALL:#{github_org}\t#{org_rel}"
   else
-    repos.each { |r| puts "#{github_org}/#{r}" }
+    repos.each do |r|
+      if r.is_a?(Hash)
+        name = r["name"]
+        rel = r["relationship"] || org_rel
+      else
+        name = r
+        rel = org_rel
+      end
+      puts "#{github_org}/#{name}\t#{rel}"
+    end
   end
 end
 ' "$ALLOWLIST")
@@ -71,7 +83,10 @@ repos=""
 while IFS= read -r line; do
   [[ -z "$line" ]] && continue
   if [[ "$line" == ALL:* ]]; then
-    org="${line#ALL:}"
+    # Marker format: "ALL:org\trelationship"
+    marker="${line#ALL:}"
+    org="${marker%%$'\t'*}"
+    relationship="${marker#*$'\t'}"
     echo "Fetching repos for org '${org}' via gh api..." >&2
     fetched=$(gh api "/orgs/${org}/repos" \
       --paginate \
@@ -79,7 +94,10 @@ while IFS= read -r line; do
       echo "Error: failed to list repos for org '${org}': ${fetched}" >&2
       exit 1
     }
-    repos+="${fetched}"$'\n'
+    while IFS= read -r full_name; do
+      [[ -z "$full_name" ]] && continue
+      repos+="${full_name}"$'\t'"${relationship}"$'\n'
+    done <<< "$fetched"
   else
     repos+="${line}"$'\n'
   fi

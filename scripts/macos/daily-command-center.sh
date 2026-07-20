@@ -268,7 +268,7 @@ if file_available "$PR_TRIAGE_FILE"; then
 ${triage_total} PR(s) triaged: ${triage_critical} critical, ${triage_high} high, ${triage_medium} medium, ${triage_low} low.
 "
   if [[ -n "$triage_attention_rows" ]]; then
-    triage_section+=$'\n'"**Needs Attention:**"$'\n'
+    triage_section+=$'\n'"**Needs Attention:**"$'\n'$'\n'
     triage_section+="| # | PR | Score | Priority | Key Risks | Action |"$'\n'
     triage_section+="|---|---|---|---|---|---|"$'\n'
     triage_section+="${triage_attention_rows}"

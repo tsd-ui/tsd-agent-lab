@@ -66,6 +66,7 @@ Recent reviews:
 30 PR(s) triaged: 1 critical, 1 high, 11 medium, 17 low.
 
 **Needs Attention:**
+
 | # | PR | Score | Priority | Key Risks | Action |
 |---|---|---|---|---|---|
 | 1 | [securesign/rhtas-console#85](https://github.com/securesign/rhtas-console/pull/85) | 73 | critical | ci-failing, release-change, stale-45d, excessive-force-pushes | deep-review |

@@ -9,9 +9,6 @@
 - 7 PRs reviewed, 3 open across monitored repos
 - 30 PR(s) triaged: 1 critical, 1 high
 
-### Changes Since Yesterday
-- 15 new stale doc finding(s)
-
 ### CI / Builds
 
 11 failure(s) across 3 repo(s)
@@ -69,8 +66,8 @@ Recent reviews:
 
 | # | PR | Score | Priority | Key Risks | Action |
 |---|---|---|---|---|---|
-| 1 | [securesign/rhtas-console#85](https://github.com/securesign/rhtas-console/pull/85) | 73 | critical | ci-failing, release-change, stale-45d, excessive-force-pushes | deep-review |
-| 2 | [securesign/rhtas-console-ui#325](https://github.com/securesign/rhtas-console-ui/pull/325) | 50 | high | ci-failing, release-change, stale-15d | deep-review |
+| 1 | [securesign/rhtas-console#85: Update Go Dependencies](https://github.com/securesign/rhtas-console/pull/85) | 73 | critical | ci-failing, release-change, stale-45d, excessive-force-pushes | deep-review |
+| 2 | [securesign/rhtas-console-ui#325: chore(deps): update npm dependencies (major)](https://github.com/securesign/rhtas-console-ui/pull/325) | 50 | high | ci-failing, release-change, stale-15d | deep-review |
 
 ### Action Items
 

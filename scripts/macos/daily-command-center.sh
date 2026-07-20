@@ -248,20 +248,46 @@ if file_available "$PR_TRIAGE_FILE"; then
     triage_low=$(echo "$triage_summary" | grep -oE '[0-9]+ low' | grep -oE '^[0-9]+' || echo "0")
   fi
 
-  # Extract "Needs Attention Now" table rows (skip header and separator lines)
-  in_attention=false
-  while IFS= read -r line; do
-    if [[ "$line" == "## Needs Attention Now" ]]; then
-      in_attention=true
-      continue
-    fi
-    if [[ "$in_attention" == "true" ]] && [[ "$line" =~ ^## ]]; then
-      break
-    fi
-    if [[ "$in_attention" == "true" ]] && [[ "$line" =~ ^\| ]] && ! [[ "$line" =~ ^\|\ # ]] && ! [[ "$line" =~ ^\|--- ]]; then
-      triage_attention_rows+="${line}"$'\n'
-    fi
-  done < "$PR_TRIAGE_FILE"
+  # Extract "Needs Attention Now" table rows (skip header and separator lines),
+  # enriching each PR link with its title pulled from the "#### [#N: Title](url)"
+  # headings in the Full Triage section below it (same convention as that report).
+  triage_attention_rows=$(awk '
+    FNR == NR {
+      if ($0 ~ /^#### \[#[0-9]+: /) {
+        line = $0
+        if (match(line, /\]\([^)]+\)$/)) {
+          url = substr(line, RSTART + 2, RLENGTH - 3)
+          title = line
+          sub(/^#### \[#[0-9]+: /, "", title)
+          sub(/\]\([^)]+\)$/, "", title)
+          map[url] = title
+        }
+      }
+      next
+    }
+    $0 == "## Needs Attention Now" { in_attention = 1; next }
+    in_attention && /^## / { in_attention = 0 }
+    in_attention && /^\|/ && $0 !~ /^\| #/ && $0 !~ /^\|---/ {
+      line = $0
+      if (match(line, /\[[^]]+\]\([^)]+\)/)) {
+        full = substr(line, RSTART, RLENGTH)
+        text = full
+        sub(/^\[/, "", text)
+        sub(/\]\(.*/, "", text)
+        url = full
+        sub(/^[^(]*\(/, "", url)
+        sub(/\)$/, "", url)
+        if (url in map) {
+          newfull = "[" text ": " map[url] "](" url ")"
+          sub(/\[[^]]+\]\([^)]+\)/, newfull, line)
+        }
+      }
+      print line
+    }
+  ' "$PR_TRIAGE_FILE" "$PR_TRIAGE_FILE")
+  if [[ -n "$triage_attention_rows" ]]; then
+    triage_attention_rows+=$'\n'
+  fi
 
   triage_section="### PR Risk Triage
 

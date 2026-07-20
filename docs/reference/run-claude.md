@@ -47,7 +47,8 @@ See [docs/prompts.md](prompts.md) for the full prompt system documentation.
 3. Resolves the prompt file (explicit or default-by-mode)
 4. Composes safety preamble + task prompt into `composed-prompt.md`
 5. Runs `claude -p` inside the worktree, capturing output to `agent-output.md`
-6. Updates `run-metadata.json` with exit code, timestamps, and status
+6. Applies mode-based tool restrictions (e.g., `review-only` adds `--disallowedTools` and `--max-budget-usd`)
+7. Updates `run-metadata.json` with exit code, timestamps, and status
 
 ## Run Metadata Updates
 

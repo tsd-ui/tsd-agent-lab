@@ -31,6 +31,7 @@ No mode permits pushing to a remote. That is a future capability gated by additi
 | Field | Type | Description |
 |-------|------|-------------|
 | `base_ref` | string | Git ref for the worktree (default: `main`) |
+| `expected_head_sha` | string | Expected PR head SHA; aborts with exit 2 on mismatch |
 | `working_directory` | string | Subdirectory within the repo |
 | `agent` | enum | `claude-code`, `codex-cli`, or `manual` |
 | `prompt_file` | string | Path to prompt file, relative to the task file |

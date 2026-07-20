@@ -150,7 +150,12 @@ Agent invocation utilities sourced by `run-claude.sh`. Provides:
 - `resolve_prompt_file`—reads `prompt_file` from task YAML; derives default from `agent` + `mode` if unset
 - `compose_prompt`—concatenates safety preamble + task prompt into `composed-prompt.md`
 - `resolve_worktree`—reads `worktree_path` from `run-metadata.json`, with fallback
-- `run_claude`—invokes `claude -p` with optional timeout
+- `run_claude`—invokes `claude -p` with optional timeout and mode-based tool restrictions
+
+When `mode` is `review-only`, `run_claude` applies:
+- `--dangerously-skip-permissions` (required for headless execution)
+- `--disallowedTools` blocking Edit, Write, push, PR/issue mutations, and outbound network
+- `--max-budget-usd 2`
 
 ### `harness/lib/verify.sh`
 

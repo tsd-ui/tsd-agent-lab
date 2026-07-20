@@ -63,6 +63,12 @@
           "type": "string",
           "description": "Repository identifier in org/repo format."
         },
+        "relationship": {
+          "type": "string",
+          "enum": ["maintained", "dependency"],
+          "description": "Team's relationship to this repository.",
+          "default": "maintained"
+        },
         "collection_status": {
           "type": "string",
           "enum": ["ok", "error", "timeout"],

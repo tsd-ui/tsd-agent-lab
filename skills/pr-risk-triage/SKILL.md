@@ -26,12 +26,13 @@ This skill consumes a structured JSON data bundle (pr-inventory-data-YYYY-MM-DD.
 
 1. Read the JSON data bundle provided in the input
 2. Validate the bundle has schema_version "1"
-3. Count total open PRs across all repos
-4. If zero PRs: produce a short "No open PRs" report
-5. For each PR, compute a risk score using the scoring formula below
-6. Assign priority buckets based on score thresholds
-7. Sort PRs by score descending
-8. Produce the report in the format specified below
+3. Partition repos by their `relationship` field: `maintained` repos vs `dependency` repos. A repo whose `relationship` is absent or unrecognized is treated as `maintained` (backward compatibility)
+4. Count total open PRs across all repos
+5. If zero PRs: produce a short "No open PRs" report
+6. For each PR, compute a risk score using the scoring formula below (scoring is identical regardless of relationship)
+7. Assign priority buckets based on score thresholds
+8. Sort PRs by score descending
+9. Produce the report in the format specified below, keeping maintained and dependency repos in separate sections
 
 ## Scoring Formula
 
@@ -58,12 +59,17 @@ Apply each signal independently. Sum all applicable points for the PR's risk sco
 
 ## Priority Buckets
 
-| Priority | Score Range | Recommended Action |
-|----------|-------------|-------------------|
-| `critical` | >= 70 | `deep-review` |
-| `high` | >= 50 | `deep-review` |
-| `medium` | >= 30 | `scan-review` |
-| `low` | < 30 | `monitor` |
+Score thresholds are identical for all repos. The **recommended action** depends on
+the repo's `relationship`: maintained repos get review actions (the team owns the
+code), while dependency repos get awareness actions (the team watches but does not
+merge these PRs).
+
+| Priority | Score Range | Action (maintained) | Action (dependency) |
+|----------|-------------|---------------------|---------------------|
+| `critical` | >= 70 | `deep-review` | `assess-impact` |
+| `high` | >= 50 | `deep-review` | `assess-impact` |
+| `medium` | >= 30 | `scan-review` | `watch` |
+| `low` | < 30 | `monitor` | `watch` |
 
 ## Expected Output
 
@@ -82,17 +88,25 @@ Produce a markdown report in the following format:
 
 ## Summary
 
-N open PR(s) across M repo(s). C critical, H high, M medium, L low.
+N open PR(s) across M maintained repo(s) and D upstream dependency repo(s). C critical, H high, M medium, L low.
 
 ## Needs Attention Now
 
-(Only include PRs with priority critical or high. Omit this section if none.)
+(Only include maintained-repo PRs with priority critical or high. Omit this section if none.)
 
 | # | PR | Score | Priority | Key Risks | Action |
 |---|---|---|---|---|---|
 | 1 | [org/repo#482](url) | 82 | critical | ci-failing, auth-change | deep-review |
 
-## Full Triage
+### Upstream Alerts
+
+(Only include dependency-repo PRs with priority critical or high. Omit this sub-section if none.)
+
+| # | PR | Score | Priority | Key Risks | Action |
+|---|---|---|---|---|---|
+| 1 | [securesign/rhtas-console#310](url) | 74 | critical | ci-failing, schema-change | assess-impact |
+
+## Full Triage — Maintained Repos
 
 ### [org/repo](https://github.com/org/repo) — N open PR(s)
 
@@ -105,6 +119,26 @@ N open PR(s) across M repo(s). C critical, H high, M medium, L low.
   - large-diff-over-1000-lines (+15)
   - ...
 - **Recommended Action:** deep-review
+
+## Upstream Dependencies — Changes to Watch
+
+> These are repositories the team depends on but does not maintain. They are listed
+> for awareness: track changes that could affect the team's own repos. Do not review
+> or merge these PRs — assess whether the upstream change warrants action downstream.
+
+(Omit this entire section if there are no dependency repos.)
+
+### [securesign/rhtas-console](https://github.com/securesign/rhtas-console) — N open PR(s)
+
+#### [#310: PR title](url)
+- **Risk Score:** 74 / 100
+- **Priority:** critical
+- **Reasons:**
+  - ci-failing (+20)
+  - changes-public-api-schema (+12)
+  - ...
+- **Impact Note:** One-sentence, best-effort assessment of how this upstream change might affect the team's repos (e.g. "Schema change to the console API may require updates in rhtas-console-ui's client types.").
+- **Recommended Action:** assess-impact
 ```
 
 ## Safety Constraints
@@ -117,14 +151,19 @@ N open PR(s) across M repo(s). C critical, H high, M medium, L low.
 
 ## Verification
 
-- Every PR in the input bundle appears in the Full Triage section
+- Every PR in the input bundle appears in exactly one triage section: maintained-repo PRs in "Full Triage — Maintained Repos", dependency-repo PRs in "Upstream Dependencies — Changes to Watch"
+- Dependency repos never appear in "Full Triage — Maintained Repos"
+- Dependency-repo PRs use `assess-impact` / `watch` actions, never `deep-review` / `scan-review`
+- Every dependency-repo PR has an Impact Note
+- Maintained-repo PRs use `deep-review` / `scan-review` / `monitor`, never `assess-impact` / `watch`
 - Every score can be reconstructed by summing the listed reasons
 - Priority bucket matches the score threshold table
-- No PRs appear in "Needs Attention Now" unless they are critical or high priority
-- The summary counts match the actual PR distribution
+- No PRs appear in "Needs Attention Now" unless they are critical or high priority maintained-repo PRs
+- No PRs appear in "Upstream Alerts" unless they are critical or high priority dependency-repo PRs
+- The summary counts match the actual PR distribution, split by maintained vs dependency repos
 
 ## Notes
 
-This skill is designed for fleet-wide triage, not deep review. The recommended actions (`deep-review`, `scan-review`, `monitor`) indicate what level of follow-up is appropriate — the actual review is performed by the pr-review skill or a human reviewer.
+This skill is designed for fleet-wide triage, not deep review. For **maintained** repos, the recommended actions (`deep-review`, `scan-review`, `monitor`) indicate what level of follow-up is appropriate — the actual review is performed by the pr-review skill or a human reviewer. For **dependency** repos (upstream code the team relies on but does not maintain), the actions (`assess-impact`, `watch`) indicate awareness follow-up rather than review: the goal is to notice upstream changes that could affect the team's own repos, not to review or merge the upstream PR.
 
 The scoring formula is intentionally mechanical to ensure reproducible results. The only subjective element is the contextual bonus from diff scanning, which is capped at +10 to limit LLM variance.

@@ -328,29 +328,32 @@ while IFS=$'\t' read -r repo relationship; do
             DIFF_THRESHOLD_LINES=$DIFF_THRESHOLD_LINES \
             MAX_DIFF_BYTES=$MAX_DIFF_BYTES \
             INCLUDE_DRAFTS=$INCLUDE_DRAFTS \
-            collect_repo '$repo'") || {
+            collect_repo '$repo' '$relationship'") || {
             exit_code=$?
             if [[ $exit_code -eq 124 ]]; then
                 log "  TIMEOUT after ${TIMEOUT_PER_REPO}s for $repo"
                 repo_json=$(echo "{}" | jq \
                     --arg repo "$repo" \
+                    --arg rel "$relationship" \
                     --arg err "Collection timed out after ${TIMEOUT_PER_REPO}s" \
-                    '{repo: $repo, collection_status: "timeout", collection_error: $err, prs: []}')
+                    '{repo: $repo, relationship: $rel, collection_status: "timeout", collection_error: $err, prs: []}')
             else
                 log "  ERROR collecting $repo (exit code $exit_code)"
                 repo_json=$(echo "{}" | jq \
                     --arg repo "$repo" \
+                    --arg rel "$relationship" \
                     --arg err "Collection failed with exit code $exit_code" \
-                    '{repo: $repo, collection_status: "error", collection_error: $err, prs: []}')
+                    '{repo: $repo, relationship: $rel, collection_status: "error", collection_error: $err, prs: []}')
             fi
         }
     else
-        repo_json=$(collect_repo "$repo") || {
+        repo_json=$(collect_repo "$repo" "$relationship") || {
             log "  ERROR collecting $repo"
             repo_json=$(echo "{}" | jq \
                 --arg repo "$repo" \
+                --arg rel "$relationship" \
                 --arg err "Collection failed" \
-                '{repo: $repo, collection_status: "error", collection_error: $err, prs: []}')
+                '{repo: $repo, relationship: $rel, collection_status: "error", collection_error: $err, prs: []}')
         }
     fi
 

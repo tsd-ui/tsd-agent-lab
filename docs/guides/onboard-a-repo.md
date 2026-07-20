@@ -33,6 +33,28 @@ organizations:
 
 If the org already exists, just append your repo to its `repos` list.
 
+**Relationship types.** Each org declares a default `relationship`, and individual repos can override it. This controls how the PR risk triage report frames the repo — it does not change scoring.
+
+| Relationship | Meaning | Triage behavior |
+|--------------|---------|-----------------|
+| `maintained` (default) | The team owns and merges code in this repo | PRs appear in "Full Triage — Maintained Repos" with review actions (`deep-review`, `scan-review`, `monitor`) |
+| `dependency` | Upstream repo the team depends on but does not maintain | PRs appear in "Upstream Dependencies — Changes to Watch" with awareness actions (`assess-impact`, `watch`) and an Impact Note |
+
+Set the org default with a top-level `relationship` key. To override for a single repo, make the entry an object with `name` and `relationship` instead of a bare string. Bare strings inherit the org default:
+
+```yaml
+organizations:
+  - name: "Securesign"
+    github_org: "securesign"
+    relationship: "dependency"          # org-level default
+    repos:
+      - name: "rhtas-console-ui"
+        relationship: "maintained"      # override: team maintains this one
+      - "rhtas-console"                 # inherits org default: dependency
+    access: "read-write"
+    notes: "..."
+```
+
 **b) Add to the `repositories` list** (flat entries used for grep matching):
 
 ```yaml

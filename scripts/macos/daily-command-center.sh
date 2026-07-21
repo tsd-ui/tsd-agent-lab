@@ -237,6 +237,9 @@ triage_medium=0
 triage_low=0
 triage_section=""
 triage_attention_rows=""
+triage_upstream_rows=""
+triage_attention_count=0
+triage_upstream_count=0
 
 if file_available "$PR_TRIAGE_FILE"; then
   triage_summary=$(grep -m1 -E '^[0-9]+ open PR' "$PR_TRIAGE_FILE" || true)
@@ -248,10 +251,13 @@ if file_available "$PR_TRIAGE_FILE"; then
     triage_low=$(echo "$triage_summary" | grep -oE '[0-9]+ low' | grep -oE '^[0-9]+' || echo "0")
   fi
 
-  # Extract "Needs Attention Now" table rows (skip header and separator lines),
-  # enriching each PR link with its title pulled from the "#### [#N: Title](url)"
-  # headings in the Full Triage section below it (same convention as that report).
-  triage_attention_rows=$(awk '
+  # Extract "Needs Attention Now" (maintained repos) and "### Upstream Alerts"
+  # (dependency repos) table rows separately, enriching each PR link with its
+  # title pulled from the "#### [#N: Title](url)" headings further down in the
+  # report. These two subsections must stay separate: dependency-repo PRs use
+  # awareness actions (assess-impact/watch) and must never be folded into the
+  # maintained-repo "needs deep-review" list, even when they score higher.
+  triage_rows=$(awk '
     FNR == NR {
       if ($0 ~ /^#### \[#[0-9]+: /) {
         line = $0
@@ -265,9 +271,10 @@ if file_available "$PR_TRIAGE_FILE"; then
       }
       next
     }
-    $0 == "## Needs Attention Now" { in_attention = 1; next }
-    in_attention && /^## / { in_attention = 0 }
-    in_attention && /^\|/ && $0 !~ /^\| #/ && $0 !~ /^\|---/ {
+    $0 == "## Needs Attention Now" { section = "attention"; next }
+    $0 == "### Upstream Alerts" { section = "upstream"; next }
+    section != "" && /^## / { section = "" }
+    (section == "attention" || section == "upstream") && /^\|/ && $0 !~ /^\| #/ && $0 !~ /^\|---/ {
       line = $0
       if (match(line, /\[[^]]+\]\([^)]+\)/)) {
         full = substr(line, RSTART, RLENGTH)
@@ -282,11 +289,19 @@ if file_available "$PR_TRIAGE_FILE"; then
           sub(/\[[^]]+\]\([^)]+\)/, newfull, line)
         }
       }
-      print line
+      print section "\t" line
     }
   ' "$PR_TRIAGE_FILE" "$PR_TRIAGE_FILE")
+
+  triage_attention_rows=$(printf '%s\n' "$triage_rows" | grep '^attention\t' | sed 's/^attention\t//' || true)
+  triage_upstream_rows=$(printf '%s\n' "$triage_rows" | grep '^upstream\t' | sed 's/^upstream\t//' || true)
+  triage_attention_count=$(printf '%s\n' "$triage_attention_rows" | grep -c '^|' || true)
+  triage_upstream_count=$(printf '%s\n' "$triage_upstream_rows" | grep -c '^|' || true)
   if [[ -n "$triage_attention_rows" ]]; then
     triage_attention_rows+=$'\n'
+  fi
+  if [[ -n "$triage_upstream_rows" ]]; then
+    triage_upstream_rows+=$'\n'
   fi
 
   triage_section="### PR Risk Triage
@@ -294,10 +309,16 @@ if file_available "$PR_TRIAGE_FILE"; then
 ${triage_total} PR(s) triaged: ${triage_critical} critical, ${triage_high} high, ${triage_medium} medium, ${triage_low} low.
 "
   if [[ -n "$triage_attention_rows" ]]; then
-    triage_section+=$'\n'"**Needs Attention:**"$'\n'$'\n'
+    triage_section+=$'\n'"**Needs Attention (maintained repos):**"$'\n'$'\n'
     triage_section+="| # | PR | Score | Priority | Key Risks | Action |"$'\n'
     triage_section+="|---|---|---|---|---|---|"$'\n'
     triage_section+="${triage_attention_rows}"
+  fi
+  if [[ -n "$triage_upstream_rows" ]]; then
+    triage_section+=$'\n'"**Upstream Alerts (dependency repos — awareness only, no deep-review):**"$'\n'$'\n'
+    triage_section+="| # | PR | Score | Priority | Key Risks | Action |"$'\n'
+    triage_section+="|---|---|---|---|---|---|"$'\n'
+    triage_section+="${triage_upstream_rows}"
   fi
 else
   triage_section="### PR Risk Triage
@@ -320,8 +341,12 @@ if [[ "$docs_critical" -gt 0 ]]; then
   action_items+=("Fix ${docs_critical} stale doc link(s)")
 fi
 
-if [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then
-  action_items+=("Triage ${triage_critical} critical and ${triage_high} high-risk PR(s)")
+if [[ "$triage_attention_count" -gt 0 ]]; then
+  action_items+=("Triage ${triage_attention_count} critical/high-risk PR(s) in maintained repos")
+fi
+
+if [[ "$triage_upstream_count" -gt 0 ]]; then
+  action_items+=("Assess impact of ${triage_upstream_count} high-impact upstream dependency PR(s) — awareness only, no deep-review needed")
 fi
 
 action_section="### Action Items
@@ -381,12 +406,12 @@ done
 overall_status="green"
 status_emoji="🟢"
 
-if [[ "$ci_failures" -gt 0 ]] || [[ "$docs_critical" -gt 0 ]] || [[ "$triage_critical" -gt 0 || "$triage_high" -gt 0 ]]; then
+if [[ "$ci_failures" -gt 0 ]] || [[ "$docs_critical" -gt 0 ]] || [[ "$triage_attention_count" -gt 0 ]]; then
   overall_status="yellow"
   status_emoji="🟡"
 fi
 
-if [[ "$ci_failures" -ge 10 ]] || [[ "$triage_critical" -ge 3 ]]; then
+if [[ "$ci_failures" -ge 10 ]] || [[ "$triage_attention_count" -ge 3 ]]; then
   overall_status="red"
   status_emoji="🔴"
 fi
@@ -509,7 +534,9 @@ json_summary=$(cat <<ENDJSON
     "critical": ${triage_critical},
     "high": ${triage_high},
     "medium": ${triage_medium},
-    "low": ${triage_low}
+    "low": ${triage_low},
+    "maintained_needs_attention": ${triage_attention_count},
+    "upstream_alerts": ${triage_upstream_count}
   },
   "action_items": ${ai_json},
   "next_steps": ${ns_json}

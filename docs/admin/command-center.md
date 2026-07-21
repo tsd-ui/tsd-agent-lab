@@ -8,6 +8,7 @@ Consolidates the daily health, stale-docs, broken-builds, and PR review reports 
 - **Documentation Health** — stale link and review finding counts from `reports/stale-docs/current.md`
 - **System Health** — warning count, failed launchd jobs, disk alerts from `reports/health/current.md`
 - **PR Activity** — reviewed PRs from `.pr-review-state.json`, open PR count via `gh` (if available)
+- **PR Risk Triage** — scraped from `reports/pr-triage/current.md`, split into two separate tables: **Needs Attention** (maintained-repo PRs, `deep-review`/`scan-review` actions) and **Upstream Alerts** (dependency-repo PRs, `assess-impact`/`watch` actions). Dependency-repo PRs are surfaced for awareness only — even a high-scoring upstream PR (e.g. in `securesign/rhtas-console`) never gets a `deep-review` action or counts toward the "needs attention" status, since the team doesn't own that code. See `policies/repo-allowlist.yaml` for the maintained/dependency classification.
 - **Action Items** — auto-generated list of things needing human attention
 - **Changes Since Yesterday** — diff against the previous day's JSON (new/resolved failures, status changes)
 
@@ -36,9 +37,11 @@ The digest assigns an overall status based on the data:
 
 | Status | Criteria |
 |--------|----------|
-| Green | No CI failures, no health warnings, no stale doc links |
-| Yellow | Any CI failures, health warnings, or stale doc links |
-| Red | 10+ CI failures, or 3+ health warnings |
+| Green | No CI failures, no stale doc links, no maintained-repo PRs needing attention |
+| Yellow | Any CI failures, stale doc links, or maintained-repo PRs needing attention |
+| Red | 10+ CI failures, or 3+ maintained-repo PRs needing attention |
+
+Upstream Alerts (dependency-repo PRs) are never counted toward this status — they're informational only, shown in their own Action Items line ("Assess impact of N high-impact upstream dependency PR(s)").
 
 ## Manual run
 

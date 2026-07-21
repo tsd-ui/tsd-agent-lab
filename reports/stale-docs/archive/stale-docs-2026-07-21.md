@@ -3,7 +3,7 @@
 - **Date:** 2026-07-21
 - **Host:** ryordan-mac
 - **User:** agent-lab
-- **Generated:** 2026-07-21 05:15:08
+- **Generated:** 2026-07-21 13:20:07
 - **Scope:** mechanical checks only (path/link existence) — no semantic review
 
 **Summary:** 5 stale findings, 18 for review (mechanical pass only)

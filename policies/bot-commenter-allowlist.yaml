@@ -8,8 +8,8 @@
 # Both checks must pass — the allowlist alone is not sufficient.
 
 allowed_commenters:
-  - username: ryordan
-    added: "2026-07-20"
+  - username: kahboom
+    added: "2026-07-21"
     reason: "Project maintainer"
 
 # Roles that are always allowed (in addition to the static list above).

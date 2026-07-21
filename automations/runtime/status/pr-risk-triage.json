@@ -1,0 +1,9 @@
+{
+  "job": "pr-risk-triage",
+  "label": "com.tsd-agent-lab.pr-risk-triage",
+  "started_at": "2026-07-21T12:19:14+00:00",
+  "finished_at": "",
+  "duration_seconds": 0,
+  "status": "running",
+  "exit_code": -1
+}

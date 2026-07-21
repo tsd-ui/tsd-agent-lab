@@ -203,7 +203,7 @@ if [[ -n "$LAST_POLL" ]]; then
   # 10 minutes before last_poll_at (overlapping watermark)
   if date -v-10M >/dev/null 2>&1; then
     # macOS date
-    WATERMARK="$(date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$LAST_POLL" -v-10M +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u -v-10M +"%Y-%m-%dT%H:%M:%SZ")"
+    WATERMARK="$(date -u -j -v-10M -f "%Y-%m-%dT%H:%M:%SZ" "$LAST_POLL" +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u -v-10M +"%Y-%m-%dT%H:%M:%SZ")"
   else
     # GNU date
     WATERMARK="$(date -u -d "${LAST_POLL} - 10 minutes" +"%Y-%m-%dT%H:%M:%SZ")"
@@ -235,6 +235,7 @@ while IFS=$'\t' read -r repo tag rest; do
   # JSON arrays, so merge them with jq -s.
   COMMENTS=""
   if ! COMMENTS="$(gh api "repos/${repo}/issues/comments" \
+      -X GET \
       --paginate \
       -f since="$WATERMARK" \
       -f per_page=100 2>&1)"; then

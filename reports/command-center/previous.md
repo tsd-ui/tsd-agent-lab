@@ -1,4 +1,4 @@
-# Daily Command Center — 2026-07-19
+# Daily Command Center — 2026-07-20
 
 ## Status: 🔴
 
@@ -8,10 +8,6 @@
 - 21 stale docs finding(s)
 - 7 PRs reviewed, 3 open across monitored repos
 - 30 PR(s) triaged: 1 critical, 1 high
-
-### Changes Since Yesterday
-- 1 new CI failure(s)
-- 7 stale doc finding(s) resolved
 
 ### CI / Builds
 
@@ -67,10 +63,11 @@ Recent reviews:
 30 PR(s) triaged: 1 critical, 1 high, 11 medium, 17 low.
 
 **Needs Attention:**
+
 | # | PR | Score | Priority | Key Risks | Action |
 |---|---|---|---|---|---|
-| 1 | [securesign/rhtas-console#85](https://github.com/securesign/rhtas-console/pull/85) | 73 | critical | ci-failing, release-change, stale-45d, excessive-force-pushes | deep-review |
-| 2 | [securesign/rhtas-console-ui#325](https://github.com/securesign/rhtas-console-ui/pull/325) | 50 | high | ci-failing, release-change, stale-15d | deep-review |
+| 1 | [securesign/rhtas-console#85: Update Go Dependencies](https://github.com/securesign/rhtas-console/pull/85) | 73 | critical | ci-failing, release-change, stale-45d, excessive-force-pushes | deep-review |
+| 2 | [securesign/rhtas-console-ui#325: chore(deps): update npm dependencies (major)](https://github.com/securesign/rhtas-console-ui/pull/325) | 50 | high | ci-failing, release-change, stale-15d | deep-review |
 
 ### Action Items
 

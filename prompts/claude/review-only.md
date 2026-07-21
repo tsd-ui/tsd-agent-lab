@@ -28,6 +28,6 @@ Style inconsistencies, minor improvements, or documentation gaps.
 ## Constraints
 
 - **Review-only.** Do not modify any files.
-- Write all output to `agent-output.md`.
+- Output your complete review as your final response — the harness captures it automatically. Do not write or modify any files.
 - Focus on the area described in the task notes. Do not review the entire codebase unless asked.
 - If you find no issues in a severity category, say so.

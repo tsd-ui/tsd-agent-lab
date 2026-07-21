@@ -123,7 +123,7 @@ generate_review_pr_task() {
 
   {
     printf '# Task: Pull Request Review — %s/%s#%s\n\n' "$owner" "$repo" "$pr_number"
-    printf 'Review the following pull request and produce a structured review in `agent-output.md`.\n\n'
+    printf 'Review the following pull request and produce a structured review as your final response.\n\n'
     printf '## PR Details\n\n'
     printf -- '- **Title:** %s\n' "$pr_title"
     printf -- '- **Author:** %s\n' "$pr_author"
@@ -175,7 +175,7 @@ Style inconsistencies, minor improvements, or documentation gaps.
 ## Constraints
 
 - **Review-only.** Do not modify any files.
-- Write all output to `agent-output.md`.
+- Output your complete review as your final response — the harness captures it automatically. Do not write or modify any files.
 - Focus on the PR changes shown in the diff above. Use the codebase for context.
 - If you find no issues in a severity category, say so.
 - Reference the surrounding code to evaluate whether the changes are correct.

@@ -1,9 +1,9 @@
 # Stale Docs Check
 
-- **Date:** 2026-07-19
+- **Date:** 2026-07-20
 - **Host:** ryordan-mac
 - **User:** agent-lab
-- **Generated:** 2026-07-19 05:21:11
+- **Generated:** 2026-07-20 05:15:07
 - **Scope:** mechanical checks only (path/link existence) — no semantic review
 
 **Summary:** 3 stale findings, 18 for review (mechanical pass only)

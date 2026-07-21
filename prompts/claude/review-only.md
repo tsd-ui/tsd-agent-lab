@@ -1,6 +1,6 @@
 # Task: Code Review (Review-Only)
 
-Review the codebase area described in the task specification. Produce a structured review document in `agent-output.md`.
+Review the codebase area described in the task specification. Produce a structured review as your final response.
 
 ## Review structure
 

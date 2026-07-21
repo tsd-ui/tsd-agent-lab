@@ -176,7 +176,13 @@ agent_pid=$!
 _show_elapsed "$agent_pid" &
 timer_pid=$!
 wait "$agent_pid" || exit_code=$?
-kill "$timer_pid" 2>/dev/null; wait "$timer_pid" 2>/dev/null
+# The elapsed-time display is a background process that is almost always
+# mid-`sleep` when Claude finishes. Killing it makes `wait` return 143
+# (128+SIGTERM); under `set -e` that would abort this script and mask
+# Claude's real exit code. Tolerate the signal so we reach the metadata
+# update below and exit with Claude's actual status.
+kill "$timer_pid" 2>/dev/null || true
+wait "$timer_pid" 2>/dev/null || true
 end_time=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
 
 if [[ "$exit_code" -eq 0 ]]; then

@@ -1,9 +1,9 @@
 {
   "job": "pr-bot-worker",
   "label": "com.tsd-agent-lab.pr-bot-worker",
-  "started_at": "2026-07-21T12:58:37+00:00",
-  "finished_at": "2026-07-21T12:58:38+00:00",
-  "duration_seconds": 1,
+  "started_at": "2026-07-21T13:08:38+00:00",
+  "finished_at": "2026-07-21T13:08:38+00:00",
+  "duration_seconds": 0,
   "status": "ok",
   "exit_code": 0
 }

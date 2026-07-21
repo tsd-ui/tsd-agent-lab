@@ -148,6 +148,7 @@ run_claude() {
     cmd="${cmd} --dangerously-skip-permissions"
     cmd="${cmd} --disallowedTools \"Edit,Write,NotebookEdit,Bash(git push*),Bash(git checkout*),Bash(gh pr *),Bash(gh issue *),Bash(curl *),Bash(wget *)\""
     cmd="${cmd} --max-budget-usd 2"
+    cmd="${cmd} --model sonnet"
   fi
 
   if [[ -n "$max_turns" && "$max_turns" -gt 0 ]] 2>/dev/null; then

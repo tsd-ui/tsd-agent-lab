@@ -26,6 +26,7 @@ _default_prompt_file() {
         read-only)       echo "prompts/claude/read-only-codebase-map.md" ;;
         patch-only)      echo "prompts/claude/bugfix-patch-only.md" ;;
         branch-only)     echo "prompts/claude/bugfix-patch-only.md" ;;
+        draft-pr)        echo "prompts/claude/bugfix-patch-only.md" ;;
         review-only)     echo "prompts/claude/review-only.md" ;;
         commit-allowed)  echo "prompts/claude/bugfix-patch-only.md" ;;
         *)               echo "" ;;

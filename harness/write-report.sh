@@ -147,6 +147,11 @@ REPORT="${RUN_DIR}/summary.md"
         echo "- Review commits: \`cd ${worktree_path} && git log --oneline\`"
         echo "- Push when ready: \`cd ${worktree_path} && git push -u origin agent-lab/<task_id>\`"
         ;;
+      draft-pr)
+        echo "- Review the diff in the worktree: \`cd ${worktree_path} && git diff\`"
+        echo "- Deliver as a draft PR (confirmation-gated): \`./harness/create-draft-pr.sh ${RUN_DIR} --confirm-push --confirm-pr\`"
+        echo "- Preview first (no push): \`./harness/create-draft-pr.sh ${RUN_DIR}\`"
+        ;;
       commit-allowed)
         echo "- Review commits in the worktree: \`cd ${worktree_path} && git log --oneline\`"
         echo "- If acceptable, push to a draft branch for review"

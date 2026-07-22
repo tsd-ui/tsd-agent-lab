@@ -29,7 +29,7 @@ usage() {
 # ---------------------------------------------------------------------------
 # Validate mode
 # ---------------------------------------------------------------------------
-VALID_MODES="read-only patch-only branch-only commit-allowed review-only"
+VALID_MODES="read-only patch-only branch-only draft-pr commit-allowed review-only"
 
 validate_mode() {
   local mode="$1"

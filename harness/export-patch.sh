@@ -33,7 +33,7 @@ usage() {
 # ---------------------------------------------------------------------------
 # Mode check
 # ---------------------------------------------------------------------------
-ALLOWED_MODES="patch-only commit-allowed"
+ALLOWED_MODES="patch-only draft-pr commit-allowed"
 
 mode_allows_patch() {
   local mode="$1"

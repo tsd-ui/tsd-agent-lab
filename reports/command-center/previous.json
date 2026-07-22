@@ -1,26 +1,28 @@
 {
-  "date": "2026-07-20",
+  "date": "2026-07-21",
   "status": "red",
   "ci": {
-    "failures": 11,
-    "repos_affected": 3,
-    "top_failures": ["[securesign/rhtas-console-ui](https://github.com/securesign/rhtas-console-ui) — 🆕 new","[tsd-ui/conforma-policy-test](https://github.com/tsd-ui/conforma-policy-test) — 🆕 new","[tsd-ui/tsd-ui](https://github.com/tsd-ui/tsd-ui) — 🆕 new"]
+    "failures": 0,
+    "repos_affected": 0,
+    "top_failures": []
   },
   "docs": {
-    "findings": 21,
-    "critical": 3
+    "findings": 14,
+    "critical": 5
   },
   "prs": {
     "reviewed": 7,
     "open": 3
   },
   "pr_triage": {
-    "total_triaged": 30,
-    "critical": 1,
-    "high": 1,
-    "medium": 11,
-    "low": 17
+    "total_triaged": 29,
+    "critical": 2,
+    "high": 3,
+    "medium": 7,
+    "low": 17,
+    "maintained_needs_attention": 3,
+    "upstream_alerts": 2
   },
-  "action_items": ["Review 11 CI failure(s) across 3 repo(s)","Fix 3 stale doc link(s)","Triage 1 critical and 1 high-risk PR(s)"],
-  "next_steps": ["View broken-builds report: cat reports/broken-builds/current.md","Re-run CI diagnosis: ./scripts/macos/broken-builds-skill-run.sh --force-rediagnose","View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\"","View PR triage report: cat reports/pr-triage/current.md","Re-run PR triage: ./scripts/macos/pr-risk-triage-skill-run.sh --dry-run"]
+  "action_items": ["Fix 5 stale doc link(s)","Triage 3 critical/high-risk PR(s) in maintained repos","Assess impact of 2 high-impact upstream dependency PR(s) — awareness only, no deep-review needed"],
+  "next_steps": ["View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\"","View PR triage report: cat reports/pr-triage/current.md","Re-run PR triage: ./scripts/macos/pr-risk-triage-skill-run.sh --dry-run"]
 }

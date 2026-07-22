@@ -15,6 +15,7 @@ All agents must follow `policies/agent-conventions.md`. Key rules:
 - Write files in place — never copy-and-rename (breaks Obsidian tabs).
 - Trim trailing whitespace in Markdown files; end with a single newline.
 - Use kebab-case for all generated names (tasks, runs, reports, skills).
+- Every LLM-authored commit uses Conventional Commits formatting and ends with a trailing `Assisted-by: Claude` git trailer.
 
 ## Safety Guidelines
 

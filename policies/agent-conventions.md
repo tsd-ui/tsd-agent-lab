@@ -73,6 +73,25 @@ When creating or modifying Markdown files (`.md`):
 - **Use consistent heading levels** — don't skip levels (e.g., `##` directly under `#`, not `####` under `#`).
 - **No hard line wraps in prose** — write each sentence or paragraph as a single line. Do not insert newlines mid-sentence to wrap at 80 columns. Hard wraps create awkward mid-sentence breaks when rendered in Obsidian or other variable-width viewers. (Code blocks and tables are exempt.)
 
+## Commits
+
+Every commit made by an LLM/agent **must**:
+
+- **Use [Conventional Commits](https://www.conventionalcommits.org/) formatting** for the subject line: `<type>(<scope>): <description>`, where `<type>` is one of `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `build`, `ci`, `perf`, `style`, `revert`. The scope is optional but encouraged (e.g. `feat(harness): ...`).
+- **End with a trailing `Assisted-by: Claude` line**, separated from the body by a blank line (a standard git trailer). This applies to *every* commit an agent authors — no exceptions.
+
+Example:
+
+```
+feat(harness): add create-draft-pr.sh delivery script
+
+Confirmation-gated delivery of a draft-pr run as a GitHub draft PR.
+
+Assisted-by: Claude
+```
+
+Only commit when the human has asked for it. Never `--force` push shared history (e.g. `origin/main`) to amend an already-pushed commit.
+
 ## Output Quality
 
 - Reports should be self-contained: a reader unfamiliar with the task should understand what was done, what was found, and what to do next.

@@ -92,13 +92,13 @@ tsd-agent-lab/
 6. [x] **Phase 5**: Skills and workflow experiments
 7. [x] **Phase 6**: First real pilot task
 8. [x] **Phase 7**: Patch-only mode
-9. [ ] **Phase 8**: Draft PR mode (manual, explicit)
+9. [x] **Phase 8**: Draft PR mode (manual, explicit)
 10. [ ] **Phase 9**: Multi-agent comparison
 11. [ ] **Phase 10**: Protocol playground
 12. [ ] **Phase 11**: Team documentation
 13. [ ] **Phase 12**: Fullsend hosted lane and GitHub Actions
 
-Current phase: **Phase 8 - Draft PR mode**
+Current phase: **Phase 9 - Multi-agent comparison**
 
 ## Integration Strategy
 

@@ -1,0 +1,36 @@
+task_id: pilot-draft-pr
+title: "Fix null-check bug in user validation (draft-PR pilot)"
+mode: draft-pr
+repo_url: "https://github.com/YOUR_ORG/YOUR_REPO.git"
+base_ref: main
+agent: claude-code
+# prompt_file: optional — defaults to prompts/claude/bugfix-patch-only.md
+working_directory: src
+
+allowed_commands:
+  - "npm test"
+  - "npm run lint"
+  - "python -m pytest"
+  - "go test ./..."
+
+denied_commands:
+  - "git push"
+  - "git commit"
+  - "gh"
+  - "npm publish"
+
+verification_commands:
+  - "git diff --stat"
+  - "test -f changed-files.txt"
+
+max_runtime_minutes: 15
+
+expected_outputs:
+  - "changed-files.txt"
+  - "agent-output.md"
+
+notes: >
+  Pilot template for draft-PR tasks. The agent edits files and runs tests
+  but does not commit, push, or use gh. After the run completes and after
+  the operator reviews the local diff, deliver the fix as a draft PR with:
+  ./harness/create-draft-pr.sh <run-dir> --confirm-push --confirm-pr

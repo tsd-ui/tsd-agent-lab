@@ -93,7 +93,7 @@ run_pipeline() {
     log_info "Task file: ${task_file}"
     log_info "Mode:      ${mode}"
     log_info "Steps:     create-run → prepare-repo → run-claude → write-report"
-    if [[ "$mode" == "patch-only" ]]; then
+    if [[ "$mode" == "patch-only" || "$mode" == "draft-pr" ]]; then
       log_info "           + verify-run → export-patch"
     fi
     echo ""
@@ -121,7 +121,7 @@ run_pipeline() {
   "${LAB_ROOT}/harness/run-claude.sh" "$task_file" --run-dir "$PIPELINE_RUN_DIR" \
     || PIPELINE_CLAUDE_EXIT=$?
 
-  if [[ "$mode" == "patch-only" ]]; then
+  if [[ "$mode" == "patch-only" || "$mode" == "draft-pr" ]]; then
     log_step "Pipeline: verify-run"
     "${LAB_ROOT}/harness/verify-run.sh" "$task_file" --run-dir "$PIPELINE_RUN_DIR" || true
 

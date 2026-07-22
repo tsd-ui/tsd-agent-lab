@@ -6,7 +6,7 @@ A single-file briefing on the TSD Agent Lab for humans and LLMs. Read this first
 
 A local experimentation environment for AI-assisted development. Agents (currently Claude Code) run under a dedicated non-admin Mac user (`agent-lab`) against allowlisted repositories. Every merge requires human review. There are no production credentials in the environment.
 
-Current phase: **Phase 8 — Draft PR mode.** Agents can create draft PRs for human review. See [README.md](../README.md) for the full phase list.
+Current phase: **Phase 9 — Multi-agent comparison.** Draft PR mode (Phase 8) is complete: agents can deliver fixes as draft PRs for human review via an explicit operator command. See [README.md](../README.md) for the full phase list.
 
 ## Gotchas That Will Bite You
 

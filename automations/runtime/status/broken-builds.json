@@ -1,9 +1,9 @@
 {
   "job": "broken-builds",
   "label": "com.tsd-agent-lab.broken-builds",
-  "started_at": "2026-07-21T12:15:59+00:00",
-  "finished_at": "2026-07-21T12:16:57+00:00",
-  "duration_seconds": 58,
+  "started_at": "2026-07-22T05:00:05+00:00",
+  "finished_at": "2026-07-22T05:01:02+00:00",
+  "duration_seconds": 57,
   "status": "ok",
   "exit_code": 0
 }

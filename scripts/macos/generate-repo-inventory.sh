@@ -90,7 +90,7 @@ while IFS= read -r line; do
     echo "Fetching repos for org '${org}' via gh api..." >&2
     fetched=$(gh api "/orgs/${org}/repos" \
       --paginate \
-      --jq '.[].full_name' 2>&1) || {
+      --jq '.[] | select(.archived == false) | .full_name' 2>&1) || {
       echo "Error: failed to list repos for org '${org}': ${fetched}" >&2
       exit 1
     }

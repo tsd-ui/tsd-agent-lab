@@ -23,7 +23,7 @@ organizations:
     url_pattern: "https://github.com/tsd-ui/*"
     relationship: "maintained"    # org-level default: team maintains these repos
     repos:
-      - "*"  # All repos under tsd-ui allowed
+      - "*"  # All non-archived repos under tsd-ui allowed (archived/read-only repos are excluded during inventory generation)
     access: "read-write"
     notes: "All repositories under tsd-ui organization are allowed"
 

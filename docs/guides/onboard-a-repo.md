@@ -33,6 +33,8 @@ organizations:
 
 If the org already exists, just append your repo to its `repos` list.
 
+**Monitor every repo in an org.** Use `repos: ["*"]` to include all of the org's repositories automatically (no need to list each one). Archived / read-only repos are **excluded** — `scripts/macos/generate-repo-inventory.sh` filters them out (`select(.archived == false)`) when it expands the wildcard, so the health and PR collectors only ever act on active repos.
+
 **Relationship types.** Each org declares a default `relationship`, and individual repos can override it. This controls how the PR risk triage report frames the repo — it does not change scoring.
 
 | Relationship | Meaning | Triage behavior |

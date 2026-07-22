@@ -265,7 +265,7 @@ generate_draft_fix_task() {
   cat > "$task_file" <<YAML_EOF
 task_id: ${task_id}
 title: "Fix ${incident_id}: ${safe_workflow} failure"
-mode: patch-only
+mode: draft-pr
 repo_url: "${repo_url}"
 base_ref: main
 agent: claude-code

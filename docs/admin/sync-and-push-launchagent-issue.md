@@ -1,107 +1,65 @@
-# sync-and-push LaunchAgent — bootout not taking (known issue)
+# sync-and-push LaunchAgent — bootout not taking (RESOLVED)
 
-**Status:** open · **First observed:** 2026-07-22 · **Owner:** operator (needs foreground desktop)
+**Status:** resolved · **First observed:** 2026-07-22 · **Resolved:** 2026-07-23
 
-## Symptom
+## TL;DR
 
-`launchctl bootout` of `com.tsd-agent-lab.sync-and-push` appears to succeed but the
-agent keeps firing on its 600s `StartInterval`. Confirmed by
-`logs/sync-and-push.log` showing runs on a clean, unbroken cadence across multiple
-bootout attempts:
+The earlier diagnosis was wrong. The job that keeps firing is **not** a per-user LaunchAgent in the `gui/502` (Aqua) domain — it is a **system `LaunchDaemon`** at `/Library/LaunchDaemons/com.tsd-agent-lab.sync-and-push.plist`, loaded in the `system` domain. Every `bootout` attempt failed because it targeted the wrong domain (`gui/502` / the foreground desktop), and booting out a service that does not exist in the addressed domain is a **silent no-op** — which is exactly why the `:58` cadence never shifted.
+
+There is **no drift** between the running job and the repo: the loaded daemon is byte-identical to `scripts/macos/com.tsd-agent-lab.sync-and-push.plist`. The only mess was a set of **stale `~/Library/LaunchAgents/` leftovers** from the pre-migration LaunchAgent setup, which have now been deleted.
+
+## Symptom (original)
+
+`launchctl bootout` of `com.tsd-agent-lab.sync-and-push` appeared to succeed but the agent kept firing on its 600s `StartInterval`, with an unbroken `:58` cadence in `logs/sync-and-push.log`.
+
+## Root cause (corrected)
+
+The automation suite was migrated to **system LaunchDaemons on 2026-07-21** (see `automations/bin/lab-jobs` `cmd_install_script`, which renders each job and installs it with `sudo launchctl bootstrap system …`). After that migration:
+
+- The **live job** is `system/com.tsd-agent-lab.sync-and-push`, backed by `/Library/LaunchDaemons/com.tsd-agent-lab.sync-and-push.plist` (owned `root:wheel`), running the `automations/bin/run-automation sync-and-push` variant. `launchctl print system/com.tsd-agent-lab.sync-and-push` confirms `domain = system`, `type = LaunchDaemon`.
+- The `~/Library/LaunchAgents/com.tsd-agent-lab.*.plist` files (dated 16 Jul, direct-`sync-and-push.sh` variant) were **leftovers from the old LaunchAgent setup**. They were never loaded after the migration — nothing in `user/502`, nothing in `launchctl list`, and the log only ever shows the `run-automation` `=== started ===` wrapper (never the bare `--- sync started ---` a direct-script LaunchAgent would emit). Comparing that stale file against the running daemon is what produced the bogus "installed ≠ loaded = drift" conclusion.
+
+### Why the domain probing was misleading
+
+From an SSH / `Background` session (`launchctl managername` → `Background`), `launchctl print gui/502/…` returns `125: Domain does not support specified action`. That is **domain-not-addressable from a non-GUI session**, not evidence the job lives in `gui/502`. The job was in `system` the whole time; `system` *is* addressable from any session (with `sudo`), which is how it was finally identified:
 
 ```
-13:00:58  === sync-and-push started ... ===
-13:10:58  === sync-and-push started ... ===
-13:20:58  === sync-and-push started ... ===
+launchctl print system/com.tsd-agent-lab.sync-and-push   # → domain = system, path = /Library/LaunchDaemons/...
 ```
 
-The `:58` offset never shifts — a successful unload + later reload would move it —
-so the loaded job was **never actually removed** by the attempts. Bootout was run
-from agent-lab's **foreground desktop** (fast-user-switched, Terminal.app as
-agent-lab, uid 502) and **without** a `bootstrap` afterward, yet the cadence
-continued.
+## Correct commands (system domain, require sudo)
 
-## Root cause found: installed plist ≠ loaded job (drift)
-
-There are **two different definitions** of this agent, and the one launchd is
-running is **not** the file currently in `~/Library/LaunchAgents/`:
-
-| | Installed (`~/Library/LaunchAgents/com.tsd-agent-lab.sync-and-push.plist`) | Repo (`scripts/macos/com.tsd-agent-lab.sync-and-push.plist`) |
-|---|---|---|
-| Program | `scripts/macos/sync-and-push.sh` (direct) | `automations/bin/run-automation sync-and-push` |
-| `UserName` | — | `agent-lab` |
-| `WorkingDirectory` | — | repo root |
-| `RunAtLoad` | true | true |
-| `StartInterval` | 600 | 600 |
-
-**Proof the loaded job is the repo/`run-automation` variant:** the log's
-`=== sync-and-push started at <ISO-UTC> ===` / `=== ... finished ... ===` wrapper
-lines are emitted by `automations/bin/run-automation` (see lines ~145/151), **not**
-by `sync-and-push.sh` (which only logs `--- sync started ---` and `SKIP:` lines).
-So whatever was bootstrapped into launchd came from the `run-automation` plist,
-while the file now sitting in `~/Library/LaunchAgents/` is the older direct-script
-variant. Editing/booting-out based on the installed file operates on the wrong
-definition.
-
-## Domain
-
-The job is **not** in `user/502` and is invisible to `launchctl list` from an
-SSH/tty session (`Could not find service ... in domain for uid: 502`). It lives in
-the **`gui/502` (Aqua) domain**, addressable only from agent-lab's foreground
-desktop. From any non-GUI session, `launchctl print gui/502/...` returns
-`125: Domain does not support specified action` — this is *domain-not-addressable*,
-not a permissions error, so `sudo` does not help and neither does running as
-`ryordan` (uid 501, wrong owner).
-
-## Why the foreground bootout still didn't take (hypotheses, unverified)
-
-1. **Label/domain the operator booted out ≠ where the job actually lives.** Worth
-   dumping the live definition first: from the foreground desktop,
-   `launchctl print gui/$(id -u)/com.tsd-agent-lab.sync-and-push` and read its
-   `program`/`arguments` + `path` to confirm which variant and domain are loaded.
-2. **A re-bootstrapper.** `run-automation` and/or `daily-command-center.sh`
-   (`com.tsd-agent-lab.command-center`) may re-install/reload the automation
-   agents. The steady `:58` cadence argues against a *recent* reload, but grep
-   these for `launchctl bootstrap`/`load`/`enable` before the next attempt.
-3. **Not disabled.** Even a clean bootout is undone at next login / `RunAtLoad`
-   unless the service is also `disable`d.
-
-## Current mitigation (in place, safe)
-
-Paused via the script's own guard, not launchctl: a **non-empty git stash** trips
-`sync-and-push.sh`'s `SKIP: stash is non-empty` branch (guards, before any
-fetch/commit/push). Every tick since 2026-07-22 12:40 has logged `SKIP` — **zero
-commits, zero pushes**. The stash (`stash@{0}: pause-auto-sync ...`) holds only
-disposable runtime churn.
-
-- **Keep it in place** to stay paused.
-- **To resume:** `git stash drop stash@{0}` (drop, *not* pop — the snapshot is
-  stale runtime state), the agent resumes on its next tick.
-
-## Recommended fix (next attempt, from agent-lab foreground desktop)
+Stop the job (persisted across reboot):
 
 ```bash
-# 1. Inspect what is actually loaded (only works from the GUI session)
-launchctl print gui/$(id -u)/com.tsd-agent-lab.sync-and-push
-
-# 2. Disable (persists across logins/RunAtLoad), then remove
-launchctl disable gui/$(id -u)/com.tsd-agent-lab.sync-and-push
-launchctl bootout  gui/$(id -u)/com.tsd-agent-lab.sync-and-push
-
-# 3. Verify it's gone
-launchctl print gui/$(id -u)/com.tsd-agent-lab.sync-and-push   # expect: Could not find service
+sudo launchctl bootout  system/com.tsd-agent-lab.sync-and-push
+sudo launchctl disable  system/com.tsd-agent-lab.sync-and-push
 ```
 
-Then watch `logs/sync-and-push.log` for ~11 min: **no new `=== started ===`
-marker = success**. Do **not** run `bootstrap`/`load` afterward.
+Reload after editing `/Library/LaunchDaemons/com.tsd-agent-lab.sync-and-push.plist`:
 
-Re-enable later: `launchctl enable gui/$(id -u)/com.tsd-agent-lab.sync-and-push`
-then `launchctl bootstrap gui/$(id -u) <plist>`.
+```bash
+sudo launchctl bootout   system/com.tsd-agent-lab.sync-and-push 2>/dev/null || true
+sudo launchctl bootstrap system /Library/LaunchDaemons/com.tsd-agent-lab.sync-and-push.plist
+```
 
-## Follow-up cleanup (separate task)
+Trigger a run immediately:
 
-Reconcile the plist drift: decide the canonical definition (the `run-automation`
-variant appears to be what's actually used) and make `~/Library/LaunchAgents/` match
-the repo copy, so future bootstrap/bootout/disable act on a known definition.
-Consider also gitignoring `automations/runtime/` (status/lock churn there is what
-generates the `chore(auto-sync)` noise in the first place).
+```bash
+sudo launchctl kickstart -k system/com.tsd-agent-lab.sync-and-push
+```
+
+The old, failing incantation was `launchctl bootout gui/$(id -u)/com.tsd-agent-lab.sync-and-push` — **wrong domain, no sudo**. Do not use it.
+
+## Pause mechanism (still valid)
+
+Stopping the daemon is heavy-handed. To pause without touching launchd, use the script's own guard: a **non-empty git stash** trips `sync-and-push.sh`'s `SKIP: stash is non-empty` branch before any fetch/commit/push. Create a throwaway stash to pause; `git stash drop` to resume on the next tick. This is what was used on 2026-07-22 and dropped on 2026-07-23 to resume.
+
+## Cleanup done (2026-07-23)
+
+- Deleted all six stale `~/Library/LaunchAgents/com.tsd-agent-lab.*.plist` leftovers (`sync-and-push`, `command-center`, `health-report`, `broken-builds`, `stale-docs-check`, `stale-docs-check-full`). The system daemons in `/Library/LaunchDaemons/` are the single source of truth and were untouched.
+- Verified the loaded `sync-and-push` daemon is byte-identical to the repo copy `scripts/macos/com.tsd-agent-lab.sync-and-push.plist`.
+
+## Follow-up (optional)
+
+Consider gitignoring `automations/runtime/` — the status/lock churn there is what generates the `chore(auto-sync)` commit noise.

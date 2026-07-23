@@ -5,5 +5,4 @@ tsd-ui/devtools	maintained
 tsd-ui/tsd-agent-lab	maintained
 tsd-ui/tsd-ui	maintained
 tsd-ui/tsd-ui-plugin	maintained
-tsd-ui/tsd-ui-team-docs	maintained
 tsd-ui/tsd-ui-template	maintained

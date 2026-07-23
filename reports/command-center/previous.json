@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-21",
+  "date": "2026-07-22",
   "status": "red",
   "ci": {
     "failures": 0,
@@ -7,22 +7,22 @@
     "top_failures": []
   },
   "docs": {
-    "findings": 14,
-    "critical": 5
+    "findings": 13,
+    "critical": 0
   },
   "prs": {
-    "reviewed": 7,
+    "reviewed": 8,
     "open": 3
   },
   "pr_triage": {
-    "total_triaged": 29,
-    "critical": 2,
+    "total_triaged": 34,
+    "critical": 0,
     "high": 3,
-    "medium": 7,
-    "low": 17,
+    "medium": 15,
+    "low": 16,
     "maintained_needs_attention": 3,
-    "upstream_alerts": 2
+    "upstream_alerts": 0
   },
-  "action_items": ["Fix 5 stale doc link(s)","Triage 3 critical/high-risk PR(s) in maintained repos","Assess impact of 2 high-impact upstream dependency PR(s) — awareness only, no deep-review needed"],
+  "action_items": ["Triage 3 critical/high-risk PR(s) in maintained repos"],
   "next_steps": ["View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\"","View PR triage report: cat reports/pr-triage/current.md","Re-run PR triage: ./scripts/macos/pr-risk-triage-skill-run.sh --dry-run"]
 }

@@ -1,9 +1,9 @@
 {
   "job": "stale-docs-check-full",
   "label": "com.tsd-agent-lab.stale-docs-check-full",
-  "started_at": "2026-07-22T04:20:05+00:00",
-  "finished_at": "2026-07-22T04:23:01+00:00",
-  "duration_seconds": 176,
+  "started_at": "2026-07-23T04:20:05+00:00",
+  "finished_at": "2026-07-23T04:22:14+00:00",
+  "duration_seconds": 129,
   "status": "ok",
   "exit_code": 0
 }

@@ -115,6 +115,9 @@ bin/*.bin
 # Broken-builds data bundles (transient collector output)
 broken-builds-data-*.json
 
+# Automation runtime state (status JSON + lock churn; recreated by run-automation)
+automations/runtime/
+
 # Old reports location (moved to /reports; ignore so Obsidian sync doesn't re-add)
 docs/admin/reports/
 

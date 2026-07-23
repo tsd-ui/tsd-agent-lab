@@ -1,9 +1,0 @@
-{
-  "job": "pr-bot-poll",
-  "label": "com.tsd-agent-lab.pr-bot-poll",
-  "started_at": "2026-07-23T11:44:25+00:00",
-  "finished_at": "2026-07-23T11:44:28+00:00",
-  "duration_seconds": 3,
-  "status": "ok",
-  "exit_code": 0
-}

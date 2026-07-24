@@ -1,17 +1,16 @@
-# Daily Command Center — 2026-07-22
+# Daily Command Center — 2026-07-23
 
 ## Status: 🔴
 
 ### Summary
 
 - 0 CI failure(s) across 0 repo(s)
-- 13 stale docs finding(s)
+- 19 stale docs finding(s)
 - 8 PRs reviewed, 3 open across monitored repos
-- 34 PR(s) triaged: 0 critical, 3 high
+- 21 PR(s) triaged: 1 critical, 3 high
 
 ### Changes Since Yesterday
-- 11 CI failure(s) resolved
-- 8 stale doc finding(s) resolved
+- 5 new stale doc finding(s)
 
 ### CI / Builds
 
@@ -20,9 +19,10 @@ unknown
 
 ### Documentation Health
 
-**Summary:** 0 stale findings, 13 for review
+**Summary:** 9 stale findings, 10 for review
 
 Affected files:
+- `docs/draft-pr-mode.md`
 - `skills/broken-builds/SKILL.md`
 - `skills/pr-risk-triage/SKILL.md`
 - `docs/admin/command-center.md`
@@ -49,19 +49,28 @@ Recent reviews:
 
 ### PR Risk Triage
 
-34 PR(s) triaged: 0 critical, 3 high, 15 medium, 16 low.
+21 PR(s) triaged: 1 critical, 3 high, 8 medium, 11 low.
 
 **Needs Attention (maintained repos):**
 
 | # | PR | Score | Priority | Key Risks | Action |
 |---|---|---|---|---|---|
-| 1 | [tsd-ui/tsd-ui-team-docs#13: chore(deps): bump react and @types/react](https://github.com/tsd-ui/tsd-ui-team-docs/pull/13) | 56 | high | ci-failing, release-change, large-diff-over-1000, stale-over-14-days | deep-review |
-| 2 | [tsd-ui/tsd-ui#18: chore(deps-dev): bump typescript from 5.9.3 to 6.0.2](https://github.com/tsd-ui/tsd-ui/pull/18) | 54 | high | ci-failing, release-change, large-diff-over-200, stale-over-14-days, force-pushes | deep-review |
-| 3 | [tsd-ui/tsd-ui-team-docs#19: chore(deps): bump @docusaurus/theme-mermaid from 3.9.2 to 3.10.0](https://github.com/tsd-ui/tsd-ui-team-docs/pull/19) | 51 | high | ci-failing, release-change, large-diff-over-200, stale-over-14-days | deep-review |
+| 1 | [tsd-ui/tsd-ui#23: chore(deps-dev): bump react-dom and @types/react-dom](https://github.com/tsd-ui/tsd-ui/pull/23) | 70 | critical | deep-review |
+| 2 | [tsd-ui/tsd-ui#18: chore(deps-dev): bump typescript from 5.9.3 to 6.0.2](https://github.com/tsd-ui/tsd-ui/pull/18) | 58 | high | deep-review |
+| 3 | [tsd-ui/tsd-ui#62: chore(deps-dev): bump astro from 6.4.8 to 7.1.3 in /apps/docs in the npm_and_yarn group across 1 directory](https://github.com/tsd-ui/tsd-ui/pull/62) | 50 | high | deep-review |
+| 4 | [securesign/rhtas-console-ui#325: chore(deps): update npm dependencies (major)](https://github.com/securesign/rhtas-console-ui/pull/325) | 50 | high | deep-review |
+
+**Upstream Alerts (dependency repos — awareness only, no deep-review):**
+
+| # | PR | Score | Priority | Key Risks | Action |
+|---|---|---|---|---|---|
+| 1 | [securesign/rhtas-console#85: Update Go Dependencies](https://github.com/securesign/rhtas-console/pull/85) | 71 | critical | assess-impact |
 
 ### Action Items
 
-- [ ] Triage 3 critical/high-risk PR(s) in maintained repos
+- [ ] Fix 9 stale doc link(s)
+- [ ] Triage 4 critical/high-risk PR(s) in maintained repos
+- [ ] Assess impact of 1 high-impact upstream dependency PR(s) — awareness only, no deep-review needed
 
 ### Next Steps
 

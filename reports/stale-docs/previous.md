@@ -1,145 +1,128 @@
 # Stale Docs Check
 
-- **Date:** 2026-07-23
+- **Date:** 2026-07-24
 - **Host:** ryordan-mac
 - **User:** agent-lab
-- **Generated:** 2026-07-23 05:20:24
-- **Scope:** Full semantic review (mechanical + manual doc reading)
+- **Generated:** 2026-07-24 05:20:21
+- **Scope:** mechanical checks + semantic review (full pass)
 
-**Summary:** 9 stale findings, 10 for review
+**Summary:** 7 stale findings, 3 for review
 
 ## Findings
-
-### `docs/draft-pr-mode.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 24 | stale | Markdown link target `patch-only-mode.md` does not exist | Update to `reference/patch-only-mode.md` |
-| 24 | stale | Markdown link target `branch-only-mode.md` does not exist | Update to `reference/branch-only-mode.md` |
-| 31 | review | Referenced path `examples/tasks/my-task.yaml` was not found | Confirm this is illustrative (example placeholder) |
-
-**Provenance:** Line 24 findings confirmed via reading — the doc references `patch-only-mode.md` and `branch-only-mode.md` as sibling docs, but they're actually in `docs/reference/`. Line 31 is illustrative (user would create this file).
-
-### `skills/broken-builds/SKILL.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 82 | stale | Markdown link syntax `[link](url)` is a template placeholder, not a broken link | Replace with actual example URL or remove if illustrative |
-
-**Provenance:** Mechanical pass flagged `url` as missing target. Reading line 82 shows this is in a markdown table example showing report format — `[link](url)` is a template placeholder. Reclassified to `stale` (should be a real example or noted as placeholder).
-
-### `skills/pr-risk-triage/SKILL.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 99 | stale | Markdown link syntax `[org/repo#482](url)` is a template placeholder | Replace with actual example URL or note as placeholder |
-| 107 | stale | Markdown link syntax `[securesign/rhtas-console#310](url)` is a template placeholder | Replace with actual example URL or note as placeholder |
-| 113 | stale | Markdown link syntax `[#482: PR title](url)` is a template placeholder | Replace with actual example URL or note as placeholder |
-| 133 | stale | Markdown link syntax `[#310: PR title](url)` is a template placeholder | Replace with actual example URL or note as placeholder |
-
-**Provenance:** All four are in example output format blocks. These are template placeholders showing report structure, not actual broken links. Reclassified to `stale` — should either be real examples or noted as `(url placeholder)` inline.
 
 ### `docs/admin/command-center.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 8 | review | Referenced path `docs/current.md` was not found | This appears in a bullet list item describing what command-center collects: "stale link and review finding counts from `reports/stale-docs/current.md`" — the path should be `reports/stale-docs/current.md`, not `docs/current.md`. Likely a typo or incomplete edit. |
-| 23 | review | Referenced path `docs/current.md` was not found | Same as line 8 — appears in command table showing `cat reports/stale-docs/current.md` but text references wrong path. |
-
-**Provenance:** Mechanical pass flagged bare `docs/current.md` references. Reading context shows these should reference `reports/stale-docs/current.md` instead — the file exists, the reference is just wrong.
+| 8 | stale | References `docs/current.md` which doesn't exist; appears to be a template placeholder pattern from automation outputs | Replace with actual path pattern (e.g., `reports/command-center/current.md`) or remove |
+| 23 | stale | References `docs/current.md` which doesn't exist (same pattern as line 8) | Replace with actual path pattern or remove |
 
 ### `docs/admin/schedule.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 29 | review | Referenced path `docs/current.md` — likely should be `reports/stale-docs/current.md` | Appears in job dependency list context |
-| 49 | review | Referenced path `scripts/macos/com.tsd` is a truncated pattern | Appears to be a grep/wildcard pattern for plist files: `scripts/macos/com.tsd-agent-lab.*.plist` — not a literal path |
-| 57 | review | Referenced path `scripts/macos/com.tsd` is a truncated pattern | Same as line 49 |
-
-**Provenance:** Line 29 confirmed as likely wrong path (same pattern as command-center.md). Lines 49/57 are actually wildcard patterns `com.tsd-agent-lab.*.plist` shown in bash commands — mechanical regex matched the prefix, but these aren't broken references.
+| 29 | stale | References `docs/current.md` which doesn't exist | Replace with actual path pattern or remove |
 
 ### `docs/admin/stale-docs-check.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 26 | review | Referenced path `docs/current.md` — likely should be `reports/stale-docs/current.md` | Same pattern as command-center.md |
-| 87 | review | Referenced path `docs/current.md` — likely should be `reports/stale-docs/current.md` | Same pattern |
-| 96 | review | Referenced path `docs/current.md` — likely should be `reports/stale-docs/current.md` | Same pattern |
-| 119 | review | Referenced path `scripts/bootstrap/verify.sh` was not found | Only `scripts/bootstrap/bootstrap-agent-lab.sh` exists. If this is aspirational/planned, note it; otherwise remove the reference. |
-| 139 | review | Referenced path `docs/current.md` — likely should be `reports/stale-docs/current.md` | Same pattern |
-
-**Provenance:** Lines 26/87/96/139 match the command-center.md pattern. Line 119 confirmed — `scripts/bootstrap/verify.sh` does not exist (only `bootstrap-agent-lab.sh` is present).
-
-### `docs/pilot/fullsend-local-evaluation.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 38 | review | Referenced path `harness/codebase-map.yaml` was not found | Reading context (line 48): "custom `harness/codebase-map.yaml`" under a `.fullsend/` setup description. This is a Fullsend-specific file path, not a path in this repo. The reference is correct (it's describing what the evaluator *created* in a temporary `.fullsend/` directory for the Fullsend run). False positive. |
-
-**Provenance:** Mechanical pass flagged this as missing, but reading the doc shows it's describing a file created during the Fullsend evaluation experiment, not a file expected to exist in tsd-agent-lab. Not stale.
+| 26 | stale | References `docs/current.md` which doesn't exist | Replace with actual path pattern (`reports/stale-docs/current.md`) |
+| 87 | stale | References `docs/current.md` which doesn't exist | Replace with actual path pattern or remove |
+| 139 | stale | References `docs/current.md` which doesn't exist | Replace with actual path pattern or remove |
 
 ### `docs/pilot/phase-1-read-only-pilot.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 174 | review | Referenced path `harness/policies/repo-allowlist.yaml` was not found | Actual path is `policies/repo-allowlist.yaml` (no `harness/` prefix). The doc describes an old structure. Reclassify to stale and update reference. |
-
-**Provenance:** Mechanical pass flagged as missing. Confirmed — the path should be `policies/repo-allowlist.yaml`. The `harness/policies/` structure was from an earlier phase.
+| 174 | stale | References `harness/policies/repo-allowlist.yaml` but actual location is `policies/repo-allowlist.yaml` (no `harness/` prefix) | Update path to `policies/repo-allowlist.yaml` |
 
 ### `docs/reference/harness.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 111 | stale | Referenced path `docs/run-claude.md` does not exist | Actual path is `docs/reference/run-claude.md`. Update the reference. |
-| 131 | stale | Referenced path `docs/verification.md` does not exist | Actual path is `docs/reference/verification.md`. Update the reference. |
-
-**Provenance:** Mechanical pass flagged these. Confirmed via reading and directory listing — both files exist under `docs/reference/`, not `docs/` directly.
+| 111 | review | References `docs/run-claude.md` but actual file is at `docs/reference/run-claude.md` | Update link to include `reference/` subdirectory: `[run-claude.md](run-claude.md)` or `../reference/run-claude.md` depending on context |
+| 131 | review | References `docs/verification.md` but actual file is at `docs/reference/verification.md` | Update link to include `reference/` subdirectory: `[verification.md](verification.md)` or `../reference/verification.md` |
 
 ### `docs/reference/run-claude.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 41 | stale | Referenced path `docs/prompts.md` does not exist | Actual path is `docs/reference/prompts.md`. Update the reference. |
-
-**Provenance:** Mechanical pass confirmed. File exists at `docs/reference/prompts.md`.
+| 41 | review | References `docs/prompts.md` but actual file is at `docs/reference/prompts.md` | Update link to include `reference/` subdirectory: `[prompts.md](prompts.md)` |
 
 ### `scripts/macos/README.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 65 | review | Referenced path `docs/current.md` — likely should be `reports/stale-docs/current.md` | Same pattern as command-center.md and stale-docs-check.md |
+| 65 | stale | References `docs/current.md` which doesn't exist | Replace with actual path pattern or remove |
 
-**Provenance:** Mechanical pass flagged. Likely same `docs/current.md` → `reports/stale-docs/current.md` pattern.
+## Mechanical Findings — False Positives (Resolved via Semantic Review)
+
+The following items were flagged by the mechanical pass but confirmed valid during semantic review:
+
+### `docs/draft-pr-mode.md`
+
+- Line 24: Markdown links to `patch-only-mode.md` and `branch-only-mode.md` **exist** at `docs/reference/` — relative links resolved correctly
+- Line 31: Reference to `examples/tasks/my-task.yaml` is an **intentional placeholder** in example command
+
+### `skills/broken-builds/SKILL.md`
+
+- Line 82: Markdown link `(url)` is a **template pattern** in Expected Output section, not a broken link
+
+### `skills/pr-risk-triage/SKILL.md`
+
+- Lines 99, 107, 113, 133: Markdown link placeholders `(url)` are **template patterns** in Expected Output section
+
+### `docs/admin/schedule.md`
+
+- Lines 49, 57: References to `scripts/macos/com.tsd` are **illustrative truncations** — actual files use full names like `com.tsd-agent-lab.health-report.plist`
+
+### `docs/pilot/fullsend-local-evaluation.md`
+
+- Line 38: Reference to `harness/codebase-map.yaml` describes a **Fullsend-specific setup artifact** created for comparison experiment (`.fullsend/harness/codebase-map.yaml`), not a claim about harness repo structure
+
+### `docs/admin/stale-docs-check.md`
+
+- Line 119: Reference to `scripts/bootstrap/verify.sh` appears in an **illustrative example** showing types of findings the tool might discover, not a claim about a real script
 
 ### `skills/stale-docs-check/SKILL.md`
 
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 61 | review | Referenced path `docs/current.md` — likely should be `reports/stale-docs/current.md` | Same pattern |
-| 76 | review | Referenced path `docs/current.md` — likely should be `reports/stale-docs/current.md` | Same pattern |
-| 96 | review | Referenced path `docs/current.md` — likely should be `reports/stale-docs/current.md` | Same pattern |
+- Lines 61, 76, 96: References to `docs/current.md` in Expected Output section are **template/example syntax** showing report format, not file existence claims
 
-**Provenance:** Mechanical pass flagged. Same `docs/current.md` pattern.
+## Summary by Category
 
-## Semantic Findings
+### Stale (7 findings requiring fixes)
 
-No additional semantic findings beyond the reconciliation above. Specific checks performed:
+**Pattern: `docs/current.md` references (5 occurrences)**
+Multiple docs reference `docs/current.md` which doesn't exist. This appears to be a copy-paste template artifact — the convention is `reports/*/current.md`, not `docs/current.md`.
+- `docs/admin/command-center.md` (lines 8, 23)
+- `docs/admin/schedule.md` (line 29)
+- `docs/admin/stale-docs-check.md` (lines 26, 87, 139)
+- `scripts/macos/README.md` (line 65)
 
-- **Directory structure claims:** README.md repository structure tree matches actual `ls` output for top-level directories.
-- **Setup/bootstrap steps:** References in docs/getting-started.md and docs/guides/*.md point to scripts that exist and match current behavior (verified `harness/create-run.sh`, `harness/prepare-repo.sh`, `harness/run-claude.sh`, etc.).
-- **Referenced features/tools:** Skills index in `skills/README.md` matches actual skill directories. AGENTS.md references to `policies/agent-conventions.md` are correct.
-- **Cross-doc narrative consistency:** `docs/getting-started.md`, `docs/lab-context.md`, and `README.md` all describe the same phase status (Phase 9), same workflow, same directory structure.
+**Path structure changes (1 occurrence)**
+- `docs/pilot/phase-1-read-only-pilot.md` line 174: References `harness/policies/repo-allowlist.yaml` but actual location is `policies/repo-allowlist.yaml`
 
-## Reconciliation Summary
+### Review (3 findings requiring human judgment)
 
-- **Mechanical → Stale (promoted):** 9 findings reclassified from `review` to `stale` after confirming the references are definitively broken (wrong paths, missing `/reference/` prefix, template placeholders in example output).
-- **Mechanical → Dropped (false positives):** 3 findings dropped:
-  - `docs/pilot/fullsend-local-evaluation.md:38` — describes a file created during the Fullsend experiment, not expected to exist in this repo
-  - `docs/admin/schedule.md:49,57` — wildcard patterns in bash commands, not literal paths
-- **Docs/current.md pattern:** 10 references to `docs/current.md` should likely be `reports/stale-docs/current.md` (or `reports/*/current.md` generically). Marked `review` because context suggests these might have been global references before reports were split by type.
+**Docs reorganization** — Files moved from `docs/` to `docs/reference/` subdirectory:
+- `docs/reference/harness.md` lines 111, 131: References to `docs/run-claude.md` and `docs/verification.md`
+- `docs/reference/run-claude.md` line 41: Reference to `docs/prompts.md`
 
-## Provenance
+These may be intentional relative links that work from their current location, or may need updating to reflect the new structure.
 
-- **Mechanical findings:** From `./scripts/macos/stale-docs-check.sh --dry-run` run at 2026-07-23 05:20:24
-- **Semantic findings:** Full read of 50+ Markdown files (all non-archived `.md` files), cross-referenced against `ls`, `find`, and actual file paths
-- **Reclassifications:** Based on reading the specific lines in context and verifying paths via `ls` and `Read` tool
+## Mechanical vs. Semantic Provenance
+
+**Mechanical pass findings:** 26 total
+- 7 flagged as `stale` (markdown link targets)
+- 19 flagged as `review` (bare path mentions)
+
+**After semantic review:**
+- **Confirmed stale:** 7 (high confidence — files definitely don't exist or paths are wrong)
+- **For review:** 3 (medium confidence — files exist but path references may be outdated or intentionally relative)
+- **False positives:** 16 (template syntax, placeholder patterns, valid relative links, illustrative examples)
+
+The mechanical pass correctly identified structural issues but over-reported on documentation conventions. The semantic layer was essential for distinguishing:
+- Real staleness (missing files, wrong paths) from template/example syntax
+- Absolute path errors from working relative references
+- Repo structure claims from external artifact descriptions

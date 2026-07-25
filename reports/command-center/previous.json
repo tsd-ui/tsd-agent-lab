@@ -1,28 +1,32 @@
 {
-  "date": "2026-07-23",
-  "status": "red",
+  "date": "2026-07-24",
+  "status": "yellow",
   "ci": {
     "failures": 0,
     "repos_affected": 0,
     "top_failures": []
   },
   "docs": {
-    "findings": 19,
-    "critical": 9
+    "findings": 10,
+    "critical": 7
   },
   "prs": {
     "reviewed": 8,
-    "open": 3
+    "open": 4
   },
   "pr_triage": {
-    "total_triaged": 21,
-    "critical": 1,
-    "high": 3,
-    "medium": 8,
-    "low": 11,
-    "maintained_needs_attention": 4,
+    "total_triaged": 19,
+    "critical": 0
+0,
+    "high": 1
+1,
+    "medium": 10
+0,
+    "low": 8
+1,
+    "maintained_needs_attention": 1,
     "upstream_alerts": 1
   },
-  "action_items": ["Fix 9 stale doc link(s)","Triage 4 critical/high-risk PR(s) in maintained repos","Assess impact of 1 high-impact upstream dependency PR(s) — awareness only, no deep-review needed"],
+  "action_items": ["Fix 7 stale doc link(s)","Triage 1 critical/high-risk PR(s) in maintained repos","Assess impact of 1 high-impact upstream dependency PR(s) — awareness only, no deep-review needed"],
   "next_steps": ["View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\"","View PR triage report: cat reports/pr-triage/current.md","Re-run PR triage: ./scripts/macos/pr-risk-triage-skill-run.sh --dry-run"]
 }

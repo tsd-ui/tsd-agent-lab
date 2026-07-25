@@ -2,66 +2,46 @@
 
 | Field | Value |
 |---|---|
-| Date | 2026-07-24 |
+| Date | 2026-07-25 |
 | Host | ryordan-mac |
 | User | agent-lab |
-| Generated | 2026-07-24 06:00:31 |
-| Status | 0 failures (collection errors across 8 repos) |
+| Generated | 2026-07-25 06:00:32 |
+| Status | 0 CI failures, 8 collection errors |
 
 ## Summary
 
-All tracked repos returned collection errors. No CI build data was available for analysis. This likely indicates a GitHub API authentication or rate-limiting issue with the collector script.
+All monitored repos report **collection errors** (failed API queries). No CI failure data available.
 
-## Collection Errors
+This represents a systemic issue with the data collector, not actual build failures. All 8 repos encountered the same error: "Failed to query repo API".
 
-### [securesign/rhtas-console dependency](https://github.com/securesign/rhtas-console)
+## Findings
 
-> **Collection issue:** error — Failed to query repo API
+### Collection Errors
 
-### [securesign/rhtas-console-ui maintained](https://github.com/securesign/rhtas-console-ui)
+The following repos could not be queried:
 
-> **Collection issue:** error — Failed to query repo API
+| Repo | Error |
+|---|---|
+| [securesign/rhtas-console dependency](https://github.com/securesign/rhtas-console) | Failed to query repo API |
+| [securesign/rhtas-console-ui maintained](https://github.com/securesign/rhtas-console-ui) | Failed to query repo API |
+| [tsd-ui/conforma-policy-test maintained](https://github.com/tsd-ui/conforma-policy-test) | Failed to query repo API |
+| [tsd-ui/devtools maintained](https://github.com/tsd-ui/devtools) | Failed to query repo API |
+| [tsd-ui/tsd-agent-lab maintained](https://github.com/tsd-ui/tsd-agent-lab) | Failed to query repo API |
+| [tsd-ui/tsd-ui maintained](https://github.com/tsd-ui/tsd-ui) | Failed to query repo API |
+| [tsd-ui/tsd-ui-plugin maintained](https://github.com/tsd-ui/tsd-ui-plugin) | Failed to query repo API |
+| [tsd-ui/tsd-ui-template maintained](https://github.com/tsd-ui/tsd-ui-template) | Failed to query repo API |
 
-### [tsd-ui/conforma-policy-test maintained](https://github.com/tsd-ui/conforma-policy-test)
+**Diagnosis** (model assessment)
 
-> **Collection issue:** error — Failed to query repo API
+- **Category:** infra-problem
+- **Confidence:** confirmed
+- **Root cause:** The data collector failed to authenticate or connect to the GitHub API for all monitored repositories. Possible causes include:
+  - Missing or expired GitHub authentication token
+  - Network connectivity issues
+  - GitHub API rate limiting or service disruption
+  - Incorrect API endpoint configuration
+- **Suggested next step:** Verify the collector's GitHub token is valid and has appropriate permissions (likely needs `repo` or at minimum `public_repo` scope). Check collector logs for detailed error messages. Confirm network access to api.github.com.
 
-### [tsd-ui/devtools maintained](https://github.com/tsd-ui/devtools)
+---
 
-> **Collection issue:** error — Failed to query repo API
-
-### [tsd-ui/tsd-agent-lab maintained](https://github.com/tsd-ui/tsd-agent-lab)
-
-> **Collection issue:** error — Failed to query repo API
-
-### [tsd-ui/tsd-ui maintained](https://github.com/tsd-ui/tsd-ui)
-
-> **Collection issue:** error — Failed to query repo API
-
-### [tsd-ui/tsd-ui-plugin maintained](https://github.com/tsd-ui/tsd-ui-plugin)
-
-> **Collection issue:** error — Failed to query repo API
-
-### [tsd-ui/tsd-ui-template maintained](https://github.com/tsd-ui/tsd-ui-template)
-
-> **Collection issue:** error — Failed to query repo API
-
-## Diagnosis (model assessment)
-
-**Category:** infra-problem  
-**Confidence:** probable  
-**Root cause:** The collector script failed to query the GitHub API for all 8 monitored repositories. This is likely due to one of:
-- Missing or expired `GITHUB_TOKEN` environment variable
-- GitHub API rate limiting
-- Network connectivity issues
-- Incorrect API endpoint or authentication method
-
-**Suggested next step:** 
-1. Verify the collector script has a valid `GITHUB_TOKEN` configured
-2. Check GitHub API rate limit status: `gh api rate_limit`
-3. Review collector script logs for the actual HTTP error response
-4. Ensure the collector has read permissions for the target repositories
-
-## Notes
-
-This report reflects a complete collection failure rather than CI build failures. The collector infrastructure must be fixed before build health can be assessed.
+**Note:** This report reflects a collector infrastructure issue, not repository build health. Once the collection error is resolved, actual CI failure data will be available for analysis.

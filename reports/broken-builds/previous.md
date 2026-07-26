@@ -2,46 +2,77 @@
 
 | Field | Value |
 |---|---|
-| Date | 2026-07-25 |
+| Date | 2026-07-26 |
 | Host | ryordan-mac |
 | User | agent-lab |
-| Generated | 2026-07-25 06:00:32 |
-| Status | 0 CI failures, 8 collection errors |
+| Generated | 2026-07-26 06:00:25 |
+| Status | All builds passing |
 
 ## Summary
 
-All monitored repos report **collection errors** (failed API queries). No CI failure data available.
+All builds passing.
 
-This represents a systemic issue with the data collector, not actual build failures. All 8 repos encountered the same error: "Failed to query repo API".
+However, 8 repositories experienced collection errors and could not be checked:
+- securesign/rhtas-console dependency
+- securesign/rhtas-console-ui maintained
+- tsd-ui/conforma-policy-test maintained
+- tsd-ui/devtools maintained
+- tsd-ui/tsd-agent-lab maintained
+- tsd-ui/tsd-ui maintained
+- tsd-ui/tsd-ui-plugin maintained
+- tsd-ui/tsd-ui-template maintained
 
-## Findings
+## Collection Issues
 
-### Collection Errors
+### securesign/rhtas-console dependency
 
-The following repos could not be queried:
+> **Collection issue:** error — Failed to query repo API
 
-| Repo | Error |
-|---|---|
-| [securesign/rhtas-console dependency](https://github.com/securesign/rhtas-console) | Failed to query repo API |
-| [securesign/rhtas-console-ui maintained](https://github.com/securesign/rhtas-console-ui) | Failed to query repo API |
-| [tsd-ui/conforma-policy-test maintained](https://github.com/tsd-ui/conforma-policy-test) | Failed to query repo API |
-| [tsd-ui/devtools maintained](https://github.com/tsd-ui/devtools) | Failed to query repo API |
-| [tsd-ui/tsd-agent-lab maintained](https://github.com/tsd-ui/tsd-agent-lab) | Failed to query repo API |
-| [tsd-ui/tsd-ui maintained](https://github.com/tsd-ui/tsd-ui) | Failed to query repo API |
-| [tsd-ui/tsd-ui-plugin maintained](https://github.com/tsd-ui/tsd-ui-plugin) | Failed to query repo API |
-| [tsd-ui/tsd-ui-template maintained](https://github.com/tsd-ui/tsd-ui-template) | Failed to query repo API |
+### securesign/rhtas-console-ui maintained
 
-**Diagnosis** (model assessment)
+> **Collection issue:** error — Failed to query repo API
 
-- **Category:** infra-problem
-- **Confidence:** confirmed
-- **Root cause:** The data collector failed to authenticate or connect to the GitHub API for all monitored repositories. Possible causes include:
-  - Missing or expired GitHub authentication token
-  - Network connectivity issues
-  - GitHub API rate limiting or service disruption
-  - Incorrect API endpoint configuration
-- **Suggested next step:** Verify the collector's GitHub token is valid and has appropriate permissions (likely needs `repo` or at minimum `public_repo` scope). Check collector logs for detailed error messages. Confirm network access to api.github.com.
+### tsd-ui/conforma-policy-test maintained
+
+> **Collection issue:** error — Failed to query repo API
+
+### tsd-ui/devtools maintained
+
+> **Collection issue:** error — Failed to query repo API
+
+### tsd-ui/tsd-agent-lab maintained
+
+> **Collection issue:** error — Failed to query repo API
+
+### tsd-ui/tsd-ui maintained
+
+> **Collection issue:** error — Failed to query repo API
+
+### tsd-ui/tsd-ui-plugin maintained
+
+> **Collection issue:** error — Failed to query repo API
+
+### tsd-ui/tsd-ui-template maintained
+
+> **Collection issue:** error — Failed to query repo API
 
 ---
 
-**Note:** This report reflects a collector infrastructure issue, not repository build health. Once the collection error is resolved, actual CI failure data will be available for analysis.
+## Diagnosis (model assessment)
+
+**Category:** infra-problem
+
+**Confidence:** probable
+
+**Root cause:** The collector failed to query the GitHub repository API for all 8 repositories with identical error messages. The repo names include suffixes like "dependency" and "maintained" which are not standard GitHub repository naming patterns. This suggests either:
+1. The repo list configuration contains malformed repository identifiers
+2. The GitHub API token lacks access permissions to these repositories
+3. The repository names are incorrectly formatted (mixing org/repo with additional labels)
+
+**Suggested next step:** 
+1. Verify the repository list configuration file contains valid GitHub repository identifiers in the format `org/repo` (without additional labels like "dependency" or "maintained")
+2. If labels are metadata, ensure they're stored separately from the repository identifier
+3. Test the GitHub API token with a simple query: `gh api repos/tsd-ui/tsd-agent-lab` to verify credentials and access
+4. Check if these repositories exist and are accessible to the authenticated user
+
+**Impact:** Unable to perform CI failure detection on any monitored repositories due to collection failure.

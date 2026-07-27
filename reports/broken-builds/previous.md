@@ -2,77 +2,58 @@
 
 | Field | Value |
 |---|---|
-| Date | 2026-07-26 |
+| Date | 2026-07-27 |
 | Host | ryordan-mac |
 | User | agent-lab |
-| Generated | 2026-07-26 06:00:25 |
-| Status | All builds passing |
+| Generated | 2026-07-27 06:00:25 |
+| Status | 0 failures; 8 collection errors |
 
 ## Summary
 
-All builds passing.
-
-However, 8 repositories experienced collection errors and could not be checked:
-- securesign/rhtas-console dependency
-- securesign/rhtas-console-ui maintained
-- tsd-ui/conforma-policy-test maintained
-- tsd-ui/devtools maintained
-- tsd-ui/tsd-agent-lab maintained
-- tsd-ui/tsd-ui maintained
-- tsd-ui/tsd-ui-plugin maintained
-- tsd-ui/tsd-ui-template maintained
+No CI failures detected. All 8 monitored repos encountered collection errors when querying the GitHub API.
 
 ## Collection Issues
 
-### securesign/rhtas-console dependency
+All repositories failed during data collection. This indicates a systemic problem with GitHub API access, not actual build failures.
+
+### [securesign/rhtas-console dependency](https://github.com/securesign/rhtas-console)
 
 > **Collection issue:** error — Failed to query repo API
 
-### securesign/rhtas-console-ui maintained
+### [securesign/rhtas-console-ui maintained](https://github.com/securesign/rhtas-console-ui)
 
 > **Collection issue:** error — Failed to query repo API
 
-### tsd-ui/conforma-policy-test maintained
+### [tsd-ui/conforma-policy-test maintained](https://github.com/tsd-ui/conforma-policy-test)
 
 > **Collection issue:** error — Failed to query repo API
 
-### tsd-ui/devtools maintained
+### [tsd-ui/devtools maintained](https://github.com/tsd-ui/devtools)
 
 > **Collection issue:** error — Failed to query repo API
 
-### tsd-ui/tsd-agent-lab maintained
+### [tsd-ui/tsd-agent-lab maintained](https://github.com/tsd-ui/tsd-agent-lab)
 
 > **Collection issue:** error — Failed to query repo API
 
-### tsd-ui/tsd-ui maintained
+### [tsd-ui/tsd-ui maintained](https://github.com/tsd-ui/tsd-ui)
 
 > **Collection issue:** error — Failed to query repo API
 
-### tsd-ui/tsd-ui-plugin maintained
+### [tsd-ui/tsd-ui-plugin maintained](https://github.com/tsd-ui/tsd-ui-plugin)
 
 > **Collection issue:** error — Failed to query repo API
 
-### tsd-ui/tsd-ui-template maintained
+### [tsd-ui/tsd-ui-template maintained](https://github.com/tsd-ui/tsd-ui-template)
 
 > **Collection issue:** error — Failed to query repo API
 
 ---
 
-## Diagnosis (model assessment)
+## Next Steps
 
-**Category:** infra-problem
-
-**Confidence:** probable
-
-**Root cause:** The collector failed to query the GitHub repository API for all 8 repositories with identical error messages. The repo names include suffixes like "dependency" and "maintained" which are not standard GitHub repository naming patterns. This suggests either:
-1. The repo list configuration contains malformed repository identifiers
-2. The GitHub API token lacks access permissions to these repositories
-3. The repository names are incorrectly formatted (mixing org/repo with additional labels)
-
-**Suggested next step:** 
-1. Verify the repository list configuration file contains valid GitHub repository identifiers in the format `org/repo` (without additional labels like "dependency" or "maintained")
-2. If labels are metadata, ensure they're stored separately from the repository identifier
-3. Test the GitHub API token with a simple query: `gh api repos/tsd-ui/tsd-agent-lab` to verify credentials and access
-4. Check if these repositories exist and are accessible to the authenticated user
-
-**Impact:** Unable to perform CI failure detection on any monitored repositories due to collection failure.
+**Diagnosis** (model assessment)
+- **Category:** config-error
+- **Confidence:** confirmed
+- **Root cause:** Repository identifiers in the configuration are malformed — they include metadata suffixes ("dependency", "maintained") appended to the org/repo format. GitHub API expects clean `org/repo` format, so queries like `securesign/rhtas-console dependency` fail. The default_branch field shows "unknown" for all repos, confirming the API queries never succeeded.
+- **Suggested next step:** Fix the repository list configuration to use clean `org/repo` format (e.g., `tsd-ui/tsd-agent-lab` instead of `tsd-ui/tsd-agent-lab maintained`). If "dependency" and "maintained" are tracking labels, store them as separate metadata fields rather than suffixes to the repository identifier.

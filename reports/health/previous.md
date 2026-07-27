@@ -1,10 +1,10 @@
 # Agent Lab Health Report
 
-- **Date:** 2026-07-25
+- **Date:** 2026-07-26
 - **Host:** ryordan-mac
 - **User:** agent-lab
-- **Generated:** 2026-07-25 05:00:05
-- **Status:** 1 warning(s)
+- **Generated:** 2026-07-26 05:00:05
+- **Status:** healthy
 
 ## Launchd Agents
 
@@ -12,21 +12,17 @@
 |--------|-----------|-------|
 | not running | 0 | com.tsd-agent-lab.sync-and-push |
 | not running | 0 | com.tsd-agent-lab.pr-bot-poll |
-| running (PID 58589) | 0 | com.tsd-agent-lab.health-report |
+| running (PID 70387) | 0 | com.tsd-agent-lab.health-report |
 | not running | 0 | com.tsd-agent-lab.stale-docs-check-full |
 | not running | 0 | com.tsd-agent-lab.pr-risk-triage |
 | not running | 0 | com.tsd-agent-lab.broken-builds |
 | not running | 0 | com.tsd-agent-lab.stale-docs-check |
-| not running | 5 | com.tsd-agent-lab.command-center |
+| not running | 0 | com.tsd-agent-lab.command-center |
 | not running | 0 | com.tsd-agent-lab.pr-bot-worker |
 
 ## Failed Jobs
 
-The following jobs had non-zero exit status on their last run:
-
-| Exit Code | Label |
-|-----------|-------|
-| 5 | com.tsd-agent-lab.command-center |
+No failed tsd-agent-lab jobs detected.
 
 ## Recent Log Errors (Last 24h)
 
@@ -51,10 +47,10 @@ Threshold: 80%
 
 | PID | Elapsed | Command |
 |-----|---------|---------|
-| 16539 | 04-14:18:06 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 16545 | 04-14:18:02 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 16816 | 04-14:18:01 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 16817 | 04-14:18:01 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 16823 | 04-14:18:00 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 18156 | 02-18:27:33 | claude |
-| 58063 | 01-16:29:32 | claude |
+| 16539 | 05-14:18:06 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 16545 | 05-14:18:02 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 16816 | 05-14:18:01 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 16817 | 05-14:18:01 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 16823 | 05-14:18:00 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 18156 | 03-18:27:33 | claude |
+| 58063 | 02-16:29:32 | claude |

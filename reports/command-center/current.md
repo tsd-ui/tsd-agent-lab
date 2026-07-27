@@ -1,4 +1,8 @@
-# Daily Command Center — 2026-07-27
+---
+aliases: 
+tags: 
+---
+# Daily Command Center—2026-07-27
 
 ## Status: 🔴
 
@@ -10,13 +14,13 @@
 - 22 PR(s) triaged: 2 critical, 8 high
 
 ### Changes Since Yesterday
+
 - 18 stale doc finding(s) resolved
 - Status changed: yellow -> red
 
 ### CI / Builds
 
 unknown
-
 
 ### Documentation Health
 
@@ -58,7 +62,7 @@ Recent reviews:
 | 7 | [securesign/rhtas-console-ui#339: feat: surface validFor service window and expiring status in certificates UI](https://github.com/securesign/rhtas-console-ui/pull/339) | 50 | high | schema-change, changes-requested, unresolved-threads, no-test-changes | deep-review |
 | 8 | [tsd-ui/tsd-ui-template#11: :ghost: bump the patternfly group across 1 directory with 4 updates](https://github.com/tsd-ui/tsd-ui-template/pull/11) | 50 | high | large-diff-1000+, stale-54d | deep-review |
 
-**Upstream Alerts (dependency repos — awareness only, no deep-review):**
+**Upstream Alerts (dependency repos—awareness only, no deep-review):**
 
 | # | PR | Score | Priority | Key Risks | Action |
 |---|---|---|---|---|---|
@@ -68,7 +72,7 @@ Recent reviews:
 
 - [ ] Fix 2 stale doc link(s)
 - [ ] Triage 8 critical/high-risk PR(s) in maintained repos
-- [ ] Assess impact of 1 high-impact upstream dependency PR(s) — awareness only, no deep-review needed
+- [ ] Assess impact of 1 high-impact upstream dependency PR(s)—awareness only, no deep-review needed
 
 ### Next Steps
 

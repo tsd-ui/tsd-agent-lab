@@ -1,17 +1,17 @@
-# Daily Command Center — 2026-07-25
+# Daily Command Center — 2026-07-26
 
 ## Status: 🟡
 
 ### Summary
 
 - 0 CI failure(s) across 0 repo(s)
-- 23 stale docs finding(s)
+- 9 stale docs finding(s)
 - 8 PRs reviewed, 5 open across monitored repos
-- 18 PR(s) triaged: 1 critical, 5 high
+- 20 PR(s) triaged: 1 critical, 2 high
 
 ### Changes Since Yesterday
-- 4 new stale doc finding(s)
-- Status changed: red -> yellow
+- 9 new stale doc finding(s)
+- Status changed: unknown -> yellow
 
 ### CI / Builds
 
@@ -20,7 +20,7 @@ unknown
 
 ### Documentation Health
 
-**Summary:** 7 stale findings, 16 for review
+**Summary:** 5 stale findings, 4 for review
 
 Affected files:
 - `docs/draft-pr-mode.md`
@@ -36,6 +36,9 @@ Affected files:
 - `docs/reference/run-claude.md`
 - `scripts/macos/README.md`
 - `skills/stale-docs-check/SKILL.md`
+- `docs/getting-started.md`
+- `docs/admin/schedule.md`
+- `docs/pilot/phase-1-read-only-pilot.md`
 
 ### PR Activity
 
@@ -51,25 +54,26 @@ Recent reviews:
 
 ### PR Risk Triage
 
-18 PR(s) triaged: 1 critical, 5 high, 9 medium, 5 low.
+20 PR(s) triaged: 1 critical, 2 high, 11 medium, 9 low.
 
 **Needs Attention (maintained repos):**
 
 | # | PR | Score | Priority | Key Risks | Action |
 |---|---|---|---|---|---|
-| 1 | [securesign/rhtas-console-ui#340: feat: display all roles in TUF metadata tab](https://github.com/securesign/rhtas-console-ui/pull/340) | 60 | high | ci-failing (+20), schema-change (+12), medium-diff (+10), changes-public-api-schema (+12), no-review-1d+ (+3), dispersion (+8) | deep-review |
+| 1 | [securesign/rhtas-console-ui#340: feat: display all roles in TUF metadata tab](https://github.com/securesign/rhtas-console-ui/pull/340) | 70 | critical | deep-review |
 
 **Upstream Alerts (dependency repos — awareness only, no deep-review):**
 
 | # | PR | Score | Priority | Key Risks | Action |
 |---|---|---|---|---|---|
-| 1 | [securesign/rhtas-console#85: Update Go Dependencies](https://github.com/securesign/rhtas-console/pull/85) | 84 | critical | ci-failing (+20), release-change (+10), large-diff-1000+ (+15), stale-14d+ (+8), force-push-2+ (+5), very-stale-52d (+8), excessive-force-pushes (+10), missing-tests (+10) | assess-impact |
+| 1 | [securesign/rhtas-console#85: Update Go Dependencies](https://github.com/securesign/rhtas-console/pull/85) | 74 | critical | assess-impact |
+| 2 | [securesign/rhtas-console#95: Update Docker Images](https://github.com/securesign/rhtas-console/pull/95) | 53 | high | assess-impact |
 
 ### Action Items
 
-- [ ] Fix 7 stale doc link(s)
+- [ ] Fix 5 stale doc link(s)
 - [ ] Triage 1 critical/high-risk PR(s) in maintained repos
-- [ ] Assess impact of 1 high-impact upstream dependency PR(s) — awareness only, no deep-review needed
+- [ ] Assess impact of 2 high-impact upstream dependency PR(s) — awareness only, no deep-review needed
 
 ### Next Steps
 

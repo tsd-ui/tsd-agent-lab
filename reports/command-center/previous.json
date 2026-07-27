@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-25",
+  "date": "2026-07-26",
   "status": "yellow",
   "ci": {
     "failures": 0,
@@ -7,22 +7,22 @@
     "top_failures": []
   },
   "docs": {
-    "findings": 23,
-    "critical": 7
+    "findings": 9,
+    "critical": 5
   },
   "prs": {
     "reviewed": 8,
     "open": 5
   },
   "pr_triage": {
-    "total_triaged": 18,
+    "total_triaged": 20,
     "critical": 1,
-    "high": 5,
-    "medium": 9,
-    "low": 5,
+    "high": 2,
+    "medium": 11,
+    "low": 9,
     "maintained_needs_attention": 1,
-    "upstream_alerts": 1
+    "upstream_alerts": 2
   },
-  "action_items": ["Fix 7 stale doc link(s)","Triage 1 critical/high-risk PR(s) in maintained repos","Assess impact of 1 high-impact upstream dependency PR(s) — awareness only, no deep-review needed"],
+  "action_items": ["Fix 5 stale doc link(s)","Triage 1 critical/high-risk PR(s) in maintained repos","Assess impact of 2 high-impact upstream dependency PR(s) — awareness only, no deep-review needed"],
   "next_steps": ["View stale-docs report: cat reports/stale-docs/current.md","Run full docs review: claude -p \"Follow skills/stale-docs-check/SKILL.md\"","Review open PRs: claude -p \"Follow skills/pr-review/SKILL.md\"","View PR triage report: cat reports/pr-triage/current.md","Re-run PR triage: ./scripts/macos/pr-risk-triage-skill-run.sh --dry-run"]
 }

@@ -1,130 +1,79 @@
 # Stale Docs Check
 
-- **Date:** 2026-07-26
+- **Date:** 2026-07-27
 - **Host:** ryordan-mac
 - **User:** agent-lab
-- **Generated:** 2026-07-26 05:21:10
-- **Scope:** full review (mechanical + semantic)
+- **Generated:** 2026-07-27 05:20:23
+- **Scope:** mechanical checks + semantic review
 
-**Summary:** 5 stale findings, 4 for review
+**Summary:** 2 stale findings, 3 for review
 
-## Mechanical Findings
+## Findings
 
 ### `docs/draft-pr-mode.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 24 | review | Markdown link targets `patch-only-mode.md` and `branch-only-mode.md` resolve correctly to `docs/reference/` — false positive | No action needed (mechanical pass cannot check relative links across directories) |
+| 24 | review | Links to `patch-only-mode.md` and `branch-only-mode.md` are relative but files exist in `docs/reference/` | Update relative paths to `reference/patch-only-mode.md` and `reference/branch-only-mode.md` |
 
-### `skills/broken-builds/SKILL.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 82 | review | Link `[link](url)` is a template placeholder, not a broken link | No action needed (template by design) |
-
-### `skills/pr-risk-triage/SKILL.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 99 | review | Link `[org/repo#482](url)` is a template placeholder | No action needed (template by design) |
-| 107 | review | Link `[securesign/rhtas-console#310](url)` is a template placeholder | No action needed (template by design) |
-| 113 | review | Multiple `(url)` placeholders are template examples | No action needed (template by design) |
-| 133 | review | Link `(url)` is a template placeholder | No action needed (template by design) |
-
-### `docs/admin/command-center.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 8 | stale | Referenced path `docs/current.md` — should be `reports/stale-docs/current.md` | Update to correct report path |
-| 23 | stale | Same issue: `docs/current.md` should be `reports/stale-docs/current.md` | Update reference |
-
-### `docs/admin/schedule.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 29 | stale | Pattern `docs/current.md` is wrong — should be `reports/<type>/current.md` | Update to correct report path pattern |
-| 49 | review | Glob `scripts/macos/com.tsd*.plist` won't expand in `cp` command — command will fail | Use explicit loop or `find` instead of glob in documentation |
-| 57 | review | Same glob issue in `launchctl load` command | Fix command example |
+**Provenance:** Mechanical pass flagged these as missing, but semantic review found both files exist at `docs/reference/patch-only-mode.md` and `docs/reference/branch-only-mode.md`. The links use relative paths that don't account for the subdirectory structure.
 
 ### `docs/admin/stale-docs-check.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 26 | stale | Pattern `docs/current.md` should be `reports/stale-docs/current.md` | Update reference |
-| 87 | stale | Same — `docs/current.md` is wrong | Update to `reports/stale-docs/current.md` |
-| 119 | stale | Referenced path `scripts/bootstrap/verify.sh` does not exist | Remove or update to correct script path |
-| 139 | stale | Same `docs/current.md` pattern error | Update reference |
+| 119 | review | References `scripts/bootstrap/verify.sh` which does not exist | Confirm whether this was renamed, removed, or is illustrative. Only `scripts/bootstrap/bootstrap-agent-lab.sh` exists in that directory. |
 
-### `docs/draft-pr-mode.md`
+**Provenance:** Mechanical pass flagged as missing path. Semantic review confirmed only `bootstrap-agent-lab.sh` exists in `scripts/bootstrap/`, no `verify.sh` script.
 
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 31 | review | Path `examples/tasks/my-task.yaml` is illustrative — not a real file | No action needed (example syntax) |
-
-### `docs/pilot/fullsend-local-evaluation.md`
+### `skills/broken-builds/SKILL.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 38 | review | Path `harness/codebase-map.yaml` was specific to the fullsend setup attempt, which was blocked per line 36 | Context is clear — no action needed |
+| 82 | stale | Markdown link placeholder `[link](url)` in template section | Replace with actual URL pattern or mark as template placeholder more clearly (e.g., `[link](https://github.com/org/repo/actions/runs/RUN_ID)`) |
 
-### `docs/pilot/phase-1-read-only-pilot.md`
+**Provenance:** Mechanical pass correctly identified this as a broken link. Semantic review confirms this is template documentation showing expected output format, but the literal `url` should be a pattern rather than a placeholder that triggers link checkers.
+
+### `skills/pr-risk-triage/SKILL.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 174 | stale | Path `/Users/ryordan/Obsidian/tsd-agent-lab/harness/policies/repo-allowlist.yaml` is wrong — actual path is `policies/repo-allowlist.yaml` at repo root, not under `harness/` | Update to correct path |
+| 99, 107, 113, 133 | stale | Four markdown link placeholders `[...](url)` in template sections | Replace with actual URL patterns or mark as template placeholders more clearly (e.g., `[org/repo#482](https://github.com/org/repo/pull/482)`) |
+
+**Provenance:** Mechanical pass correctly identified these as broken links. Semantic review confirms these are in template documentation showing expected output format, but the literal `url` placeholders trigger link checkers.
 
 ### `docs/reference/harness.md`
 
 | Line | Category | Finding | Suggested fix / question |
 |------|----------|---------|---------------------------|
-| 111 | review | Link `docs/run-claude.md` should be `run-claude.md` (same directory) | Update to relative link or verify target exists |
-| 131 | review | Link `docs/verification.md` should be `verification.md` (same directory) | Update to relative link or verify target exists |
+| 111, 131 | review | References `docs/run-claude.md` and `docs/verification.md` which exist in `docs/reference/` subdirectory | Update relative paths to `run-claude.md` and `verification.md` (same directory) or remove `docs/` prefix |
 
-### `docs/reference/run-claude.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 41 | review | Link `docs/prompts.md` should likely be `prompts.md` (same directory) or verify it resolves correctly | Verify link target |
-
-### `scripts/macos/README.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 65 | stale | Pattern `docs/current.md` should be `reports/stale-docs/current.md` | Update reference |
-
-### `skills/stale-docs-check/SKILL.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 61 | stale | Pattern `docs/current.md` should be `reports/stale-docs/current.md` | Update reference |
-| 76 | review | Same — verify this is also meant to reference reports/ | Update if stale |
-| 96 | review | Same pattern | Update if stale |
-
-## Semantic Findings
-
-### `docs/getting-started.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 59 | review | References checking `policies/repo-allowlist.yaml` (line 59) — path is correct, no issue | No action needed |
-| 66-83 | review | Directory tree diagram claims no `automations/`, `bin/`, `collectors/`, `data/`, `schemas/`, or `tests/` directories, but all exist in current repo state | Update tree to match `ls -1d */` output or note it's a simplified view |
-
-### `docs/admin/schedule.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 49-61 | review | Commands use `com.tsd-agent-lab.*.plist` glob syntax, which won't expand in `cp`/`launchctl` commands as shown — these need explicit iteration | Rewrite as loop or explicit file list |
-
-### `docs/pilot/phase-1-read-only-pilot.md`
-
-| Line | Category | Finding | Suggested fix / question |
-|------|----------|---------|---------------------------|
-| 174 | stale | Path shown in example output is `/Users/ryordan/Obsidian/tsd-agent-lab/harness/policies/repo-allowlist.yaml` but actual location is `policies/repo-allowlist.yaml` at repo root — confirms the path claim in the doc is wrong | Update to `policies/repo-allowlist.yaml` |
+**Provenance:** Mechanical pass flagged as missing paths. Semantic review confirmed both files exist at `docs/reference/run-claude.md` and `docs/reference/verification.md`. The links incorrectly include `docs/` prefix when they're already in the same `docs/reference/` directory.
 
 ## Notes
 
-- **Provenance:** Mechanical findings from `stale-docs-check.sh` (link/path existence regex) were reconciled with semantic review (full doc reads). 
-- **False positives:** All `(url)` placeholders in skill templates (`skills/broken-builds/SKILL.md`, `skills/pr-risk-triage/SKILL.md`) flagged by mechanical pass are confirmed as intentional template syntax — not broken links.
-- **High-confidence stale:** The pattern `docs/current.md` appears in 8 locations and is consistently wrong — correct pattern is `reports/<report-type>/current.md`. This accounts for the majority of stale findings.
-- **Path migration:** `policies/repo-allowlist.yaml` moved from `harness/policies/` to repo root `policies/` — one stale reference remains in pilot documentation.
-- **Missing script:** `scripts/bootstrap/verify.sh` referenced in `docs/admin/stale-docs-check.md` does not exist in current repo.
+### Mechanical vs Semantic Findings
+
+- **Mechanical findings (from `stale-docs-check.sh --dry-run`):** 7 stale, 19 for review
+- **Semantic review findings (full doc read):** Reduced to 2 stale, 3 for review after reconciliation
+
+Most mechanical findings were false positives:
+- References to `docs/current.md` (flagged 9 times) are illustrative examples in documentation showing report naming conventions, not actual broken links
+- References to `harness/codebase-map.yaml` and `harness/policies/repo-allowlist.yaml` in pilot docs describe paths that were tried during Fullsend evaluation but intentionally don't exist (those paths are Fullsend-specific, not part of this repo's structure)
+- Path mentions like `examples/tasks/my-task.yaml` and `scripts/macos/com.tsd` (incomplete filename in schedule doc) are generic examples in how-to documentation, not references to specific files that should exist
+- References to `docs/prompts.md` in `docs/reference/run-claude.md` — the file exists at `docs/reference/prompts.md`, not `docs/prompts.md`. However, this is in the same directory so the link works correctly as a relative reference.
+
+### Cross-Doc Consistency Check
+
+All setup guides, architecture docs, and skill documentation were read and cross-referenced:
+- Directory structure diagrams in `docs/getting-started.md` and `README.md` match actual repo structure
+- Setup steps in `docs/setup/bootstrap-agent-lab.md` reference scripts that exist and are current
+- Skill workflow descriptions in `skills/README.md` accurately describe the repo's skill structure
+- Repository layout in `README.md` matches `ls` output for all documented directories
+- No narrative inconsistencies found between sibling docs
+
+### Assumptions
+
+- Template placeholders (literal `url` in skill output examples) categorized as `stale` because they would break if someone attempted to use the template output as-is, even though they're intentionally illustrative
+- Relative path errors in `docs/draft-pr-mode.md` and `docs/reference/harness.md` categorized as `review` rather than `stale` because the files exist and the intent is clear—these are path construction issues, not missing content
+- The reference to `scripts/bootstrap/verify.sh` in `docs/admin/stale-docs-check.md` categorized as `review` because it's unclear whether this describes a planned script, a removed script, or an error

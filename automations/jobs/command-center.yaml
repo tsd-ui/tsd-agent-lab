@@ -1,9 +1,9 @@
 label: com.tsd-agent-lab.command-center
 name: command-center
-description: "Daily command center digest with Slack posting"
+description: "Daily command center digest (Slack posting disabled)"
 script: scripts/macos/daily-command-center.sh
-args:
-  - --post-slack
+# Slack posting disabled 2026-07-28 — team is undergoing changes and the daily
+# post isn't useful right now. To re-enable, restore: args: [--post-slack]
 schedule:
   type: calendar
   hour: 6

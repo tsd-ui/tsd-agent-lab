@@ -2,19 +2,19 @@
 
 | Field | Value |
 |---|---|
-| Date | 2026-07-27 |
-| Host | ryordan-mac |
+| Date | 2026-07-28 |
+| Host | agent-lab |
 | User | agent-lab |
-| Generated | 2026-07-27 06:00:25 |
-| Status | 0 failures; 8 collection errors |
+| Generated | 2026-07-28 05:00:05 |
+| Status | 0 failure(s) — 8 repo(s) with collection errors |
 
 ## Summary
 
-No CI failures detected. All 8 monitored repos encountered collection errors when querying the GitHub API.
+No CI failures detected. However, all 8 repositories encountered collection errors: "Failed to query repo API". This indicates a systemic issue with the data collector, not actual build failures.
 
 ## Collection Issues
 
-All repositories failed during data collection. This indicates a systemic problem with GitHub API access, not actual build failures.
+All repositories failed during data collection with identical error messages:
 
 ### [securesign/rhtas-console dependency](https://github.com/securesign/rhtas-console)
 
@@ -50,10 +50,11 @@ All repositories failed during data collection. This indicates a systemic proble
 
 ---
 
-## Next Steps
-
 **Diagnosis** (model assessment)
+
 - **Category:** config-error
 - **Confidence:** confirmed
-- **Root cause:** Repository identifiers in the configuration are malformed — they include metadata suffixes ("dependency", "maintained") appended to the org/repo format. GitHub API expects clean `org/repo` format, so queries like `securesign/rhtas-console dependency` fail. The default_branch field shows "unknown" for all repos, confirming the API queries never succeeded.
-- **Suggested next step:** Fix the repository list configuration to use clean `org/repo` format (e.g., `tsd-ui/tsd-agent-lab` instead of `tsd-ui/tsd-agent-lab maintained`). If "dependency" and "maintained" are tracking labels, store them as separate metadata fields rather than suffixes to the repository identifier.
+- **Root cause:** The repository identifiers in the JSON data are malformed. Each repo name includes metadata suffixes ("dependency", "maintained") appended to the standard `org/repo` format (e.g., `securesign/rhtas-console dependency` instead of `securesign/rhtas-console`). GitHub API queries fail because these are not valid repository identifiers.
+- **Suggested next step:** Fix the collector's repository list configuration to use clean `org/repo` format. If "dependency" and "maintained" are tracking labels or categories, store them as separate metadata fields in the configuration rather than suffixing them to the repository identifier.
+
+**Evidence:** All repos show `default_branch: "unknown"`, indicating the collector couldn't retrieve even basic repository metadata — consistent with invalid repository names preventing API queries.

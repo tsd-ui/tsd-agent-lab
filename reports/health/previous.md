@@ -1,9 +1,9 @@
 # Agent Lab Health Report
 
-- **Date:** 2026-07-26
+- **Date:** 2026-07-27
 - **Host:** ryordan-mac
 - **User:** agent-lab
-- **Generated:** 2026-07-26 05:00:05
+- **Generated:** 2026-07-27 05:00:06
 - **Status:** healthy
 
 ## Launchd Agents
@@ -12,7 +12,7 @@
 |--------|-----------|-------|
 | not running | 0 | com.tsd-agent-lab.sync-and-push |
 | not running | 0 | com.tsd-agent-lab.pr-bot-poll |
-| running (PID 70387) | 0 | com.tsd-agent-lab.health-report |
+| running (PID 82878) | 0 | com.tsd-agent-lab.health-report |
 | not running | 0 | com.tsd-agent-lab.stale-docs-check-full |
 | not running | 0 | com.tsd-agent-lab.pr-risk-triage |
 | not running | 0 | com.tsd-agent-lab.broken-builds |
@@ -39,7 +39,7 @@ No errors or faults in the last 24 hours.
 | /dev/disk1s2 | 550Mi | 6.0Mi | 530Mi | 2% | /System/Volumes/xarts |
 | /dev/disk1s1 | 550Mi | 5.9Mi | 530Mi | 2% | /System/Volumes/iSCPreboot |
 | /dev/disk1s3 | 550Mi | 3.0Mi | 530Mi | 1% | /System/Volumes/Hardware |
-| /dev/disk3s5 | 926Gi | 105Gi | 799Gi | 12% | /System/Volumes/Data |
+| /dev/disk3s5 | 926Gi | 106Gi | 799Gi | 12% | /System/Volumes/Data |
 
 Threshold: 80%
 
@@ -47,10 +47,10 @@ Threshold: 80%
 
 | PID | Elapsed | Command |
 |-----|---------|---------|
-| 16539 | 05-14:18:06 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 16545 | 05-14:18:02 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 16816 | 05-14:18:01 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 16817 | 05-14:18:01 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 16823 | 05-14:18:00 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
-| 18156 | 03-18:27:33 | claude |
-| 58063 | 02-16:29:32 | claude |
+| 16539 | 06-14:18:07 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 16545 | 06-14:18:03 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 16816 | 06-14:18:02 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 16817 | 06-14:18:02 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 16823 | 06-14:18:01 | /Users/agent-lab/.vscode-server/cli/servers/Stable-8a7abeba6e03ea3af87bfbce9a1b7e48fed567b8/server/node |
+| 18156 | 04-18:27:34 | claude |
+| 58063 | 03-16:29:33 | claude |
